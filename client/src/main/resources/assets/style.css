@@ -1,0 +1,37 @@
+.root {
+    -fx-background-color: #1e1e2f;
+}
+
+.button {
+    -fx-background-color: #3a3a4f;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.text {
+    -fx-fill: #ffccff;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+Text {
+    -fx-fill: white;
+    -fx-font-size: 18px;
+}
+
+#menu-title {
+    -fx-font-size: 48px;
+    -fx-fill: #ffffff;
+}
+
+#server-label {
+    -fx-fill: #000000;
+    -fx-font-size: 16px;
+}

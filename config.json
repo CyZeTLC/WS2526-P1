@@ -1,0 +1,13 @@
+{
+  "mysql": {
+    "hostname": "127.0.0.1",
+    "port": 3306,
+    "database": "cyze_game_hsbi",
+    "username": "root",
+    "password": "",
+    "poolSize": 3
+  },
+  "messages": {
+    "game.prefix": "HSBI-GAME"
+  }
+}
