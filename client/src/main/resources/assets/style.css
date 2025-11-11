@@ -16,7 +16,7 @@
 }
 
 .text {
-    -fx-fill: #ffccff;
+    -fx-fill: #ffcc00;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
@@ -29,6 +29,10 @@ Text {
 #menu-title {
     -fx-font-size: 48px;
     -fx-fill: #ffffff;
+}
+
+#achievements {
+    -fx-font-size: 26px;
 }
 
 #server-label {

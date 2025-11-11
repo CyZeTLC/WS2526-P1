@@ -15,6 +15,9 @@ public abstract class Entity {
 
     private float health;
 
+    private float width;
+    private float height;
+
     public Entity() {
         this.uuid = UUID.randomUUID();
         this.health = 0.0F;

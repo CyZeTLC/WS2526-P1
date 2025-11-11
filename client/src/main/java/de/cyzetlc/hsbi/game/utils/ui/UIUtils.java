@@ -147,6 +147,7 @@ public class UIUtils {
         Button button = new Button(label);
         button.setLayoutX(x);
         button.setLayoutY(y);
+        button.setFocusTraversable(false);
         button.setOnAction(e -> {
             SoundManager.play(Sound.CLICK);
             onClick.run();
@@ -233,5 +234,10 @@ public class UIUtils {
         view.setFitHeight(height);
         parent.getChildren().add(view);
         return view;
+    }
+
+    public static double getTextWidth(Text text) {
+        text.applyCss();
+        return text.getLayoutBounds().getWidth();
     }
 }

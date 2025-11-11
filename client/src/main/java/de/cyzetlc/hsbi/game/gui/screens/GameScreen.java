@@ -1,15 +1,22 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.entity.Direction;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
+import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Location;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements GuiScreen {
     private final Pane root = new Pane();
@@ -21,22 +28,30 @@ public class GameScreen implements GuiScreen {
 
     private final Text fpsLbl;
 
+    private final List<Platform> platforms = new ArrayList<>();
+
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+        double width = screenManager.getStage().getWidth();
+        double height = screenManager.getStage().getHeight();
 
-        // Beispiel: Spielfigur
+        UIUtils.drawRect(root, 0,0,width,height, Color.LIGHTBLUE);
         player = Game.thePlayer;
         player.drawPlayer(root, 20, 20);
 
         // Zurück zum Menü
-        Button backButton = new Button("Zurück");
-        backButton.setLayoutX(10);
-        backButton.setLayoutY(10);
-        backButton.setOnAction(e -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
 
         this.fpsLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
 
-        root.getChildren().add(backButton);
+        //Bsp.: -> wird später geändert
+        platforms.add(new Platform(0, height-300, 450, 300, root)); // x, y, width, height
+        platforms.add(new Platform(500, height-350, 200, 350, root)); // x, y, width, height
+        platforms.add(new Platform(780, height-300, 150, 300, root));
+
+        for (Platform platform : platforms) {
+            //UIUtils.drawRect(root, platform.getX(), platform.getY(), platform.getWidth(), platform.getHeight(), Color.BLACK);
+        }
     }
 
     @Override
@@ -44,45 +59,84 @@ public class GameScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        // einfache Bewegung
-        player.getLocation().setX(player.getLocation().getX() + dx);
-        player.getLocation().setY(player.getLocation().getY() + dy);
+        double gravity = 15;       // Stärke der Schwerkraft
+        double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
+        double jumpPower = 800;    // Sprungkraft
+        boolean onGround = false;  // Flag: steht der Spieler auf dem Boden?
 
-        if (screenManager.getInputManager().isPressed(KeyCode.W)) {
-            dy -= 4 * delta;
-            dy = -2.5;
-            dx = 0;
-        } else if (screenManager.getInputManager().isPressed(KeyCode.S)) {
-            dy += 4 * delta;
-            dy = 2.5;
-            dx = 0;
+        double x = player.getLocation().getX();
+        double y = player.getLocation().getY();
+
+        // Eingabe (wird später auch noch in einen Listener gesteckt)
+        if (screenManager.getInputManager().isPressed(KeyCode.A)) {
+            dx = -moveSpeed * delta;
+            player.setDirection(Direction.WALK_LEFT);
         } else if (screenManager.getInputManager().isPressed(KeyCode.D)) {
-            dx += 4 * delta;
-            dx = 2.5;
-            dy = 0;
-        } else if (screenManager.getInputManager().isPressed(KeyCode.A)) {
-            dx -= 4 * delta;
-            dx = -2.5;
-            dy = 0;
+            dx = moveSpeed * delta;
+            player.setDirection(Direction.WALK_RIGHT);
         } else {
-            if (dx > 0) dx = 1;
-            else dx = -1;
-
-            if (dy > 0) dy = 0.5;
-            else dy = -0.5;
+            dx = 0; // kein Gleiten mehr
         }
 
-        if (screenManager.getInputManager().isPressed(KeyCode.F3) && screenManager.getInputManager().isPressed(KeyCode.R)) {
-            player.setLocation(new Location(width/2-10,height/2-10));
+        // Sprung (nur wenn auf dem Boden)
+        if (screenManager.getInputManager().isPressed(KeyCode.SPACE) && dy == 0) {
+            dy = -jumpPower * delta;
+            player.setDirection(Direction.JUMP);
         }
 
-        // Kollision mit Rand
-        if (player.getLocation().getX() <= 20 || player.getLocation().getX() >= width-20) dx *= -1;
-        else
-        if (player.getLocation().getY() <= 20 || player.getLocation().getY() >= height-20) dy *= -1;
+        // Schwerkraft
+        dy += gravity * delta;
 
-        this.fpsLbl.setText("FPS: " + (int) screenManager.getCurrentFps());
-        this.player.update();
+        // Vorläufige Position berechnen
+        double nextX = x + dx;
+        double nextY = y + dy;
+
+        Rectangle2D nextBounds = new Rectangle2D(nextX, nextY, player.getWidth(), player.getHeight());
+
+        // Kollision mit Plattformen
+        for (Platform platform : platforms) {
+            Rectangle2D pBounds = platform.getBounds();
+
+            if (nextBounds.intersects(pBounds)) {
+                // Kollision von oben (Spieler landet)
+                if (y + player.getHeight() <= platform.getY()) {
+                    nextY = platform.getY() - player.getHeight();
+                    dy = 0;
+                    onGround = true;
+
+                    //Spieler muss resetet werden
+                }
+                // Seitenkollision
+                else if (x + player.getWidth() <= platform.getX()) {
+                    nextX = platform.getX() - player.getWidth();
+                    dx = 0;
+                }
+                else if (x >= platform.getX() + platform.getWidth()) {
+                    nextX = platform.getX() + platform.getWidth();
+                    dx = 0;
+                }
+            }
+        }
+
+        // Kollision mit Fensterrand (später dann halt für den Game-Over Screen oder so)
+        if (nextX < 0) nextX = 0;
+        if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
+
+        if (nextY + player.getHeight() > height) {
+            nextY = height - player.getHeight();
+            dy = 0;
+            onGround = true;
+        }
+
+        // Position aktualisieren
+        player.getLocation().setX(nextX);
+        player.getLocation().setY(nextY);
+
+        // Debug-Info (später maybe per F3 oder so ein/aus)
+        this.fpsLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
+                " | onGround: " + onGround);
+
+        player.update();
     }
 
     @Override
