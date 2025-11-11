@@ -1,6 +1,7 @@
 package de.cyzetlc.hsbi.game.entity;
 
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import de.cyzetlc.hsbi.game.world.Direction;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
