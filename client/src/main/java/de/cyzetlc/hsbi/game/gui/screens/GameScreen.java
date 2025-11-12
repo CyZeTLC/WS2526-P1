@@ -38,7 +38,7 @@ public class GameScreen implements GuiScreen {
         player.drawPlayer(root, 20, height-450);
 
         // Zurück zum Menü
-        UIUtils.drawButton(root, "Zurück", 100, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
 
         this.fpsLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
 
