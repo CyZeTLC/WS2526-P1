@@ -35,7 +35,7 @@ public class GameScreen implements GuiScreen {
 
         UIUtils.drawRect(root, 0,0,width,height, Color.LIGHTBLUE);
         player = Game.thePlayer;
-        player.drawPlayer(root, 20, 20);
+        player.drawPlayer(root, 20, height-450);
 
         // Zurück zum Menü
         UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
@@ -132,7 +132,8 @@ public class GameScreen implements GuiScreen {
 
         // Debug-Info (später maybe per F3 oder so ein/aus)
         this.fpsLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
-                " | onGround: " + onGround);
+                " | onGround: " + onGround +
+                " | uuid: " + player.getUuid());
 
         player.update();
     }

@@ -23,8 +23,8 @@ public class EntityPlayer extends Player {
         // Position vom Sprite & Nametag anpassen
         this.sprite.setX(this.getLocation().getX());
         this.sprite.setY(this.getLocation().getY());
-        this.nameTag.setX(this.getLocation().getX() - this.nameTag.getLayoutBounds().getWidth() / 2);
-        this.nameTag.setY(this.getLocation().getY() - 25);
+        this.nameTag.setLayoutX(this.getLocation().getX() + this.nameTag.getLayoutBounds().getWidth() / 2 - this.getWidth()*1.4);
+        this.nameTag.setLayoutY(this.getLocation().getY() - 25);
 
         // Richtung wechseln
         if (direction != null) {
@@ -38,7 +38,7 @@ public class EntityPlayer extends Player {
     public EntityPlayer drawPlayer(Pane pane, double x, double y) {
         // Nametag zeichnen
         this.nameTag = UIUtils.drawText(pane, this.getDisplayName(), x, y - 25);
-        this.nameTag.setX(x - this.nameTag.getLayoutBounds().getWidth() / 2);
+        this.nameTag.setLayoutX(x - this.nameTag.getLayoutBounds().getWidth() / 2);
 
         // Bild laden
         Image image = new Image(getClass().getResource("/assets/player.png").toExternalForm());
