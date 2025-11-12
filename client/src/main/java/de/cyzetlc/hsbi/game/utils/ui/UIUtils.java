@@ -164,6 +164,28 @@ public class UIUtils {
      * @param y      Y-Position
      * @return der erstellte Button
      */
+    public static Button drawButton(Pane parent, String label, double x, double y, String id, Runnable onClick) {
+        Button button = new Button(label);
+        button.setLayoutX(x);
+        button.setLayoutY(y);
+        button.setFocusTraversable(false);
+        button.setId(id);
+        button.setOnAction(e -> {
+            SoundManager.play(Sound.CLICK);
+            onClick.run();
+        });
+        parent.getChildren().add(button);
+        return button;
+    }
+
+    /**
+     * Zeichnet einen einfachen Button in eine Pane.
+     *
+     * @param parent Pane, in die der Button eingefügt wird
+     * @param x      X-Position
+     * @param y      Y-Position
+     * @return der erstellte Button
+     */
     public static Button drawButton(Pane parent, String label, double x, double y) {
         return drawButton(parent, label, x, y, () -> {});
     }
@@ -176,8 +198,34 @@ public class UIUtils {
      * @param y      Y-Position
      * @return der erstellte Button
      */
+    public static Button drawButton(Pane parent, String label, double x, double y, String id) {
+        return drawButton(parent, label, x, y, id, () -> {});
+    }
+
+    /**
+     * Zeichnet einen einfachen Button in eine Pane.
+     *
+     * @param parent Pane, in die der Button eingefügt wird
+     * @param x      X-Position
+     * @param y      Y-Position
+     * @return der erstellte Button
+     */
     public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical, Runnable onClick) {
         Button button = drawButton(parent, label, x, y, onClick);
+        centerButton(button, parent, vertical);
+        return button;
+    }
+
+    /**
+     * Zeichnet einen einfachen Button in eine Pane.
+     *
+     * @param parent Pane, in die der Button eingefügt wird
+     * @param x      X-Position
+     * @param y      Y-Position
+     * @return der erstellte Button
+     */
+    public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical, String id, Runnable onClick) {
+        Button button = drawButton(parent, label, x, y, id, onClick);
         centerButton(button, parent, vertical);
         return button;
     }

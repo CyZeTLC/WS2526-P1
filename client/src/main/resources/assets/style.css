@@ -39,3 +39,7 @@ Text {
     -fx-fill: #000000;
     -fx-font-size: 16px;
 }
+
+#mainmenu-button {
+    -fx-padding: 10px 150px 10px 150px;
+}
