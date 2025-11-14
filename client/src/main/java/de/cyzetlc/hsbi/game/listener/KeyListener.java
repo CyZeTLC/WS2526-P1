@@ -2,8 +2,8 @@ package de.cyzetlc.hsbi.game.listener;
 
 import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.event.EventHandler;
-import de.cyzetlc.hsbi.game.events.InputType;
-import de.cyzetlc.hsbi.game.events.KeyInputEvent;
+import de.cyzetlc.hsbi.game.events.input.InputType;
+import de.cyzetlc.hsbi.game.events.input.KeyInputEvent;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
 import javafx.scene.input.KeyCode;
 
