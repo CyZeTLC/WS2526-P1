@@ -5,8 +5,12 @@ import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
+import de.cyzetlc.hsbi.game.gui.block.Block;
+import de.cyzetlc.hsbi.game.gui.block.JumpBoostBlock;
+import de.cyzetlc.hsbi.game.gui.block.LavaBlock;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
+import de.cyzetlc.hsbi.game.world.Location;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -28,6 +32,8 @@ public class GameScreen implements GuiScreen {
 
     private final List<Platform> platforms = new ArrayList<>();
 
+    private final List<Block> blocks = new ArrayList<>();
+
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
         double width = screenManager.getStage().getWidth();
@@ -47,8 +53,13 @@ public class GameScreen implements GuiScreen {
         platforms.add(new Platform(500, height-350, 200, 350, root)); // x, y, width, height
         platforms.add(new Platform(780, height-300, 150, 300, root));
 
-        for (Platform platform : platforms) {
-            //UIUtils.drawRect(root, platform.getX(), platform.getY(), platform.getWidth(), platform.getHeight(), Color.BLACK);
+        this.blocks.add(new LavaBlock(new Location(150, 150)));
+        this.blocks.add(new LavaBlock(new Location(250, height-332)));
+        this.blocks.add(new JumpBoostBlock(new Location(150, height-332)));
+
+        // Bloecke zeichnen
+        for (Block block : this.blocks) {
+            block.draw(root);
         }
     }
 
@@ -112,6 +123,35 @@ public class GameScreen implements GuiScreen {
                 else if (x >= platform.getX() + platform.getWidth()) {
                     nextX = platform.getX() + platform.getWidth();
                     dx = 0;
+                }
+            }
+        }
+
+        // Kollision mit Bloecke
+        for (Block block : this.blocks) {
+            Rectangle2D pBounds = block.getBounds();
+
+            if (nextBounds.intersects(pBounds)) {
+                block.onCollide(player);
+
+                if (block.isCollideAble()) {
+                    // Kollision von oben (Spieler landet)
+                    if (y + player.getHeight() <= block.getLocation().getY()) {
+                        nextY = block.getLocation().getY() - player.getHeight();
+                        dy = 0;
+                        onGround = true;
+
+                        //Spieler muss resetet werden
+                    }
+                    // Seitenkollision
+                    else if (x + player.getWidth() <= block.getLocation().getX()) {
+                        nextX = block.getLocation().getX() - player.getWidth();
+                        dx = 0;
+                    }
+                    else if (x >= block.getLocation().getX() + block.getWidth()) {
+                        nextX = block.getLocation().getX() + block.getWidth();
+                        dx = 0;
+                    }
                 }
             }
         }
