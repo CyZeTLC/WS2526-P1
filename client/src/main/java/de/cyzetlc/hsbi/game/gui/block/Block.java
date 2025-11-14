@@ -13,6 +13,8 @@ public abstract class Block {
     @Getter @Setter
     private Material material;
 
+    private Pane pane;
+
     private ImageView sprite;
 
     @Getter @Setter
@@ -24,11 +26,15 @@ public abstract class Block {
     @Getter @Setter
     private double width, height;
 
+    @Getter @Setter
+    private boolean active;
+
     public Block(Location location) {
         this.location = location;
         this.width = 32;
         this.height = 32;
         this.collideAble = true;
+        this.active = true;
     }
 
     public abstract void onCollide(Player player);
@@ -41,6 +47,7 @@ public abstract class Block {
 
         javafx.scene.image.Image image = new Image(getClass().getResource(this.getMaterial().texturePath).toExternalForm());
         this.sprite = new ImageView(image);
+        this.pane = pane;
 
         // Größe anpassen
         this.sprite.setFitWidth(32);
@@ -55,6 +62,14 @@ public abstract class Block {
         this.setHeight((float) this.sprite.getFitHeight());
 
         pane.getChildren().add(sprite);
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+
+        if (!active) {
+            this.pane.getChildren().remove(this.sprite);
+        }
     }
 
     public Rectangle2D getBounds() {
