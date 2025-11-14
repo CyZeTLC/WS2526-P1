@@ -28,7 +28,7 @@ public class GameScreen implements GuiScreen {
     private double dx = 1; // Bewegung in X-Richtung
     private double dy = 0.5; // Bewegung in Y-Richtung
 
-    private final Text fpsLbl;
+    private final Text debugLbl;
 
     private final List<Platform> platforms = new ArrayList<>();
 
@@ -46,16 +46,16 @@ public class GameScreen implements GuiScreen {
         // Zurück zum Menü
         UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
 
-        this.fpsLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
+        this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
 
         //Bsp.: -> wird später geändert
         platforms.add(new Platform(0, height-300, 450, 300, root)); // x, y, width, height
         platforms.add(new Platform(500, height-350, 200, 350, root)); // x, y, width, height
         platforms.add(new Platform(780, height-300, 150, 300, root));
 
-        this.blocks.add(new LavaBlock(new Location(150, 150)));
-        this.blocks.add(new LavaBlock(new Location(250, height-332)));
         this.blocks.add(new JumpBoostBlock(new Location(150, height-332)));
+        this.blocks.add(new LavaBlock(new Location(250, height-332)));
+
 
         // Bloecke zeichnen
         for (Block block : this.blocks) {
@@ -68,9 +68,9 @@ public class GameScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        double gravity = 15;       // Stärke der Schwerkraft
-        double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
-        double jumpPower = 800;    // Sprungkraft
+        double gravity = Game.gravity;       // Stärke der Schwerkraft
+        double moveSpeed = Game.moveSpeed;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
+        double jumpPower = Game.jumpPower;    // Sprungkraft
         boolean onGround = false;  // Flag: steht der Spieler auf dem Boden?
 
         double x = player.getLocation().getX();
@@ -131,7 +131,7 @@ public class GameScreen implements GuiScreen {
         for (Block block : this.blocks) {
             Rectangle2D pBounds = block.getBounds();
 
-            if (nextBounds.intersects(pBounds)) {
+            if (nextBounds.intersects(pBounds) && block.isActive()) {
                 block.onCollide(player);
 
                 if (block.isCollideAble()) {
@@ -171,8 +171,10 @@ public class GameScreen implements GuiScreen {
         player.getLocation().setY(nextY);
 
         // Debug-Info (später maybe per F3 oder so ein/aus)
-        this.fpsLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
+        this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
                 " | onGround: " + onGround +
+                " | moveSpeed: " + moveSpeed +
+                " | jumpPower: " + jumpPower +
                 " | uuid: " + player.getUuid());
 
         player.update();
