@@ -20,7 +20,7 @@ public abstract class Entity {
 
     public Entity() {
         this.uuid = UUID.randomUUID();
-        this.health = 0.0F;
+        this.health = 1.0F;
     }
 
     public abstract void update();
