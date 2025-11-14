@@ -7,6 +7,7 @@ import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
 import de.cyzetlc.hsbi.game.listener.KeyListener;
 import de.cyzetlc.hsbi.game.listener.PacketListener;
+import de.cyzetlc.hsbi.game.listener.PlayerListener;
 import de.cyzetlc.hsbi.game.listener.UserMessageListener;
 import de.cyzetlc.hsbi.game.utils.database.mysql.MySQLCredentials;
 import de.cyzetlc.hsbi.game.utils.database.mysql.QueryHandler;
@@ -35,6 +36,10 @@ public class Game extends Application {
     @Getter
     private ScreenManager screenManager;
 
+    public static double gravity = 15;       // Stärke der Schwerkraft
+    public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
+    public static double jumpPower = 800;    // Sprungkraft
+
     @Override
     public void start(Stage primaryStage) {
         instance = this;
@@ -45,6 +50,7 @@ public class Game extends Application {
         EventManager.register(new PacketListener());
         EventManager.register(new UserMessageListener());
         EventManager.register(new KeyListener());
+        EventManager.register(new PlayerListener());
 
         screenManager = new ScreenManager(primaryStage);
         screenManager.showScreen(new MainMenuScreen(screenManager));
