@@ -6,6 +6,7 @@ import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Block;
+import de.cyzetlc.hsbi.game.gui.block.FloatingPlatformBlock;
 import de.cyzetlc.hsbi.game.gui.block.JumpBoostBlock;
 import de.cyzetlc.hsbi.game.gui.block.LavaBlock;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
@@ -56,6 +57,13 @@ public class GameScreen implements GuiScreen {
         this.blocks.add(new JumpBoostBlock(new Location(150, height-332)));
         this.blocks.add(new LavaBlock(new Location(250, height-332)));
 
+        // Schwebende Plattform verbindet die beiden groesseren Inseln im oberen Bereich
+        this.blocks.add(new FloatingPlatformBlock(
+                new Location(420, height - 420),
+                new Location(720, height - 420),
+                120
+        ));
+
 
         // Bloecke zeichnen
         for (Block block : this.blocks) {
@@ -67,6 +75,11 @@ public class GameScreen implements GuiScreen {
     public void update(double delta) {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
+
+        // Bewege dynamische Bloecke (z.B. schwebende Plattform) bevor Kollisionsabfragen stattfinden
+        for (Block block : this.blocks) {
+            block.update();
+        }
 
         double gravity = Game.gravity;       // Stärke der Schwerkraft
         double moveSpeed = Game.moveSpeed;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
