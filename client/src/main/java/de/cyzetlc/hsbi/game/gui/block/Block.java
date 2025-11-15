@@ -13,8 +13,10 @@ public abstract class Block {
     @Getter @Setter
     private Material material;
 
+    @Getter
     private Pane pane;
 
+    @Getter
     private ImageView sprite;
 
     @Getter @Setter
@@ -45,19 +47,22 @@ public abstract class Block {
         /*Rectangle2D rec = new Rectangle();
         rec.setFrame(this.location.getX(), this.location.getY(), 32, 32);*/
 
-        javafx.scene.image.Image image = new Image(getClass().getResource(this.getMaterial().texturePath).toExternalForm());
+        Image image = new Image(getClass().getResource(this.getMaterial().texturePath).toExternalForm());
         this.sprite = new ImageView(image);
         this.pane = pane;
 
-        // Größe anpassen
-        this.sprite.setFitWidth(32);
-        this.sprite.setFitHeight(32);
+        double spriteWidth = this.width > 0 ? this.width : 32;
+        double spriteHeight = this.height > 0 ? this.height : 32;
+
+        // Spritegroesse anhand der Blockabmessungen setzen
+        this.sprite.setFitWidth(spriteWidth);
+        this.sprite.setFitHeight(spriteHeight);
 
         // Startposition
         this.sprite.setX(this.getLocation().getX());
         this.sprite.setY(this.getLocation().getY());
 
-        // Bounding Box (für Kollisionen)
+        // Bounding Box (fuer Kollisionen)
         this.setWidth((float) this.sprite.getFitWidth());
         this.setHeight((float) this.sprite.getFitHeight());
 
@@ -76,3 +81,7 @@ public abstract class Block {
         return new Rectangle2D(this.getLocation().getX(), this.getLocation().getY(), width, height);
     }
 }
+
+
+
+
