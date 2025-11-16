@@ -151,6 +151,7 @@ public class GameScreen implements GuiScreen {
                     // Kollision von oben (Spieler landet)
                     if (y + player.getHeight() <= block.getLocation().getY()) {
                         nextY = block.getLocation().getY() - player.getHeight();
+                        nextX += block.getDeltaX(); // Spieler folgt seitlicher Bewegung der Plattform
                         dy = 0;
                         onGround = true;
 

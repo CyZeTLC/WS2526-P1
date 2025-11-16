@@ -31,12 +31,17 @@ public abstract class Block {
     @Getter @Setter
     private boolean active;
 
+    @Getter
+    private double deltaX, deltaY;
+
     public Block(Location location) {
         this.location = location;
         this.width = 32;
         this.height = 32;
         this.collideAble = true;
         this.active = true;
+        this.deltaX = 0;
+        this.deltaY = 0;
     }
 
     public abstract void onCollide(Player player);
@@ -79,6 +84,11 @@ public abstract class Block {
 
     public Rectangle2D getBounds() {
         return new Rectangle2D(this.getLocation().getX(), this.getLocation().getY(), width, height);
+    }
+
+    protected void setDelta(double deltaX, double deltaY) {
+        this.deltaX = deltaX;
+        this.deltaY = deltaY;
     }
 }
 

@@ -46,6 +46,8 @@ public class FloatingPlatformBlock extends Block {
      */
     @Override
     public void update() {
+        this.setDelta(0, 0); // Ruecksetzen, falls sich die Plattform in diesem Tick nicht bewegt
+
         if (!this.isActive() || this.getSprite() == null) {
             return;
         }
@@ -60,6 +62,8 @@ public class FloatingPlatformBlock extends Block {
         this.lastUpdateNanos = now;
 
         Location current = this.getLocation();
+        double oldX = current.getX();
+        double oldY = current.getY();
         Location target = this.movingTowardsEnd ? this.endLocation : this.startLocation;
 
         double dx = target.getX() - current.getX();
@@ -73,6 +77,7 @@ public class FloatingPlatformBlock extends Block {
             current.setY(target.getY());
             this.getSprite().setX(target.getX());
             this.getSprite().setY(target.getY());
+            this.setDelta(target.getX() - oldX, target.getY() - oldY);
             return;
         }
 
@@ -91,6 +96,7 @@ public class FloatingPlatformBlock extends Block {
         current.setY(nextY);
         this.getSprite().setX(nextX);
         this.getSprite().setY(nextY);
+        this.setDelta(nextX - oldX, nextY - oldY);
     }
 
     private static Location copy(Location location) {
