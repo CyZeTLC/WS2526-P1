@@ -5,6 +5,7 @@ import javafx.scene.media.MediaPlayer;
 import lombok.Getter;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,9 +24,7 @@ public class SoundManager {
      */
     public static void play(Sound sound) {
         try {
-            Media media = mediaCache.computeIfAbsent(sound.path, p ->
-                    new Media(new File(p).toURI().toString())
-            );
+            Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
 
             MediaPlayer player = new MediaPlayer(media);
             applyVolume(player);
@@ -45,9 +44,7 @@ public class SoundManager {
     public static void playBackground(Music music, boolean looping) {
         stopBackground();
         try {
-            Media media = mediaCache.computeIfAbsent(music.path(), p ->
-                    new Media(new File(p).toURI().toString())
-            );
+            Media media = mediaCache.computeIfAbsent(music.path(), SoundManager::loadMedia);
 
             backgroundPlayer = new MediaPlayer(media);
             backgroundPlayer.setCycleCount(looping ? MediaPlayer.INDEFINITE : 1);
@@ -97,6 +94,29 @@ public class SoundManager {
     private static void applyVolume(MediaPlayer player) {
         if (player != null) {
             player.setVolume(muted ? 0.0 : globalVolume);
+        }
+    }
+
+    private static Media loadMedia(String path) {
+        try {
+            // Versuche zuerst, die Datei als Resource vom Classpath zu laden
+            String resourcePath = path.startsWith("/") ? path : "/" + path;
+            URL resource = SoundManager.class.getResource(resourcePath);
+            if (resource != null) {
+                return new Media(resource.toExternalForm());
+            }
+
+            // Fallback: direkte Datei auf dem Dateisystem
+            File file = new File(path);
+            if (file.exists()) {
+                return new Media(file.toURI().toString());
+            }
+
+            throw new IllegalArgumentException("Media nicht gefunden: " + path);
+        } catch (Exception e) {
+            System.err.println("Fehler beim Laden von Media: " + path);
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
