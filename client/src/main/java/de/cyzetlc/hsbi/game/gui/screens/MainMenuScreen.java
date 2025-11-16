@@ -33,7 +33,8 @@ public class MainMenuScreen implements GuiScreen {
         UIUtils.drawCenteredText(root, "STEAL THE FILES", 0, 50, false).setId("menu-title");
         UIUtils.drawCenteredButton(root, "Spiel starten", 0, 120, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
         UIUtils.drawCenteredButton(root, "Mehrspieler", 0, 200, false, "mainmenu-button", () -> screenManager.showScreen(new MultiplayerScreen(screenManager)));
-        UIUtils.drawCenteredButton(root, "Beenden", 0, 280, false, "mainmenu-button", screenManager::closeScreen);
+        UIUtils.drawCenteredButton(root, "Einstellungen", 0, 280, false, "mainmenu-button", () -> screenManager.showScreen(new SettingsScreen(screenManager)));
+        UIUtils.drawCenteredButton(root, "Beenden", 0, 360, false, "mainmenu-button", screenManager::closeScreen);
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
 

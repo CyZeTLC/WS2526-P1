@@ -6,6 +6,7 @@ import de.cyzetlc.hsbi.game.audio.SoundManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -283,6 +284,40 @@ public class UIUtils {
         parent.getChildren().add(view);
         return view;
     }
+
+    public static Slider drawCenteredSlider(Pane parent, double min, double max, double value, double y, boolean verticalCenter) {
+
+        Slider slider = new Slider(min, max, value);
+        slider.applyCss();
+        slider.setPrefWidth(200);
+        parent.getChildren().add(slider);
+
+        Runnable doCenter = () -> {
+            double sliderWidth = slider.getWidth();
+            double sliderHeight = slider.getHeight();
+
+            double x = (parent.getWidth() - sliderWidth) / 2.0;
+            slider.setLayoutX(x);
+
+            if (verticalCenter) {
+                double yCentered = (parent.getHeight() - sliderHeight) / 2.0;
+                slider.setLayoutY(yCentered);
+            } else {
+                slider.setLayoutY(y);
+            }
+        };
+
+        Platform.runLater(doCenter);
+
+        ChangeListener<Number> parentSizeListener = (obs, o, n) -> Platform.runLater(doCenter);
+        parent.widthProperty().addListener(parentSizeListener);
+        if (verticalCenter) parent.heightProperty().addListener(parentSizeListener);
+
+        slider.widthProperty().addListener((obs, o, n) -> Platform.runLater(doCenter));
+
+        return slider;
+    }
+
 
     public static double getTextWidth(Text text) {
         text.applyCss();
