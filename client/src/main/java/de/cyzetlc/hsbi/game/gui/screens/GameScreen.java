@@ -15,8 +15,8 @@ import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.control.Button;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -41,6 +41,8 @@ public class GameScreen implements GuiScreen {
     private Text volumeLbl;
     private Button muteBtn;
     private int volumeStep = 5; // 0-5 => 0-100%
+    private boolean paused = false;
+    private Pane pauseOverlay;
 
     private final List<Platform> platforms = new ArrayList<>();
     private final List<Block> blocks = new ArrayList<>();
@@ -62,10 +64,12 @@ public class GameScreen implements GuiScreen {
 
         // back to menu
         UIUtils.drawButton(root, "Zurueck", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        UIUtils.drawButton(root, "Pause", 100, 10, this::togglePause);
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
         this.setupSoundControls(width);
+        this.setupPauseOverlay(width, height);
 
         // example platforms (placeholder layout)
         platforms.add(new Platform(0, height - 300, 450, 300, root));
@@ -90,6 +94,16 @@ public class GameScreen implements GuiScreen {
 
     @Override
     public void update(double delta) {
+        // ESC toggles pause
+        if (screenManager.getInputManager().isPressed(KeyCode.ESCAPE)) {
+            this.togglePause();
+            return;
+        }
+
+        if (this.paused) {
+            return;
+        }
+
         if (player.getHealth() <= 0) {
             this.handleGameOver();
             return;
@@ -310,6 +324,30 @@ public class GameScreen implements GuiScreen {
 
     private void updateMuteButton() {
         this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+    }
+
+    private void setupPauseOverlay(double width, double height) {
+        this.pauseOverlay = new Pane();
+        UIUtils.drawRect(pauseOverlay, 0, 0, width, height, Color.BLACK).setOpacity(0.5);
+        Text title = UIUtils.drawCenteredText(pauseOverlay, "Pause", 0, height / 2 - 120, false);
+        title.setFill(Color.WHITE);
+
+        UIUtils.drawCenteredButton(pauseOverlay, "Weiter", 0, height / 2 - 50, false, this::togglePause);
+        UIUtils.drawCenteredButton(pauseOverlay, "Zum Menu", 0, height / 2 + 20, false, () -> {
+            this.paused = false;
+            this.pauseOverlay.setVisible(false);
+            screenManager.showScreen(new MainMenuScreen(screenManager));
+        });
+
+        this.pauseOverlay.setVisible(false);
+        root.getChildren().add(pauseOverlay);
+    }
+
+    private void togglePause() {
+        this.paused = !this.paused;
+        if (this.pauseOverlay != null) {
+            this.pauseOverlay.setVisible(this.paused);
+        }
     }
 
     private void fillGapsWithLava(double screenHeight) {
