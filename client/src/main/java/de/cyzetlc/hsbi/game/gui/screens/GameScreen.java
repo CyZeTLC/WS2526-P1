@@ -60,11 +60,6 @@ public class GameScreen implements GuiScreen {
         platforms.add(new Platform(780, height-300, 150, 300, root));
 
         this.blocks.add(new JumpBoostBlock(new Location(150, height-332)));
-        this.blocks.add(new LavaBlock(new Location(250, height-332)));
-        LavaBlock gapLava = new LavaBlock(new Location(455, height-332));
-        gapLava.setWidth(50);
-        gapLava.setHeight(32);
-        this.blocks.add(gapLava);
 
         // Schwebende Plattform verbindet die beiden groesseren Inseln im oberen Bereich
         this.blocks.add(new FloatingPlatformBlock(
@@ -75,6 +70,7 @@ public class GameScreen implements GuiScreen {
 
 
         // Bloecke zeichnen
+        this.fillGapsWithLava(height);
         for (Block block : this.blocks) {
             block.draw(root);
         }
@@ -229,5 +225,20 @@ public class GameScreen implements GuiScreen {
         if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
             this.screenManager.showScreen(new MainMenuScreen(screenManager));
         }
+    }
+
+    private void fillGapsWithLava(double screenHeight) {
+        // Gap zwischen Plattform 1 (0-450) und 2 (500-700)
+        this.blocks.add(createLavaColumn(450, screenHeight - 300, 50, 300));
+
+        // Gap zwischen Plattform 2 (500-700) und 3 (780-930)
+        this.blocks.add(createLavaColumn(700, screenHeight - 350, 80, 350));
+    }
+
+    private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
+        LavaBlock lava = new LavaBlock(new Location(x, y));
+        lava.setWidth(width);
+        lava.setHeight(height);
+        return lava;
     }
 }
