@@ -1,4 +1,4 @@
-﻿package de.cyzetlc.hsbi.game.audio;
+package de.cyzetlc.hsbi.game.audio;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;

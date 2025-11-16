@@ -1,4 +1,4 @@
-﻿package de.cyzetlc.hsbi.game.audio;
+package de.cyzetlc.hsbi.game.audio;
 
 public enum Music {
     MENU("/assets/audio/background_music/Sonic Empire (Short Mix) (128kbit_AAC).m4a"),
