@@ -1,6 +1,8 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.audio.Music;
+import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.Platform;
@@ -44,6 +46,7 @@ public class GameScreen implements GuiScreen {
         double height = screenManager.getStage().getHeight();
 
         UIUtils.drawRect(root, 0,0,width,height, Color.LIGHTBLUE);
+        SoundManager.playBackground(Music.GAME, true);
         player = Game.thePlayer;
         if (player.getHealth() <= 0) {
             player.setHealth(1.0F);

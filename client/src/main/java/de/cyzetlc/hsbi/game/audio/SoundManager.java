@@ -1,11 +1,11 @@
-package de.cyzetlc.hsbi.game.audio;
+﻿package de.cyzetlc.hsbi.game.audio;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,29 +13,21 @@ public class SoundManager {
 
     private static final Map<String, Media> mediaCache = new HashMap<>();
     private static double globalVolume = 1.0;
-    /**
-     * -- GETTER --
-     * Gibt zurück, ob Mute aktiv ist
-     * -- SETTER --
-     * Aktiviert oder deaktiviert Mute
 
-     */
-    @Setter
     @Getter
     private static boolean muted = false;
 
+    private static MediaPlayer backgroundPlayer;
+
     /**
-     * Spielt einen Sound ab. Unterstützt gleichzeitige Wiedergabe.
-     * @param sound Pfad zur Audiodatei (z. B. "sounds/click.mp3")
+     * Spielt einen kurzen Soundeffekt ab. Unterstuetzt gleichzeitige Wiedergabe.
      */
     public static void play(Sound sound) {
         try {
-            Media media = mediaCache.computeIfAbsent(sound.path, p ->
-                    new Media(new File(p).toURI().toString())
-            );
+            Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
 
             MediaPlayer player = new MediaPlayer(media);
-            player.setVolume(muted ? 0.0 : globalVolume);
+            applyVolume(player);
             player.setOnEndOfMedia(player::dispose); // Ressourcen freigeben
             player.play();
         } catch (Exception e) {
@@ -44,14 +36,88 @@ public class SoundManager {
         }
     }
 
-    /** Setzt die globale Lautstärke (0.0–1.0) */
-    public static void setVolume(double volume) {
-        globalVolume = Math.max(0, Math.min(1, volume));
+    /**
+     * Spielt Musik im Hintergrund. Stoppt vorher laufende Musik automatisch.
+     * @param music   Audiodatei
+     * @param looping true, wenn die Musik unendlich wiederholt werden soll
+     */
+    public static void playBackground(Music music, boolean looping) {
+        stopBackground();
+        try {
+            Media media = mediaCache.computeIfAbsent(music.path(), SoundManager::loadMedia);
+
+            backgroundPlayer = new MediaPlayer(media);
+            backgroundPlayer.setCycleCount(looping ? MediaPlayer.INDEFINITE : 1);
+            applyVolume(backgroundPlayer);
+            backgroundPlayer.setOnEndOfMedia(() -> {
+                if (!looping) {
+                    stopBackground();
+                }
+            });
+            backgroundPlayer.play();
+        } catch (Exception e) {
+            System.err.println("Fehler beim Abspielen von Hintergrundmusik: " + music.path());
+            e.printStackTrace();
+        }
     }
 
-    /** Gibt die aktuelle Lautstärke zurück */
+    /** Stoppt die laufende Hintergrundmusik (falls vorhanden). */
+    public static void stopBackground() {
+        if (backgroundPlayer != null) {
+            try {
+                backgroundPlayer.stop();
+                backgroundPlayer.dispose();
+            } catch (Exception ignored) {
+                // nichts weiter tun, wir wollen nur sicher freigeben
+            }
+            backgroundPlayer = null;
+        }
+    }
+
+    /** Setzt die globale Lautstaerke (0.0 - 1.0) */
+    public static void setVolume(double volume) {
+        globalVolume = Math.max(0, Math.min(1, volume));
+        applyVolume(backgroundPlayer);
+    }
+
+    /** Gibt die aktuelle Lautstaerke zurueck */
     public static double getVolume() {
         return globalVolume;
+    }
+
+    /** Aktiviert oder deaktiviert Stummschaltung. */
+    public static void setMuted(boolean muted) {
+        SoundManager.muted = muted;
+        applyVolume(backgroundPlayer);
+    }
+
+    private static void applyVolume(MediaPlayer player) {
+        if (player != null) {
+            player.setVolume(muted ? 0.0 : globalVolume);
+        }
+    }
+
+    private static Media loadMedia(String path) {
+        try {
+            // Versuche zuerst, die Datei als Resource vom Classpath zu laden
+            String resourcePath = path.startsWith("/") ? path : "/" + path;
+            URL resource = SoundManager.class.getResource(resourcePath);
+            if (resource != null) {
+                return new Media(resource.toExternalForm());
+            }
+
+            // Fallback: direkte Datei auf dem Dateisystem
+            File file = new File(path);
+            if (file.exists()) {
+                return new Media(file.toURI().toString());
+            }
+
+            throw new IllegalArgumentException("Media nicht gefunden: " + path);
+        } catch (Exception e) {
+            System.err.println("Fehler beim Laden von Media: " + path);
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /** Entfernt alle gecachten Media-Objekte */

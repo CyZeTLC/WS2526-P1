@@ -1,5 +1,7 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
+import de.cyzetlc.hsbi.game.audio.Music;
+import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
@@ -23,6 +25,8 @@ public class MainMenuScreen implements GuiScreen {
         this.screenManager = screenManager;
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
+
+        SoundManager.playBackground(Music.MENU, true);
 
         UIUtils.drawImage(root, "/assets/mainmenu.png", 0, 0, width, height);
         UIUtils.drawRect(root, 0, 0, width, height, Color.DARKGRAY).setOpacity(0.5);
