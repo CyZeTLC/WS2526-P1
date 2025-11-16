@@ -5,6 +5,7 @@ import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.event.EventManager;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
+import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.listener.KeyListener;
 import de.cyzetlc.hsbi.game.listener.PacketListener;
 import de.cyzetlc.hsbi.game.listener.PlayerListener;
@@ -15,6 +16,7 @@ import de.cyzetlc.hsbi.game.utils.json.JsonConfig;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ public class Game extends Application {
 
     @Getter
     private ScreenManager screenManager;
+
+    @Getter @Setter
+    private Level currentLevel;
 
     public static double gravity = 15;       // Stärke der Schwerkraft
     public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
