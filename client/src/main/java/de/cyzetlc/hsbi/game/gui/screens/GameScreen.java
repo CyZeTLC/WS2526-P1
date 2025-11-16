@@ -14,6 +14,7 @@ import de.cyzetlc.hsbi.game.gui.block.LavaBlock;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
 import de.cyzetlc.hsbi.game.world.Location;
+import javafx.scene.control.Button;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -37,6 +38,9 @@ public class GameScreen implements GuiScreen {
 
     private final Text debugLbl;
     private final Text healthLbl;
+    private Text volumeLbl;
+    private Button muteBtn;
+    private int volumeStep = 5; // 0-5 entspricht 0-100%
 
     private final List<Platform> platforms = new ArrayList<>();
 
