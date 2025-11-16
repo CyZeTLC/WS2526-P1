@@ -19,8 +19,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 
 import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 
 public class GameScreen implements GuiScreen {
@@ -45,7 +49,7 @@ public class GameScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawRect(root, 0,0,width,height, Color.LIGHTBLUE);
+        this.setupBackgroundVideo(width, height);
         SoundManager.playBackground(Music.GAME, true);
         player = Game.thePlayer;
         if (player.getHealth() <= 0) {
@@ -231,6 +235,31 @@ public class GameScreen implements GuiScreen {
         this.gameOverTriggered = true;
         if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
             this.screenManager.showScreen(new MainMenuScreen(screenManager));
+        }
+    }
+
+    private void setupBackgroundVideo(double width, double height) {
+        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4";
+        File file = new File(videoPath);
+        if (!file.exists()) {
+            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
+            return;
+        }
+
+        try {
+            Media media = new Media(file.toURI().toString());
+            MediaPlayer player = new MediaPlayer(media);
+            player.setCycleCount(MediaPlayer.INDEFINITE);
+            MediaView view = new MediaView(player);
+            view.setFitWidth(width);
+            view.setFitHeight(height);
+            view.setPreserveRatio(false);
+            root.getChildren().add(view); // zuerst hinzugefügt => liegt hinter den restlichen Nodes
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Konnte Video nicht laden: " + videoPath);
+            e.printStackTrace();
+            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
         }
     }
 
