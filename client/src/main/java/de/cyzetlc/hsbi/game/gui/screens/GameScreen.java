@@ -39,6 +39,9 @@ public class GameScreen implements GuiScreen {
     private Button muteBtn;
     private int volumeStep = 5; // 0-5 => 0-100%
 
+    private boolean paused = false;
+    private Pane pauseOverlay;
+
     private final List<Platform> platforms = new ArrayList<>();
     private final List<Block> blocks = new ArrayList<>();
 
@@ -59,10 +62,13 @@ public class GameScreen implements GuiScreen {
 
         // back to menu
         UIUtils.drawButton(root, "Zurueck", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        UIUtils.drawButton(root, "Pause", 100, 10, this::togglePause);
+
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
         this.setupSoundControls(width);
+        this.setupPauseOverlay(width, height);
 
         Game.getInstance().setCurrentLevel(new TutorialLevel());
         Game.getInstance().getCurrentLevel().draw(width, height, root);
@@ -202,6 +208,30 @@ public class GameScreen implements GuiScreen {
     @Override
     public String getName() {
         return "GameScreen";
+    }
+
+    private void setupPauseOverlay(double width, double height) {
+        this.pauseOverlay = new Pane();
+        UIUtils.drawRect(pauseOverlay, 0, 0, width, height, Color.BLACK).setOpacity(0.5);
+        Text title = UIUtils.drawCenteredText(pauseOverlay, "Pause", 0, height / 2 - 120, false);
+        title.setFill(Color.WHITE);
+
+        UIUtils.drawCenteredButton(pauseOverlay, "Weiter", 0, height / 2 - 50, false, this::togglePause);
+        UIUtils.drawCenteredButton(pauseOverlay, "Zum Menu", 0, height / 2 + 20, false, () -> {
+            this.paused = false;
+            this.pauseOverlay.setVisible(false);
+            screenManager.showScreen(new MainMenuScreen(screenManager));
+        });
+
+        this.pauseOverlay.setVisible(false);
+        root.getChildren().add(pauseOverlay);
+    }
+
+    private void togglePause() {
+        this.paused = !this.paused;
+        if (this.pauseOverlay != null) {
+            this.pauseOverlay.setVisible(this.paused);
+        }
     }
 
     private void handleGameOver() {
