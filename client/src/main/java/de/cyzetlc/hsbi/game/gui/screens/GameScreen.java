@@ -35,6 +35,8 @@ public class GameScreen implements GuiScreen {
 
     private final List<Block> blocks = new ArrayList<>();
 
+    private boolean gameOverTriggered = false;
+
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
         double width = screenManager.getStage().getWidth();
@@ -42,6 +44,9 @@ public class GameScreen implements GuiScreen {
 
         UIUtils.drawRect(root, 0,0,width,height, Color.LIGHTBLUE);
         player = Game.thePlayer;
+        if (player.getHealth() <= 0) {
+            player.setHealth(1.0F);
+        }
         player.drawPlayer(root, 20, height-450);
 
         // Zurück zum Menü
@@ -56,6 +61,10 @@ public class GameScreen implements GuiScreen {
 
         this.blocks.add(new JumpBoostBlock(new Location(150, height-332)));
         this.blocks.add(new LavaBlock(new Location(250, height-332)));
+        LavaBlock gapLava = new LavaBlock(new Location(455, height-332));
+        gapLava.setWidth(50);
+        gapLava.setHeight(32);
+        this.blocks.add(gapLava);
 
         // Schwebende Plattform verbindet die beiden groesseren Inseln im oberen Bereich
         this.blocks.add(new FloatingPlatformBlock(
@@ -73,6 +82,11 @@ public class GameScreen implements GuiScreen {
 
     @Override
     public void update(double delta) {
+        if (player.getHealth() <= 0) {
+            this.handleGameOver();
+            return;
+        }
+
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -179,6 +193,7 @@ public class GameScreen implements GuiScreen {
             if (player.getHealth() > 0) {
                 player.setHealth(0);
             }
+            this.handleGameOver();
             return;
         }
 
@@ -205,5 +220,14 @@ public class GameScreen implements GuiScreen {
     public String getName() {
         return "GameScreen";
     }
-}
 
+    private void handleGameOver() {
+        if (this.gameOverTriggered) {
+            return;
+        }
+        this.gameOverTriggered = true;
+        if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
+            this.screenManager.showScreen(new MainMenuScreen(screenManager));
+        }
+    }
+}
