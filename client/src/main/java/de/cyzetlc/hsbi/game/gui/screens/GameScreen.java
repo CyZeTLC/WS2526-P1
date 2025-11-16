@@ -30,6 +30,7 @@ public class GameScreen implements GuiScreen {
     private double dy = 0.5; // Bewegung in Y-Richtung
 
     private final Text debugLbl;
+    private final Text healthLbl;
 
     private final List<Platform> platforms = new ArrayList<>();
 
@@ -53,6 +54,7 @@ public class GameScreen implements GuiScreen {
         UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
+        this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
 
         //Bsp.: -> wird später geändert
         platforms.add(new Platform(0, height-300, 450, 300, root)); // x, y, width, height
@@ -203,6 +205,8 @@ public class GameScreen implements GuiScreen {
                 " | moveSpeed: " + moveSpeed +
                 " | jumpPower: " + jumpPower +
                 " | uuid: " + player.getUuid());
+        int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
+        this.healthLbl.setText("HP: " + hpPercent + "%");
 
         player.update();
     }
