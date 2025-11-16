@@ -174,10 +174,12 @@ public class GameScreen implements GuiScreen {
         if (nextX < 0) nextX = 0;
         if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
 
+        // Aus dem Spielfeld gefallen -> Spieler "stirbt" und Hauptmenü wird via Listener geöffnet
         if (nextY + player.getHeight() > height) {
-            nextY = height - player.getHeight();
-            dy = 0;
-            onGround = true;
+            if (player.getHealth() > 0) {
+                player.setHealth(0);
+            }
+            return;
         }
 
         // Position aktualisieren
