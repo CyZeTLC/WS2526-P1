@@ -30,7 +30,7 @@ public class TutorialLevel extends Level {
                 new Location(940, height - 340),
                 new Location(1224, height - 340),
                 120,
-                1 // Skin 1 (Zuschnitt 1) mit zwei Blink-Zustaenden
+                0 // 0 = altes MovingPlatform-Artwork
         ));
 
         // draw blocks
