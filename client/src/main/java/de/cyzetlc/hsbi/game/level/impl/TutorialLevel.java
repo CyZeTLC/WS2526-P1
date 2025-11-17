@@ -1,11 +1,8 @@
 package de.cyzetlc.hsbi.game.level.impl;
 
 import de.cyzetlc.hsbi.game.gui.Platform;
-import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Block;
-import de.cyzetlc.hsbi.game.gui.block.FloatingPlatformBlock;
-import de.cyzetlc.hsbi.game.gui.block.JumpBoostBlock;
-import de.cyzetlc.hsbi.game.gui.block.LavaBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.*;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
@@ -21,9 +18,14 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(0, height - 300, 450, 600, root));
         platforms.add(new Platform(500, height - 350, 200, 650, root));
         platforms.add(new Platform(780, height - 300, 150, 600, root));
-        platforms.add(new Platform(1318, height - 300, 1900, 600, root));
+        platforms.add(new Platform(1318, height - 300, 400, 600, root));
+        platforms.add(new Platform(1800, height - 400, 100, 600, root));
+        platforms.add(new Platform(2000, height - 400, 500, 600, root));
 
-        this.blocks.add(new JumpBoostBlock(new Location(150, height - 332)));
+        this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
+        this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
+        this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
+        this.blocks.add(createLavaColumn(930, height - 80, 388, 300));
 
         // floating platform connects upper islands
         this.blocks.add(new FloatingPlatformBlock(
@@ -34,7 +36,7 @@ public class TutorialLevel extends Level {
         ));
 
         // draw blocks
-        this.fillGapsWithLava(height);
+        //this.fillGapsWithLava(height);
         for (Block block : this.blocks) {
             block.draw(root);
         }
@@ -46,10 +48,10 @@ public class TutorialLevel extends Level {
 
     private void fillGapsWithLava(double screenHeight) {
         // gap between platform 1 (0-450) and 2 (500-700)
-        this.blocks.add(createLavaColumn(450, screenHeight - 300, 50, 600));
+        this.blocks.add(createLavaColumn(450, screenHeight - 280, 50, 600));
 
         // gap between platform 2 (500-700) and 3 (780-930)
-        this.blocks.add(createLavaColumn(700, screenHeight - 350, 80, 650));
+        this.blocks.add(createLavaColumn(700, screenHeight - 280, 80, 600));
     }
 
     private static LavaBlock createLavaColumn(double x, double y, double width, double height) {

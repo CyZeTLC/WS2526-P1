@@ -1,7 +1,9 @@
-package de.cyzetlc.hsbi.game.gui.block;
+package de.cyzetlc.hsbi.game.gui.block.impl;
 
 import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.entity.Player;
+import de.cyzetlc.hsbi.game.gui.block.Block;
+import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.image.Image;
@@ -96,7 +98,7 @@ public class FloatingPlatformBlock extends Block {
             current.setX(target.getX());
             current.setY(target.getY());
             this.getSprite().setX(target.getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
-            this.getSprite().setY(target.getY());
+            this.getSprite().setY(target.getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
             this.setDelta(target.getX() - oldX, target.getY() - oldY);
             return;
         }
@@ -115,7 +117,7 @@ public class FloatingPlatformBlock extends Block {
         current.setX(nextX);
         current.setY(nextY);
         this.getSprite().setX(nextX - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
-        this.getSprite().setY(nextY);
+        this.getSprite().setY(nextY - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
         this.setDelta(nextX - oldX, nextY - oldY);
 
         this.advanceAnimation(deltaSeconds);
@@ -142,7 +144,7 @@ public class FloatingPlatformBlock extends Block {
         // Skin 0 = alte, statische MovingPlatform
         if (this.skinIndex <= 0) {
             try {
-                Image image = new Image(getClass().getResource(Material.FLOATING_PLATFORM.texturePath).toExternalForm());
+                Image image = new Image(getClass().getResource(this.getMaterial().texturePath).toExternalForm());
                 this.frames.add(image);
             } catch (Exception ignored) { }
             return;
@@ -159,7 +161,7 @@ public class FloatingPlatformBlock extends Block {
 
         if (this.frames.isEmpty()) {
             try {
-                Image fallback = new Image(getClass().getResource(Material.FLOATING_PLATFORM.texturePath).toExternalForm());
+                Image fallback = new Image(getClass().getResource(this.getMaterial().texturePath).toExternalForm());
                 this.frames.add(fallback);
             } catch (Exception ignored) { }
         }
