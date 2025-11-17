@@ -18,10 +18,10 @@ public class TutorialLevel extends Level {
     @Override
     public void draw(double width, double height, Pane root) {
         // example platforms (placeholder layout)
-        platforms.add(new Platform(0, height - 300, 450, 300, root));
-        platforms.add(new Platform(500, height - 350, 200, 350, root));
-        platforms.add(new Platform(780, height - 300, 150, 300, root));
-        platforms.add(new Platform(1318, height - 300, 1900, 300, root));
+        platforms.add(new Platform(0, height - 300, 450, 600, root));
+        platforms.add(new Platform(500, height - 350, 200, 650, root));
+        platforms.add(new Platform(780, height - 300, 150, 600, root));
+        platforms.add(new Platform(1318, height - 300, 1900, 600, root));
 
         this.blocks.add(new JumpBoostBlock(new Location(150, height - 332)));
 
@@ -45,10 +45,10 @@ public class TutorialLevel extends Level {
 
     private void fillGapsWithLava(double screenHeight) {
         // gap between platform 1 (0-450) and 2 (500-700)
-        this.blocks.add(createLavaColumn(450, screenHeight - 300, 50, 300));
+        this.blocks.add(createLavaColumn(450, screenHeight - 300, 50, 600));
 
         // gap between platform 2 (500-700) and 3 (780-930)
-        this.blocks.add(createLavaColumn(700, screenHeight - 350, 80, 350));
+        this.blocks.add(createLavaColumn(700, screenHeight - 350, 80, 650));
     }
 
     private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
