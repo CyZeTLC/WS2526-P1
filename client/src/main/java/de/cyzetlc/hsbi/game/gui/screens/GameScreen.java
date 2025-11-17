@@ -84,7 +84,7 @@ public class GameScreen implements GuiScreen {
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
-        this.setupSoundControls(width);
+        //this.setupSoundControls(width);
         this.setupPauseOverlay(width, height);
 
         this.drawHealth(width);
@@ -215,8 +215,7 @@ public class GameScreen implements GuiScreen {
                 " | jumpPower: " + jumpPower +
                 " | cameraX: " + (int) cameraX +
                 " | cameraY: " + (int) cameraY +
-                " | Location: " + player.getLocation().toString() +
-                " | uuid: " + player.getUuid());
+                " | Location: " + player.getLocation().toString());
 
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
         this.healthLbl.setText("HP: " + hpPercent + "%");
@@ -299,7 +298,8 @@ public class GameScreen implements GuiScreen {
         String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4d";
         File file = new File(videoPath);
         if (!file.exists()) {
-            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
+            //UIUtils.drawRect(root, 0, 0, width, height, Color.rgb(28, 20, 20));
+            UIUtils.drawImage(root, "/assets/hud/background.png", 0,0, width, height);
             return;
         }
 
