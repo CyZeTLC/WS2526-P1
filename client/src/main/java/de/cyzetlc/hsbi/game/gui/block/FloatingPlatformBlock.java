@@ -139,6 +139,15 @@ public class FloatingPlatformBlock extends Block {
             return;
         }
 
+        // Skin 0 = alte, statische MovingPlatform
+        if (this.skinIndex <= 0) {
+            try {
+                Image image = new Image(getClass().getResource(Material.FLOATING_PLATFORM.texturePath).toExternalForm());
+                this.frames.add(image);
+            } catch (Exception ignored) { }
+            return;
+        }
+
         for (String framePath : resolveFramePaths(this.skinIndex)) {
             try {
                 Image image = new Image(getClass().getResource(framePath).toExternalForm());
