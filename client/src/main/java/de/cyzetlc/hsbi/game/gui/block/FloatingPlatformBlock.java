@@ -33,7 +33,7 @@ public class FloatingPlatformBlock extends Block {
         this.setMaterial(Material.FLOATING_PLATFORM);
         this.setCollideAble(true);
         this.setWidth(64);
-        this.setHeight(64);
+        this.setHeight(84);
     }
 
     @Override
@@ -46,6 +46,7 @@ public class FloatingPlatformBlock extends Block {
      */
     @Override
     public void update() {
+        super.update();
         this.setDelta(0, 0); // Ruecksetzen, falls sich die Plattform in diesem Tick nicht bewegt
 
         if (!this.isActive() || this.getSprite() == null) {

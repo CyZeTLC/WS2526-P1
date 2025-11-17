@@ -20,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,8 +34,8 @@ public class GameScreen implements GuiScreen {
     private double dx = 1; // movement in X direction
     private double dy = 0.5; // movement in Y direction
 
-    private final Text debugLbl;
-    private final Text healthLbl;
+    private Text debugLbl;
+    private Text healthLbl;
     private Text volumeLbl;
     private Button muteBtn;
     private int volumeStep = 5; // 0-5 => 0-100%
@@ -42,13 +43,25 @@ public class GameScreen implements GuiScreen {
     private boolean paused = false;
     private Pane pauseOverlay;
 
-    private final List<Platform> platforms = new ArrayList<>();
-    private final List<Block> blocks = new ArrayList<>();
-
     private boolean gameOverTriggered = false;
+
+    @Getter
+    private double cameraX = 0;
+
+    @Getter
+    private double cameraY = 0;
+
+    private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
+
+    private final double marginX = 200;
+    private final double marginY = 150;
 
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+    }
+
+    @Override
+    public void initialize() {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -56,13 +69,15 @@ public class GameScreen implements GuiScreen {
         SoundManager.playBackground(Music.GAME, true);
         player = Game.thePlayer;
         if (player.getHealth() <= 0) {
-            player.setHealth(1.0F);
+            player.setHealth(player.getMaxHealth());
         }
-        player.drawPlayer(root, 20, height - 450);
+        //player.drawPlayer(root, 20, height - 450);
+        player.drawPlayer(root, 20 - cameraX,
+                height - 450 - cameraY);
 
         // back to menu
         UIUtils.drawButton(root, "Zurueck", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
-        UIUtils.drawButton(root, "Pause", 100, 10, this::togglePause);
+        UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
 
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
@@ -72,6 +87,7 @@ public class GameScreen implements GuiScreen {
 
         Game.getInstance().setCurrentLevel(new TutorialLevel());
         Game.getInstance().getCurrentLevel().draw(width, height, root);
+        this.drawHealth(width);
     }
 
     @Override
@@ -188,12 +204,15 @@ public class GameScreen implements GuiScreen {
         player.getLocation().setX(nextX);
         player.getLocation().setY(nextY);
 
-        // debug info
         this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
                 " | onGround: " + onGround +
                 " | moveSpeed: " + moveSpeed +
                 " | jumpPower: " + jumpPower +
+                " | cameraX: " + (int) cameraX +
+                " | cameraY: " + (int) cameraY +
+                " | Location: " + player.getLocation().toString() +
                 " | uuid: " + player.getUuid());
+
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
         this.healthLbl.setText("HP: " + hpPercent + "%");
 
@@ -245,7 +264,7 @@ public class GameScreen implements GuiScreen {
     }
 
     private void setupBackgroundVideo(double width, double height) {
-        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4";
+        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4d";
         File file = new File(videoPath);
         if (!file.exists()) {
             UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
@@ -271,9 +290,9 @@ public class GameScreen implements GuiScreen {
 
     private void setupSoundControls(double width) {
         double panelWidth = 220;
-        double panelHeight = 90;
+        double panelHeight = 120;
         double x = width - panelWidth - 20;
-        double y = 20;
+        double y = 80;
 
         UIUtils.drawRect(root, x, y, panelWidth, panelHeight, Color.BLACK).setOpacity(0.55);
         Text title = UIUtils.drawText(root, "Sound", x + 10, y + 22);
@@ -289,6 +308,31 @@ public class GameScreen implements GuiScreen {
 
         this.updateVolumeLabel();
         this.updateMuteButton();
+    }
+
+    private void drawHealth(double width) {
+        player.setHealth(3.5F);
+
+        int heartSize = 32;
+        int padding = 4;
+        int maxLives = (int) player.getMaxHealth();
+
+        double lives = player.getHealth();
+
+        int startX = (int) (width - (maxLives * (heartSize + padding)) - 16);
+
+        for (int i = 0; i < maxLives; i++) {
+            int x = startX + i * (heartSize + padding);
+
+            if (lives >= i + 1) {
+                UIUtils.drawImage(root, "/assets/hud/heart_full.png", x, 16, heartSize, heartSize);
+            } else if (lives > i && lives < i + 1) {
+                UIUtils.drawImage(root, "/assets/hud/heart_half.png", x, 16, heartSize, heartSize);
+
+            } else {
+                UIUtils.drawImage(root, "/assets/hud/heart_empty.png", x, 16, heartSize, heartSize);
+            }
+        }
     }
 
     private void changeVolume(int delta) {
@@ -311,7 +355,7 @@ public class GameScreen implements GuiScreen {
     private void updateVolumeLabel() {
         int percent = (int) Math.round(SoundManager.getVolume() * 100);
         String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
-        this.volumeLbl.setText("Lautstaerke: " + percent + "% (Stufe " + this.volumeStep + "/5)" + muteSuffix);
+        this.volumeLbl.setText("Lautstaerke: " + percent + "% (" + this.volumeStep + "/5)" + muteSuffix);
     }
 
     private void updateMuteButton() {

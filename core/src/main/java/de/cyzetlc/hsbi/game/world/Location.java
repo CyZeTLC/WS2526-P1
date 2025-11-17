@@ -21,4 +21,9 @@ public class Location {
     public double distance(Location location) {
         return Math.sqrt(Math.pow(location.getX() - this.x, 2) + Math.pow(location.getY() - this.y, 2));
     }
+
+    @Override
+    public String toString() {
+        return "X: " + (int) this.getX() + ", Y: " + (int) this.getY();
+    }
 }

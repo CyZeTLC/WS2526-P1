@@ -1,6 +1,8 @@
 package de.cyzetlc.hsbi.game.gui.block;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.entity.Player;
+import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -46,7 +48,10 @@ public abstract class Block {
 
     public abstract void onCollide(Player player);
 
-    public abstract void update();
+    public void update() {
+        this.sprite.setX(this.getLocation().getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
+        this.sprite.setY(this.getLocation().getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+    }
 
     public void draw(Pane pane) {
         /*Rectangle2D rec = new Rectangle();
@@ -64,8 +69,8 @@ public abstract class Block {
         this.sprite.setFitHeight(spriteHeight);
 
         // Startposition
-        this.sprite.setX(this.getLocation().getX());
-        this.sprite.setY(this.getLocation().getY());
+        this.sprite.setX(this.getLocation().getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
+        this.sprite.setY(this.getLocation().getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
 
         // Bounding Box (fuer Kollisionen)
         this.setWidth((float) this.sprite.getFitWidth());
