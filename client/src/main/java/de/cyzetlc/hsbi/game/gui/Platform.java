@@ -18,8 +18,8 @@ public class Platform {
     private Pane pane;
 
     private static final String[] FRAME_PATHS = {
-            "/assets/movingplatform/zuschnitt1.png",
-            "/assets/movingplatform/zuschnitt1_zustand1.png"
+            "/assets/hud/PlatformServerMehreZustände/Zugeschnitten1.png",
+            "/assets/hud/PlatformServerMehreZustände/Zugeschnitten1 - Lichtzustand1.png"
     };
     private static final double FRAME_DURATION_SECONDS = 0.6;
     private static final int TILE_SIZE = 128; // groesser, damit das Rack erkennbar bleibt

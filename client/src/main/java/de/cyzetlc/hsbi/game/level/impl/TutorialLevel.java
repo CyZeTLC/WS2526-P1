@@ -1,11 +1,10 @@
 package de.cyzetlc.hsbi.game.level.impl;
 
 import de.cyzetlc.hsbi.game.gui.Platform;
-import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Block;
-import de.cyzetlc.hsbi.game.gui.block.FloatingPlatformBlock;
-import de.cyzetlc.hsbi.game.gui.block.JumpBoostBlock;
-import de.cyzetlc.hsbi.game.gui.block.LavaBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.FloatingPlatformBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.JumpBoostBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.LavaBlock;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
@@ -46,10 +45,10 @@ public class TutorialLevel extends Level {
 
     private void fillGapsWithLava(double screenHeight) {
         // gap between platform 1 (0-450) and 2 (500-700)
-        this.blocks.add(createLavaColumn(450, screenHeight - 300, 50, 600));
+        this.blocks.add(createLavaColumn(450, screenHeight - 280, 50, 600));
 
         // gap between platform 2 (500-700) and 3 (780-930)
-        this.blocks.add(createLavaColumn(700, screenHeight - 350, 80, 650));
+        this.blocks.add(createLavaColumn(700, screenHeight - 280, 80, 600));
     }
 
     private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
