@@ -1,10 +1,11 @@
-package de.cyzetlc.hsbi.game.gui.block;
+package de.cyzetlc.hsbi.game.gui.block.impl;
 
 import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.audio.Sound;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.Player;
-import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
+import de.cyzetlc.hsbi.game.gui.block.Block;
+import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
