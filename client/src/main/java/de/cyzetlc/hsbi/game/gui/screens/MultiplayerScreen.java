@@ -17,6 +17,10 @@ public class MultiplayerScreen implements GuiScreen {
 
     public MultiplayerScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+    }
+
+    @Override
+    public void update(double delta) {
         double height = screenManager.getStage().getScene().getHeight();
         double width = screenManager.getStage().getScene().getWidth();
 
@@ -26,11 +30,6 @@ public class MultiplayerScreen implements GuiScreen {
         UIUtils.drawButton(root, "Zurück", 20, height-75, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
 
         this.drawServers();
-    }
-
-    @Override
-    public void update(double delta) {
-
     }
 
     public void drawServers() {
@@ -54,5 +53,10 @@ public class MultiplayerScreen implements GuiScreen {
     @Override
     public String getName() {
         return "Multiplayer";
+    }
+
+    @Override
+    public void initialize() {
+
     }
 }

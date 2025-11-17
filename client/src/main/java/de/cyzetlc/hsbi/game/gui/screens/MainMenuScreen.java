@@ -19,10 +19,12 @@ public class MainMenuScreen implements GuiScreen {
     private final Pane root = new Pane();
     private final ScreenManager screenManager;
 
-    //private final Text fpsLbl;
-
     public MainMenuScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+    }
+
+    @Override
+    public void initialize() {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -43,11 +45,6 @@ public class MainMenuScreen implements GuiScreen {
         Text achievementsLbl = UIUtils.drawText(root, "Achievements", 200, 235, "achievements");
         achievementsLbl.setLayoutX((445-UIUtils.getTextWidth(achievementsLbl))/2);
         this.drawAchievementProgress();
-
-        // Systeminfos
-        /*UIUtils.drawRect(root, 60, 100, 400, height-200, Color.DARKGRAY).setOpacity(0.6);
-        this.fpsLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 75, 125);
-        this.displaySystemInfo();*/
     }
 
     public void drawAchievementProgress() {

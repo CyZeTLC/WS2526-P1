@@ -26,6 +26,10 @@ public class SettingsScreen implements GuiScreen {
 
     public SettingsScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+    }
+
+    @Override
+    public void initialize() {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
