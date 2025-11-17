@@ -1,9 +1,10 @@
 package de.cyzetlc.hsbi.game.entity;
 
+import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
 import de.cyzetlc.hsbi.game.world.Location;
-import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,11 +30,22 @@ public class EntityPlayer extends Player {
 
     @Override
     public void update() {
-        // Position vom Sprite & Nametag anpassen
-        this.sprite.setX(this.getLocation().getX());
-        this.sprite.setY(this.getLocation().getY());
-        this.nameTag.setLayoutX(this.getLocation().getX() + this.nameTag.getLayoutBounds().getWidth() / 2 - this.getWidth()*1.4);
-        this.nameTag.setLayoutY(this.getLocation().getY() - 25);
+        double camX = 0;
+        double camY = 0;
+
+        if (Game.getInstance() != null && Game.getInstance().getScreenManager().getCurrentScreen() instanceof GameScreen gameScreen) {
+            camX = gameScreen.getCameraX();
+            camY = gameScreen.getCameraY();
+        }
+
+        // Position vom Sprite & Nametag anpassen (mit Kameraversatz)
+        double screenX = this.getLocation().getX() - camX;
+        double screenY = this.getLocation().getY() - camY;
+
+        this.sprite.setX(screenX);
+        this.sprite.setY(screenY);
+        this.nameTag.setLayoutX(screenX + this.nameTag.getLayoutBounds().getWidth() / 2 - this.getWidth() * 1.4);
+        this.nameTag.setLayoutY(screenY - 25);
 
         this.setRealLocation(new Rectangle2D(this.sprite.getX(), this.sprite.getY(), this.getWidth(), this.getHeight()));
 

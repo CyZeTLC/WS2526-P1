@@ -194,7 +194,8 @@ public class GameScreen implements GuiScreen {
         //if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
 
         // fell out of the world -> game over
-        if (nextY + player.getHeight() > height) {
+        double screenNextY = nextY - this.cameraY;
+        if (screenNextY + player.getHeight() > height) {
             if (player.getHealth() > 0) {
                 player.setHealth(0);
             }
@@ -202,20 +203,11 @@ public class GameScreen implements GuiScreen {
             return;
         }
 
-        /*
-         * Camera DeadZone-Logik
-         */
-        if (player.getLocation().getX() >= width-this.marginX) {
-            this.cameraX += dx;
-
-            if (this.cameraX < 0) {
-                this.cameraX = 0;
-            }
-        }
-
         // apply position
         player.getLocation().setX(nextX);
         player.getLocation().setY(nextY);
+
+        this.updateCamera(width, height);
 
         this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
                 " | onGround: " + onGround +
@@ -240,6 +232,33 @@ public class GameScreen implements GuiScreen {
     @Override
     public String getName() {
         return "GameScreen";
+    }
+
+    private void updateCamera(double width, double height) {
+        double playerScreenX = player.getLocation().getX() - this.cameraX;
+        double playerScreenY = player.getLocation().getY() - this.cameraY;
+
+        double targetCamX = this.cameraX;
+        double targetCamY = this.cameraY;
+
+        if (playerScreenX > width - this.marginX) {
+            targetCamX += playerScreenX - (width - this.marginX);
+        } else if (playerScreenX < this.marginX) {
+            targetCamX -= (this.marginX - playerScreenX);
+        }
+
+        if (playerScreenY > height - this.marginY) {
+            targetCamY += playerScreenY - (height - this.marginY);
+        } else if (playerScreenY < this.marginY) {
+            targetCamY -= (this.marginY - playerScreenY);
+        }
+
+        // sanftes Folgen (definiert durch cameraSmooth)
+        this.cameraX += (targetCamX - this.cameraX) * this.cameraSmooth;
+        this.cameraY += (targetCamY - this.cameraY) * this.cameraSmooth;
+
+        if (this.cameraX < 0) this.cameraX = 0;
+        if (this.cameraY < 0) this.cameraY = 0;
     }
 
     private void setupPauseOverlay(double width, double height) {
