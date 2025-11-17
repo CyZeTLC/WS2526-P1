@@ -29,7 +29,8 @@ public class TutorialLevel extends Level {
         this.blocks.add(new FloatingPlatformBlock(
                 new Location(940, height - 340),
                 new Location(1224, height - 340),
-                120
+                120,
+                1 // Skin 1 (Zuschnitt 1) mit zwei Blink-Zustaenden
         ));
 
         // draw blocks
