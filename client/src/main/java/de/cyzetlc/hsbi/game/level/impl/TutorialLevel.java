@@ -21,13 +21,14 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(0, height - 300, 450, 300, root));
         platforms.add(new Platform(500, height - 350, 200, 350, root));
         platforms.add(new Platform(780, height - 300, 150, 300, root));
+        platforms.add(new Platform(1318, height - 300, 1900, 300, root));
 
         this.blocks.add(new JumpBoostBlock(new Location(150, height - 332)));
 
         // floating platform connects upper islands
         this.blocks.add(new FloatingPlatformBlock(
-                new Location(420, height - 420),
-                new Location(720, height - 420),
+                new Location(940, height - 340),
+                new Location(1224, height - 340),
                 120
         ));
 
@@ -35,6 +36,10 @@ public class TutorialLevel extends Level {
         this.fillGapsWithLava(height);
         for (Block block : this.blocks) {
             block.draw(root);
+        }
+
+        for (Platform platform : this.platforms) {
+            platform.drawPlatform();
         }
     }
 
