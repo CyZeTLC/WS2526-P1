@@ -49,14 +49,13 @@ public abstract class Block {
     public abstract void onCollide(Player player);
 
     public void update() {
-        this.sprite.setX(this.getLocation().getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
-        this.sprite.setY(this.getLocation().getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+        if (Game.getInstance().getScreenManager().getCurrentScreen() instanceof GameScreen) {
+            this.sprite.setX(this.getLocation().getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
+            this.sprite.setY(this.getLocation().getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+        }
     }
 
     public void draw(Pane pane) {
-        /*Rectangle2D rec = new Rectangle();
-        rec.setFrame(this.location.getX(), this.location.getY(), 32, 32);*/
-
         Image image = new Image(getClass().getResource(this.getMaterial().texturePath).toExternalForm());
         this.sprite = new ImageView(image);
         this.pane = pane;
