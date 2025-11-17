@@ -74,6 +74,7 @@ public class ScreenManager {
 
     public void showScreen(GuiScreen screen) {
         this.currentScreen = screen;
+        screen.initialize();
         Platform.runLater(() -> stage.getScene().setRoot(screen.getRoot()));
     }
 

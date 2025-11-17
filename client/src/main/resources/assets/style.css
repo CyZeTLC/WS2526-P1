@@ -42,4 +42,50 @@ Text {
 
 #mainmenu-button {
     -fx-padding: 10px 150px 10px 150px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0, 0, 2);
+}
+
+
+
+/* SLIDER */
+
+.slider.custom-slider {
+    -fx-padding: 20 0;
+    -fx-pref-width: 280;
+}
+
+.slider.custom-slider .track {
+    -fx-background-color: #3a3a4f;
+    -fx-background-radius: 6;
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0, 0, 2);
+}
+
+.slider.custom-slider .track:filled {
+    -fx-background-color: #ffcc00;
+    -fx-background-radius: 6;
+}
+
+.slider.custom-slider .thumb {
+    -fx-background-color:
+        linear-gradient(#ffd84d, #e6b800),
+        #ffcc00;
+    -fx-background-radius: 50%;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(255,204,0,0.6), 10, 0, 0, 0);
+}
+
+.slider.custom-slider .thumb:hover {
+    -fx-background-color:
+        linear-gradient(#ffea80, #e6c200),
+        #ffcc00;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.slider.custom-slider .thumb:pressed {
+    -fx-background-color:
+        linear-gradient(#ffe066, #ccaa00),
+        #ffcc00;
+    -fx-effect: dropshadow(gaussian, rgba(255,204,0,0.8), 12, 0, 0, 0);
 }

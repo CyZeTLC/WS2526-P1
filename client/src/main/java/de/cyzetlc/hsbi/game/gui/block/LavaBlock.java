@@ -41,6 +41,7 @@ public class LavaBlock extends Block {
 
     @Override
     public void update() {
+        super.update();
         if (!this.isActive() || this.getSprite() == null || this.frames.isEmpty()) {
             return;
         }

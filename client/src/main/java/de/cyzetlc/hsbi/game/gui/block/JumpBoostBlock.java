@@ -39,6 +39,6 @@ public class JumpBoostBlock extends Block {
 
     @Override
     public void update() {
-        //Animation der Lava
+        super.update();
     }
 }

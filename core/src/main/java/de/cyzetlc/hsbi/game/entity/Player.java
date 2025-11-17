@@ -9,6 +9,8 @@ public class Player extends Entity {
     public Player() {
         super();
         this.setDisplayName("Player" + new Random().nextInt(999));
+        this.setMaxHealth(5.0F);
+        this.setHealth(5.0F);
     }
 
     @Override

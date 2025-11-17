@@ -8,21 +8,19 @@ import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Block;
-import de.cyzetlc.hsbi.game.gui.block.FloatingPlatformBlock;
-import de.cyzetlc.hsbi.game.gui.block.JumpBoostBlock;
-import de.cyzetlc.hsbi.game.gui.block.LavaBlock;
+import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
-import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,21 +34,34 @@ public class GameScreen implements GuiScreen {
     private double dx = 1; // movement in X direction
     private double dy = 0.5; // movement in Y direction
 
-    private final Text debugLbl;
-    private final Text healthLbl;
+    private Text debugLbl;
+    private Text healthLbl;
     private Text volumeLbl;
     private Button muteBtn;
     private int volumeStep = 5; // 0-5 => 0-100%
+
     private boolean paused = false;
     private Pane pauseOverlay;
 
-    private final List<Platform> platforms = new ArrayList<>();
-    private final List<Block> blocks = new ArrayList<>();
-
     private boolean gameOverTriggered = false;
+
+    @Getter
+    private double cameraX = 0;
+
+    @Getter
+    private double cameraY = 0;
+
+    private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
+
+    private final double marginX = 200;
+    private final double marginY = 150;
 
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+    }
+
+    @Override
+    public void initialize() {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -58,52 +69,29 @@ public class GameScreen implements GuiScreen {
         SoundManager.playBackground(Music.GAME, true);
         player = Game.thePlayer;
         if (player.getHealth() <= 0) {
-            player.setHealth(1.0F);
+            player.setHealth(player.getMaxHealth());
         }
-        player.drawPlayer(root, 20, height - 450);
+        //player.drawPlayer(root, 20, height - 450);
+        player.drawPlayer(root, 20 - cameraX,
+                height - 450 - cameraY);
 
         // back to menu
         UIUtils.drawButton(root, "Zurueck", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
-        UIUtils.drawButton(root, "Pause", 100, 10, this::togglePause);
+        UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
+
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
         this.setupSoundControls(width);
         this.setupPauseOverlay(width, height);
 
-        // example platforms (placeholder layout)
-        platforms.add(new Platform(0, height - 300, 450, 300, root));
-        platforms.add(new Platform(500, height - 350, 200, 350, root));
-        platforms.add(new Platform(780, height - 300, 150, 300, root));
-
-        this.blocks.add(new JumpBoostBlock(new Location(150, height - 332)));
-
-        // floating platform connects upper islands
-        this.blocks.add(new FloatingPlatformBlock(
-                new Location(420, height - 420),
-                new Location(720, height - 420),
-                120
-        ));
-
-        // draw blocks
-        this.fillGapsWithLava(height);
-        for (Block block : this.blocks) {
-            block.draw(root);
-        }
+        Game.getInstance().setCurrentLevel(new TutorialLevel());
+        Game.getInstance().getCurrentLevel().draw(width, height, root);
+        this.drawHealth(width);
     }
 
     @Override
     public void update(double delta) {
-        // ESC toggles pause
-        if (screenManager.getInputManager().isPressed(KeyCode.ESCAPE)) {
-            this.togglePause();
-            return;
-        }
-
-        if (this.paused) {
-            return;
-        }
-
         if (player.getHealth() <= 0) {
             this.handleGameOver();
             return;
@@ -111,11 +99,6 @@ public class GameScreen implements GuiScreen {
 
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
-
-        // move dynamic blocks (e.g. floating platform) before collision checks
-        for (Block block : this.blocks) {
-            block.update();
-        }
 
         double gravity = Game.gravity;       // gravity strength
         double moveSpeed = Game.moveSpeed;    // horizontal speed
@@ -152,7 +135,7 @@ public class GameScreen implements GuiScreen {
         Rectangle2D nextBounds = new Rectangle2D(nextX, nextY, player.getWidth(), player.getHeight());
 
         // platform collisions
-        for (Platform platform : platforms) {
+        for (Platform platform : Game.getInstance().getCurrentLevel().getPlatforms()) {
             Rectangle2D pBounds = platform.getBounds();
 
             if (nextBounds.intersects(pBounds)) {
@@ -175,8 +158,9 @@ public class GameScreen implements GuiScreen {
         }
 
         // block collisions
-        for (Block block : this.blocks) {
+        for (Block block : Game.getInstance().getCurrentLevel().getBlocks()) {
             Rectangle2D pBounds = block.getBounds();
+            block.update();
 
             if (nextBounds.intersects(pBounds) && block.isActive()) {
                 block.onCollide(player);
@@ -220,12 +204,15 @@ public class GameScreen implements GuiScreen {
         player.getLocation().setX(nextX);
         player.getLocation().setY(nextY);
 
-        // debug info
         this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
                 " | onGround: " + onGround +
                 " | moveSpeed: " + moveSpeed +
                 " | jumpPower: " + jumpPower +
+                " | cameraX: " + (int) cameraX +
+                " | cameraY: " + (int) cameraY +
+                " | Location: " + player.getLocation().toString() +
                 " | uuid: " + player.getUuid());
+
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
         this.healthLbl.setText("HP: " + hpPercent + "%");
 
@@ -240,90 +227,6 @@ public class GameScreen implements GuiScreen {
     @Override
     public String getName() {
         return "GameScreen";
-    }
-
-    private void handleGameOver() {
-        if (this.gameOverTriggered) {
-            return;
-        }
-        this.gameOverTriggered = true;
-        if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
-            this.screenManager.showScreen(new MainMenuScreen(screenManager));
-        }
-    }
-
-    private void setupBackgroundVideo(double width, double height) {
-        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4";
-        File file = new File(videoPath);
-        if (!file.exists()) {
-            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
-            return;
-        }
-
-        try {
-            Media media = new Media(file.toURI().toString());
-            MediaPlayer player = new MediaPlayer(media);
-            player.setCycleCount(MediaPlayer.INDEFINITE);
-            MediaView view = new MediaView(player);
-            view.setFitWidth(width);
-            view.setFitHeight(height);
-            view.setPreserveRatio(false);
-            root.getChildren().add(view); // add first so other nodes render above
-            player.play();
-        } catch (Exception e) {
-            System.err.println("Could not load video: " + videoPath);
-            e.printStackTrace();
-            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
-        }
-    }
-
-    private void setupSoundControls(double width) {
-        double panelWidth = 220;
-        double panelHeight = 90;
-        double x = width - panelWidth - 20;
-        double y = 20;
-
-        UIUtils.drawRect(root, x, y, panelWidth, panelHeight, Color.BLACK).setOpacity(0.55);
-        Text title = UIUtils.drawText(root, "Sound", x + 10, y + 22);
-        title.setFill(Color.WHITE);
-
-        this.volumeStep = (int) Math.round(SoundManager.getVolume() * 5);
-        this.volumeLbl = UIUtils.drawText(root, "", x + 10, y + 45);
-        this.volumeLbl.setFill(Color.WHITE);
-
-        UIUtils.drawButton(root, "-", x + 10, y + 60, () -> changeVolume(-1));
-        UIUtils.drawButton(root, "+", x + 50, y + 60, () -> changeVolume(1));
-        this.muteBtn = UIUtils.drawButton(root, "", x + 90, y + 60, this::toggleMute);
-
-        this.updateVolumeLabel();
-        this.updateMuteButton();
-    }
-
-    private void changeVolume(int delta) {
-        this.volumeStep = Math.max(0, Math.min(5, this.volumeStep + delta));
-        double newVolume = this.volumeStep / 5.0;
-        SoundManager.setVolume(newVolume);
-        if (SoundManager.isMuted() && newVolume > 0) {
-            SoundManager.setMuted(false);
-        }
-        this.updateVolumeLabel();
-        this.updateMuteButton();
-    }
-
-    private void toggleMute() {
-        SoundManager.setMuted(!SoundManager.isMuted());
-        this.updateMuteButton();
-        this.updateVolumeLabel();
-    }
-
-    private void updateVolumeLabel() {
-        int percent = (int) Math.round(SoundManager.getVolume() * 100);
-        String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
-        this.volumeLbl.setText("Lautstaerke: " + percent + "% (Stufe " + this.volumeStep + "/5)" + muteSuffix);
-    }
-
-    private void updateMuteButton() {
-        this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
     }
 
     private void setupPauseOverlay(double width, double height) {
@@ -350,18 +253,112 @@ public class GameScreen implements GuiScreen {
         }
     }
 
-    private void fillGapsWithLava(double screenHeight) {
-        // gap between platform 1 (0-450) and 2 (500-700)
-        this.blocks.add(createLavaColumn(450, screenHeight - 300, 50, 300));
-
-        // gap between platform 2 (500-700) and 3 (780-930)
-        this.blocks.add(createLavaColumn(700, screenHeight - 350, 80, 350));
+    private void handleGameOver() {
+        if (this.gameOverTriggered) {
+            return;
+        }
+        this.gameOverTriggered = true;
+        if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
+            this.screenManager.showScreen(new MainMenuScreen(screenManager));
+        }
     }
 
-    private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
-        LavaBlock lava = new LavaBlock(new Location(x, y));
-        lava.setWidth(width);
-        lava.setHeight(height);
-        return lava;
+    private void setupBackgroundVideo(double width, double height) {
+        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4d";
+        File file = new File(videoPath);
+        if (!file.exists()) {
+            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
+            return;
+        }
+
+        try {
+            Media media = new Media(file.toURI().toString());
+            MediaPlayer player = new MediaPlayer(media);
+            player.setCycleCount(MediaPlayer.INDEFINITE);
+            MediaView view = new MediaView(player);
+            view.setFitWidth(width);
+            view.setFitHeight(height);
+            view.setPreserveRatio(false);
+            root.getChildren().add(view); // add first so other nodes render above
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Could not load video: " + videoPath);
+            e.printStackTrace();
+            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
+        }
+    }
+
+    private void setupSoundControls(double width) {
+        double panelWidth = 220;
+        double panelHeight = 120;
+        double x = width - panelWidth - 20;
+        double y = 80;
+
+        UIUtils.drawRect(root, x, y, panelWidth, panelHeight, Color.BLACK).setOpacity(0.55);
+        Text title = UIUtils.drawText(root, "Sound", x + 10, y + 22);
+        title.setFill(Color.WHITE);
+
+        this.volumeStep = (int) Math.round(SoundManager.getVolume() * 5);
+        this.volumeLbl = UIUtils.drawText(root, "", x + 10, y + 45);
+        this.volumeLbl.setFill(Color.WHITE);
+
+        UIUtils.drawButton(root, "-", x + 10, y + 60, () -> changeVolume(-1));
+        UIUtils.drawButton(root, "+", x + 50, y + 60, () -> changeVolume(1));
+        this.muteBtn = UIUtils.drawButton(root, "", x + 90, y + 60, this::toggleMute);
+
+        this.updateVolumeLabel();
+        this.updateMuteButton();
+    }
+
+    private void drawHealth(double width) {
+        player.setHealth(3.5F);
+
+        int heartSize = 32;
+        int padding = 4;
+        int maxLives = (int) player.getMaxHealth();
+
+        double lives = player.getHealth();
+
+        int startX = (int) (width - (maxLives * (heartSize + padding)) - 16);
+
+        for (int i = 0; i < maxLives; i++) {
+            int x = startX + i * (heartSize + padding);
+
+            if (lives >= i + 1) {
+                UIUtils.drawImage(root, "/assets/hud/heart_full.png", x, 16, heartSize, heartSize);
+            } else if (lives > i && lives < i + 1) {
+                UIUtils.drawImage(root, "/assets/hud/heart_half.png", x, 16, heartSize, heartSize);
+
+            } else {
+                UIUtils.drawImage(root, "/assets/hud/heart_empty.png", x, 16, heartSize, heartSize);
+            }
+        }
+    }
+
+    private void changeVolume(int delta) {
+        this.volumeStep = Math.max(0, Math.min(5, this.volumeStep + delta));
+        double newVolume = this.volumeStep / 5.0;
+        SoundManager.setVolume(newVolume);
+        if (SoundManager.isMuted() && newVolume > 0) {
+            SoundManager.setMuted(false);
+        }
+        this.updateVolumeLabel();
+        this.updateMuteButton();
+    }
+
+    private void toggleMute() {
+        SoundManager.setMuted(!SoundManager.isMuted());
+        this.updateMuteButton();
+        this.updateVolumeLabel();
+    }
+
+    private void updateVolumeLabel() {
+        int percent = (int) Math.round(SoundManager.getVolume() * 100);
+        String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
+        this.volumeLbl.setText("Lautstaerke: " + percent + "% (" + this.volumeStep + "/5)" + muteSuffix);
+    }
+
+    private void updateMuteButton() {
+        this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
     }
 }
