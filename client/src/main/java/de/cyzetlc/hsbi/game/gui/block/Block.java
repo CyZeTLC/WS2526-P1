@@ -19,7 +19,7 @@ public abstract class Block {
     private Pane pane;
 
     @Getter
-    private ImageView sprite;
+    protected ImageView sprite;
 
     @Getter @Setter
     private Location location;
