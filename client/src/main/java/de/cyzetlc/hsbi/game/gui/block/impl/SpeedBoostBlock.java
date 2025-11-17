@@ -10,19 +10,19 @@ import de.cyzetlc.hsbi.game.world.Location;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
-public class JumpBoostBlock extends Block {
+public class SpeedBoostBlock extends Block {
     private boolean isTriggered = false;
 
-    public JumpBoostBlock(Location location) {
+    public SpeedBoostBlock(Location location) {
         super(location);
-        this.setMaterial(Material.JUMP_PERK);
+        this.setMaterial(Material.SPEED_PERK);
         this.setCollideAble(false);
     }
 
     @Override
     public void onCollide(Player player) {
         if (!this.isTriggered) {
-            Game.jumpPower *= 1.25; // 25% hoehere Sprungkraft
+            Game.moveSpeed *= 1.25; // 25% hoehere Sprungkraft
             this.isTriggered = true;
             this.setActive(false); // block verschwindet
 
@@ -31,7 +31,7 @@ public class JumpBoostBlock extends Block {
             PauseTransition delay = new PauseTransition(Duration.seconds(10));
             delay.setOnFinished(event -> {
                 this.isTriggered = false;
-                Game.jumpPower = 800;
+                Game.moveSpeed = 450;
             });
             delay.play();
         }

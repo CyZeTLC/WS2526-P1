@@ -2,10 +2,7 @@ package de.cyzetlc.hsbi.game.level.impl;
 
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
-import de.cyzetlc.hsbi.game.gui.block.impl.FloatingPlatformBlock;
-import de.cyzetlc.hsbi.game.gui.block.impl.JumpBoostBlock;
-import de.cyzetlc.hsbi.game.gui.block.impl.LavaBlock;
-import de.cyzetlc.hsbi.game.gui.block.impl.ServerBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.*;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
@@ -21,10 +18,13 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(0, height - 300, 450, 600, root));
         platforms.add(new Platform(500, height - 350, 200, 650, root));
         platforms.add(new Platform(780, height - 300, 150, 600, root));
-        platforms.add(new Platform(1318, height - 300, 1900, 600, root));
+        platforms.add(new Platform(1318, height - 300, 400, 600, root));
+        platforms.add(new Platform(1800, height - 400, 100, 600, root));
+        platforms.add(new Platform(2000, height - 400, 500, 600, root));
 
-        this.blocks.add(new JumpBoostBlock(new Location(150, height - 332)));
+        this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
+        this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
 
         // floating platform connects upper islands
         this.blocks.add(new FloatingPlatformBlock(
