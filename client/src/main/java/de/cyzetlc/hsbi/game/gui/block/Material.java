@@ -8,7 +8,7 @@ public enum Material {
     JUMP_PERK("/assets/tileset/jumpboost.png"),
     FLOATING_PLATFORM("/assets/movingplatform/1MovingPlatform32x64.png");
 
-    String texturePath;
+    public String texturePath;
 
     Material(String texturePath) {
         this.texturePath = texturePath;
