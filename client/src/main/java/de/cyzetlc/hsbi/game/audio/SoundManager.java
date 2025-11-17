@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.audio;
 
+import de.cyzetlc.hsbi.game.Game;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import lombok.Getter;
@@ -77,6 +78,8 @@ public class SoundManager {
     /** Setzt die globale Lautstaerke (0.0 - 1.0) */
     public static void setVolume(double volume) {
         globalVolume = Math.max(0, Math.min(1, volume));
+        Game.getInstance().getConfig().getObject().put("soundVolume", volume);
+        Game.getInstance().getConfig().save();
         applyVolume(backgroundPlayer);
     }
 
@@ -88,6 +91,8 @@ public class SoundManager {
     /** Aktiviert oder deaktiviert Stummschaltung. */
     public static void setMuted(boolean muted) {
         SoundManager.muted = muted;
+        Game.getInstance().getConfig().getObject().put("soundMuted", muted);
+        Game.getInstance().getConfig().save();
         applyVolume(backgroundPlayer);
     }
 
