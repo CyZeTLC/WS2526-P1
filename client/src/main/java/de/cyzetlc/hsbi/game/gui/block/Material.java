@@ -4,6 +4,7 @@ public enum Material {
     AIR(""),
     DIRT("/assets/tileset/dirt_tiles.png"),
     SANDSTONE("/assets/tileset/sandstone_tiles.png"),
+    FLOOR("/assets/tileset/floor_tiles.png"),
     LAVA("/assets/lavaset/1Lava32x64.png"),
     JUMP_PERK("/assets/tileset/jump_boost.png"),
     SPEED_PERK("/assets/tileset/speed.png"),

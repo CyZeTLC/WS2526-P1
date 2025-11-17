@@ -1,6 +1,7 @@
 package de.cyzetlc.hsbi.game.gui;
 
 import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +18,7 @@ public class Platform {
     private double x, y, width, height;
     private Pane pane;
 
-    private static final String TILESET_PATH = "assets/tileset/sandstone_tiles.png";
+    private static final String TILESET_PATH = Material.FLOOR.texturePath;
     private static final Image TILESET_IMAGE = new Image(TILESET_PATH);
     private static final int TILE_SIZE = 32;
 
