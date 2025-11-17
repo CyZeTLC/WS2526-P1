@@ -3,6 +3,8 @@ package de.cyzetlc.hsbi.game.entity;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
 import de.cyzetlc.hsbi.game.world.Location;
+import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -18,6 +20,13 @@ public class EntityPlayer extends Player {
     @Setter
     private Direction direction;
 
+    @Getter @Setter
+    private Rectangle2D realLocation;
+
+    public EntityPlayer() {
+        super();
+    }
+
     @Override
     public void update() {
         // Position vom Sprite & Nametag anpassen
@@ -25,6 +34,8 @@ public class EntityPlayer extends Player {
         this.sprite.setY(this.getLocation().getY());
         this.nameTag.setLayoutX(this.getLocation().getX() + this.nameTag.getLayoutBounds().getWidth() / 2 - this.getWidth()*1.4);
         this.nameTag.setLayoutY(this.getLocation().getY() - 25);
+
+        this.setRealLocation(new Rectangle2D(this.sprite.getX(), this.sprite.getY(), this.getWidth(), this.getHeight()));
 
         // Richtung wechseln
         if (direction != null) {

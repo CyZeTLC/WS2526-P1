@@ -1,6 +1,8 @@
 package de.cyzetlc.hsbi.game.gui.block;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.entity.Player;
+import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
 import de.cyzetlc.hsbi.game.world.Location;
 
 /**
@@ -76,7 +78,7 @@ public class FloatingPlatformBlock extends Block {
             this.movingTowardsEnd = !this.movingTowardsEnd;
             current.setX(target.getX());
             current.setY(target.getY());
-            this.getSprite().setX(target.getX());
+            this.getSprite().setX(target.getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
             this.getSprite().setY(target.getY());
             this.setDelta(target.getX() - oldX, target.getY() - oldY);
             return;
@@ -95,7 +97,7 @@ public class FloatingPlatformBlock extends Block {
 
         current.setX(nextX);
         current.setY(nextY);
-        this.getSprite().setX(nextX);
+        this.getSprite().setX(nextX - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
         this.getSprite().setY(nextY);
         this.setDelta(nextX - oldX, nextY - oldY);
     }
