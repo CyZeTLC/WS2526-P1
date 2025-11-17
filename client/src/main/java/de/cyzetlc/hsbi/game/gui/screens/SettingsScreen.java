@@ -35,8 +35,8 @@ public class SettingsScreen implements GuiScreen {
 
         SoundManager.playBackground(Music.MENU, true);
 
-        UIUtils.drawImage(root, "/assets/mainmenu.png", 0, 0, width, height);
-        UIUtils.drawRect(root, 0, 0, width, height, Color.DARKGRAY).setOpacity(0.5);
+        UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
+        //UIUtils.drawRect(root, 0, 0, width, height, Color.DARKGRAY).setOpacity(0.5);
         UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
         UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
             // wenn ingame zurück
