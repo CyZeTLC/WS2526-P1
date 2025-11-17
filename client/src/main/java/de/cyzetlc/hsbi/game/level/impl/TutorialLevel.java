@@ -25,6 +25,7 @@ public class TutorialLevel extends Level {
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
+        this.blocks.add(createLavaColumn(930, height - 80, 388, 300));
 
         // floating platform connects upper islands
         this.blocks.add(new FloatingPlatformBlock(
@@ -35,7 +36,7 @@ public class TutorialLevel extends Level {
         ));
 
         // draw blocks
-        this.fillGapsWithLava(height);
+        //this.fillGapsWithLava(height);
         for (Block block : this.blocks) {
             block.draw(root);
         }
