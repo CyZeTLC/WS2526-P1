@@ -15,9 +15,9 @@ import java.util.List;
 public class LavaBlock extends AnimatedBlock {
     public LavaBlock(Location location) {
         super(location, new String[] {
-                "/assets/lavaset/1Lava32x64.png",
-                "/assets/lavaset/2Lava32x64.png",
-                "/assets/lavaset/3Lava32x64.png"
+                "/assets/lavaset/lava_1.png",
+                "/assets/lavaset/lava_2.png",
+                "/assets/lavaset/lava_3.png"
         });
         this.setMaterial(Material.LAVA);
     }
