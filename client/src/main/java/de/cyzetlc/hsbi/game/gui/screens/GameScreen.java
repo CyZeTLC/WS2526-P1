@@ -53,7 +53,7 @@ public class GameScreen implements GuiScreen {
 
     private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
 
-    private final double marginX = 200;
+    private final double marginX = 400;
     private final double marginY = 150;
 
     public GameScreen(ScreenManager screenManager) {
@@ -75,18 +75,18 @@ public class GameScreen implements GuiScreen {
         player.drawPlayer(root, 20 - cameraX,
                 height - 450 - cameraY);
 
+        Game.getInstance().setCurrentLevel(new TutorialLevel());
+        Game.getInstance().getCurrentLevel().draw(width, height, root);
+
         // back to menu
         UIUtils.drawButton(root, "Zurueck", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
         UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
-
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
         this.setupSoundControls(width);
         this.setupPauseOverlay(width, height);
 
-        Game.getInstance().setCurrentLevel(new TutorialLevel());
-        Game.getInstance().getCurrentLevel().draw(width, height, root);
         this.drawHealth(width);
     }
 
@@ -125,6 +125,7 @@ public class GameScreen implements GuiScreen {
             player.setDirection(Direction.JUMP);
         }
 
+
         // gravity
         dy += gravity * delta;
 
@@ -137,6 +138,7 @@ public class GameScreen implements GuiScreen {
         // platform collisions
         for (Platform platform : Game.getInstance().getCurrentLevel().getPlatforms()) {
             Rectangle2D pBounds = platform.getBounds();
+            platform.update(this);
 
             if (nextBounds.intersects(pBounds)) {
                 // landing from above
@@ -189,7 +191,7 @@ public class GameScreen implements GuiScreen {
 
         // window bounds
         if (nextX < 0) nextX = 0;
-        if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
+        //if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
 
         // fell out of the world -> game over
         if (nextY + player.getHeight() > height) {
@@ -198,6 +200,17 @@ public class GameScreen implements GuiScreen {
             }
             this.handleGameOver();
             return;
+        }
+
+        /*
+         * Camera DeadZone-Logik
+         */
+        if (player.getLocation().getX() >= width-this.marginX) {
+            this.cameraX += dx;
+
+            if (this.cameraX < 0) {
+                this.cameraX = 0;
+            }
         }
 
         // apply position
@@ -311,8 +324,6 @@ public class GameScreen implements GuiScreen {
     }
 
     private void drawHealth(double width) {
-        player.setHealth(3.5F);
-
         int heartSize = 32;
         int padding = 4;
         int maxLives = (int) player.getMaxHealth();

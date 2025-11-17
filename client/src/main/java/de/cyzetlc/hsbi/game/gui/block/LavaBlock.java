@@ -25,14 +25,12 @@ public class LavaBlock extends Block {
     public LavaBlock(Location location) {
         super(location);
         this.setMaterial(Material.LAVA);
-        this.setWidth(32);
-        this.setHeight(64);
         this.loadFrames();
     }
 
     @Override
     public void onCollide(Player player) {
-        float newHealth = (float) Math.max(0, player.getHealth() - 0.25f); // 25% Schaden pro Tick
+        float newHealth = Math.max(0, player.getHealth() - 0.25f); // 25% Schaden pro Tick
         player.setHealth(newHealth);
         if (newHealth <= 0 && Game.getInstance() != null) {
             Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
