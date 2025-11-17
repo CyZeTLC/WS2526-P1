@@ -17,11 +17,18 @@ public class Platform {
     private double x, y, width, height;
     private Pane pane;
 
-    private static final String TILESET_PATH = "assets/tileset/sandstone_tiles.png";
-    private static final Image TILESET_IMAGE = new Image(TILESET_PATH);
-    private static final int TILE_SIZE = 32;
+    private static final String[] FRAME_PATHS = {
+            "/assets/movingplatform/zuschnitt1.png",
+            "/assets/movingplatform/zuschnitt1_zustand1.png"
+    };
+    private static final double FRAME_DURATION_SECONDS = 0.6;
+    private static final int TILE_SIZE = 128; // groesser, damit das Rack erkennbar bleibt
 
     private List<ImageView> tiles = new ArrayList<>();
+    private final List<Image> frames = new ArrayList<>();
+    private int currentFrame = 0;
+    private double frameTimer = 0;
+    private long lastFrameTimeNanos = 0L;
 
     private Location location;
 
@@ -36,7 +43,7 @@ public class Platform {
     }
 
     public void drawPlatform() {
-        final int TILE_SIZE = 32;
+        this.loadFrames();
 
         // Breite aufteilen
         int fullTilesX = (int) (width / TILE_SIZE);
@@ -45,7 +52,7 @@ public class Platform {
         if (remainingWidth == 0) {
             remainingWidth = TILE_SIZE;
         } else {
-            fullTilesX++; // rechts eine zusätzliche Kachel
+            fullTilesX++; // rechts eine zusaetzliche Kachel
         }
 
         int fullTilesY = (int) (height / TILE_SIZE);
@@ -57,39 +64,24 @@ public class Platform {
             fullTilesY++;
         }
 
-        final int DIRT_TOP_TILE_Y = 0;
-        final int DIRT_BODY_TILE_Y = 32;
-
         for (int i = 0; i < fullTilesX; i++) {
             double currentY = this.y;
 
-            // Berechne die effektive Breite der Kachel (32 oder Rest)
+            // effektive Breite der Kachel (Standard oder Rest)
             double tileDrawWidth = TILE_SIZE;
             if (i == fullTilesX - 1 && width % TILE_SIZE != 0) {
                 tileDrawWidth = remainingWidth;
             }
 
             for (int j = 0; j < fullTilesY; j++) {
-                ImageView tileView = new ImageView(TILESET_IMAGE);
-
-                int tileSrcY = (j == 0) ? DIRT_TOP_TILE_Y : DIRT_BODY_TILE_Y;
+                ImageView tileView = new ImageView(this.frames.get(0));
 
                 double tileDrawHeight = TILE_SIZE;
                 if (j == fullTilesY - 1 && height % TILE_SIZE != 0) {
                     tileDrawHeight = remainingHeight;
                 }
 
-                // Viewport aus dem Tileset
-                tileView.setViewport(new Rectangle2D(
-                        0,            // x-Start im Tileset
-                        tileSrcY,        // y-Start im Tileset
-                        tileDrawWidth,   // Breite des Ausschnitts
-                        tileDrawHeight   // Höhe des Ausschnitts
-                ));
-
-                // Setze die Position und Größe der Kachel
-                //tileView.setX(x + i * TILE_SIZE);
-                //tileView.setY(currentY);
+                // Position setzen
                 tileView.setX((x + i * TILE_SIZE) - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
                 tileView.setY(currentY - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
                 tileView.setFitWidth(tileDrawWidth);
@@ -109,6 +101,8 @@ public class Platform {
         double screenWidth = gameScreen.getRoot().getWidth();
         double screenHeight = gameScreen.getRoot().getHeight();
 
+        this.advanceAnimation();
+
         int fullTilesX = (int) (width / TILE_SIZE);
         int remainingWidth = (int) (width % TILE_SIZE);
         if (remainingWidth != 0) fullTilesX++;
@@ -122,9 +116,9 @@ public class Platform {
         for (int i = 0; i < fullTilesX; i++) {
             double tileDrawWidth = (i == fullTilesX - 1 && width % TILE_SIZE != 0) ? remainingWidth : TILE_SIZE;
             double tileX = x + i * TILE_SIZE;
-            // Prüfen, ob Tile horizontal sichtbar ist
+            // Pruefen, ob Tile horizontal sichtbar ist
             if (tileX + tileDrawWidth < camX || tileX > camX + screenWidth) {
-                // Tile ist außerhalb des Bildschirms, unsichtbar machen
+                // Tile ist ausserhalb des Bildschirms, unsichtbar machen
                 for (int j = 0; j < fullTilesY; j++) {
                     ImageView tileView = tiles.get(index++);
                     tileView.setVisible(false);
@@ -139,6 +133,7 @@ public class Platform {
 
                 ImageView tileView = tiles.get(index++);
                 tileView.setVisible(true);
+                tileView.setImage(this.frames.get(this.currentFrame));
                 tileView.setX(tileX - camX);
                 tileView.setY(tileY - camY);
                 tileView.setFitWidth(tileDrawWidth);
@@ -151,6 +146,41 @@ public class Platform {
 
     public Rectangle2D getBounds() {
         return new Rectangle2D(this.getLocation().getX(), this.getLocation().getY(), width, height);
+    }
+
+    private void loadFrames() {
+        if (!this.frames.isEmpty()) {
+            return;
+        }
+        for (String path : FRAME_PATHS) {
+            try {
+                Image image = new Image(getClass().getResource(path).toExternalForm());
+                this.frames.add(image);
+            } catch (Exception ignored) { }
+        }
+        if (this.frames.isEmpty()) {
+            // Fallback: alter Tileset, falls Ressourcen fehlen
+            Image fallback = new Image("assets/tileset/sandstone_tiles.png");
+            this.frames.add(fallback);
+        }
+    }
+
+    private void advanceAnimation() {
+        if (this.frames.size() < 2) {
+            return;
+        }
+        long now = System.nanoTime();
+        if (this.lastFrameTimeNanos == 0L) {
+            this.lastFrameTimeNanos = now;
+            return;
+        }
+        double deltaSeconds = (now - this.lastFrameTimeNanos) / 1_000_000_000.0;
+        this.lastFrameTimeNanos = now;
+        this.frameTimer += deltaSeconds;
+        if (this.frameTimer >= FRAME_DURATION_SECONDS) {
+            this.frameTimer -= FRAME_DURATION_SECONDS;
+            this.currentFrame = (this.currentFrame + 1) % this.frames.size();
+        }
     }
 }
 
