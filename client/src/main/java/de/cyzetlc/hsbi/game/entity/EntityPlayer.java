@@ -21,9 +21,6 @@ public class EntityPlayer extends Player {
     @Setter
     private Direction direction;
 
-    @Getter @Setter
-    private Rectangle2D realLocation;
-
     public EntityPlayer() {
         super();
     }
@@ -46,8 +43,6 @@ public class EntityPlayer extends Player {
         this.sprite.setY(screenY);
         this.nameTag.setLayoutX(screenX + this.nameTag.getLayoutBounds().getWidth() / 2 - this.getWidth() * 1.4);
         this.nameTag.setLayoutY(screenY - 25);
-
-        this.setRealLocation(new Rectangle2D(this.sprite.getX(), this.sprite.getY(), this.getWidth(), this.getHeight()));
 
         // Richtung wechseln
         if (direction != null) {
