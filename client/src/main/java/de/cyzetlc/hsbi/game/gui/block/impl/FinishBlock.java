@@ -1,8 +1,11 @@
 package de.cyzetlc.hsbi.game.gui.block.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.entity.Player;
 import de.cyzetlc.hsbi.game.gui.block.AnimatedBlock;
 import de.cyzetlc.hsbi.game.gui.block.Material;
+import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
+import de.cyzetlc.hsbi.game.level.impl.SecondLevel;
 import de.cyzetlc.hsbi.game.world.Location;
 
 public class FinishBlock extends AnimatedBlock {
@@ -19,6 +22,7 @@ public class FinishBlock extends AnimatedBlock {
 
     @Override
     public void onCollide(Player player) {
-        player.setHealth(0.0F);
+        Game.getInstance().setCurrentLevel(new SecondLevel());
+        Game.getInstance().getScreenManager().showScreen(new GameScreen(Game.getInstance().getScreenManager()));
     }
 }
