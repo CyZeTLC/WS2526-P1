@@ -30,6 +30,8 @@ Text {
     -fx-font-size: 48px;
     -fx-fill: #ffffff;
     -fx-font-weight: bold;
+    -fx-stroke: #526b69;
+    -fx-stroke-width: 2px;
 }
 
 #achievements {
