@@ -75,10 +75,12 @@ public class GameScreen implements GuiScreen {
         player.drawPlayer(root, 20 - cameraX,
                 height - 450 - cameraY);
 
+        Game.getInstance().getCurrentLevel().getBlocks().clear();
+        Game.getInstance().getCurrentLevel().getPlatforms().clear();
         Game.getInstance().getCurrentLevel().draw(width, height, root);
 
         // back to menu
-        UIUtils.drawButton(root, "Zurueck", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
         UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
