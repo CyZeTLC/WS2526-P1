@@ -1,5 +1,8 @@
 package de.cyzetlc.hsbi.game.event;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class EventManager {
+    private static final Logger logger = LoggerFactory.getLogger(EventManager.class.getName());
+
     private static final Map<Class<? extends Event>, ArrayList<EventData>> REGISTRY_MAP = new HashMap<>();
 
     /**
@@ -143,7 +148,7 @@ public class EventManager {
                 }
             });
         }
-
+        logger.info("Registered new Listener ({})", o.getClass().getSimpleName());
     }
 
     /**
