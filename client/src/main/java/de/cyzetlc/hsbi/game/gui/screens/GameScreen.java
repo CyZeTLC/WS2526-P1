@@ -105,6 +105,7 @@ public class GameScreen implements GuiScreen {
         double moveSpeed = Game.moveSpeed;    // horizontal speed
         double jumpPower = Game.jumpPower;    // jump power
         boolean onGround = false;
+        boolean hittingCeiling = false;
 
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
@@ -119,13 +120,6 @@ public class GameScreen implements GuiScreen {
         } else {
             dx = 0;
         }
-
-        // jump (only if on ground)
-        if (screenManager.getInputManager().isPressed(KeyCode.SPACE) && dy == 0) {
-            dy = -jumpPower * delta;
-            player.setDirection(Direction.JUMP);
-        }
-
 
         // gravity
         dy += gravity * delta;
@@ -148,8 +142,17 @@ public class GameScreen implements GuiScreen {
                     dy = 0;
                     onGround = true;
                 }
+                // collision from below
+                if (dy < 0 && y >= platform.getY() + platform.getHeight() && nextY <= platform.getY() + platform.getHeight()) {
+                    nextY = platform.getY() + platform.getHeight();
+                    hittingCeiling = true;
+                    dy = 0;
+                } else {
+                    hittingCeiling = false;
+                }
+
                 // side collision
-                else if (x + player.getWidth() <= platform.getX()) {
+                if (x + player.getWidth() <= platform.getX()) {
                     nextX = platform.getX() - player.getWidth();
                     dx = 0;
                 }
@@ -202,6 +205,12 @@ public class GameScreen implements GuiScreen {
             }
             this.handleGameOver();
             return;
+        }
+
+        // jump (only if on ground)
+        if (screenManager.getInputManager().isPressed(KeyCode.SPACE) && dy == 0 && !hittingCeiling) {
+            dy = -jumpPower * delta;
+            player.setDirection(Direction.JUMP);
         }
 
         // apply position
