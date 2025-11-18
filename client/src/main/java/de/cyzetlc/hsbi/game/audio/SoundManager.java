@@ -9,6 +9,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class SoundManager {
 
@@ -43,23 +44,25 @@ public class SoundManager {
      * @param looping true, wenn die Musik unendlich wiederholt werden soll
      */
     public static void playBackground(Music music, boolean looping) {
-        stopBackground();
-        try {
-            Media media = mediaCache.computeIfAbsent(music.path(), SoundManager::loadMedia);
+        CompletableFuture.runAsync(() -> {
+            stopBackground();
+            try {
+                Media media = mediaCache.computeIfAbsent(music.path(), SoundManager::loadMedia);
 
-            backgroundPlayer = new MediaPlayer(media);
-            backgroundPlayer.setCycleCount(looping ? MediaPlayer.INDEFINITE : 1);
-            applyVolume(backgroundPlayer);
-            backgroundPlayer.setOnEndOfMedia(() -> {
-                if (!looping) {
-                    stopBackground();
-                }
-            });
-            backgroundPlayer.play();
-        } catch (Exception e) {
-            System.err.println("Fehler beim Abspielen von Hintergrundmusik: " + music.path());
-            e.printStackTrace();
-        }
+                backgroundPlayer = new MediaPlayer(media);
+                backgroundPlayer.setCycleCount(looping ? MediaPlayer.INDEFINITE : 1);
+                applyVolume(backgroundPlayer);
+                backgroundPlayer.setOnEndOfMedia(() -> {
+                    if (!looping) {
+                        stopBackground();
+                    }
+                });
+                backgroundPlayer.play();
+            } catch (Exception e) {
+                System.err.println("Fehler beim Abspielen von Hintergrundmusik: " + music.path());
+                e.printStackTrace();
+            }
+        });
     }
 
     /** Stoppt die laufende Hintergrundmusik (falls vorhanden). */
