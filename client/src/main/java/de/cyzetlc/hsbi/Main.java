@@ -4,6 +4,6 @@ import de.cyzetlc.hsbi.game.Game;
 
 public class Main {
     public static void main(String[] args) {
-        new Game().launch();
+        Game.main(args);
     }
 }
