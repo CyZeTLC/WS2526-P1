@@ -6,6 +6,7 @@ import de.cyzetlc.hsbi.game.event.EventManager;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
 import de.cyzetlc.hsbi.game.level.Level;
+import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.listener.KeyListener;
 import de.cyzetlc.hsbi.game.listener.PacketListener;
 import de.cyzetlc.hsbi.game.listener.PlayerListener;
@@ -62,6 +63,8 @@ public class Game extends Application {
 
         screenManager = new ScreenManager(primaryStage);
         screenManager.showScreen(new MainMenuScreen(screenManager));
+
+        this.setCurrentLevel(new TutorialLevel());
     }
 
     /**

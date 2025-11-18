@@ -75,7 +75,6 @@ public class GameScreen implements GuiScreen {
         player.drawPlayer(root, 20 - cameraX,
                 height - 450 - cameraY);
 
-        Game.getInstance().setCurrentLevel(new TutorialLevel());
         Game.getInstance().getCurrentLevel().draw(width, height, root);
 
         // back to menu
