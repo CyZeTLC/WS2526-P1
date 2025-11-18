@@ -25,6 +25,7 @@ public class TutorialLevel extends Level {
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
+        this.blocks.add(new FinishBlock(new Location(2400, height - 490)));
         this.blocks.add(createLavaColumn(930, height - 80, 388, 300));
 
         // floating platform connects upper islands
@@ -36,7 +37,6 @@ public class TutorialLevel extends Level {
         ));
 
         // draw blocks
-        //this.fillGapsWithLava(height);
         for (Block block : this.blocks) {
             block.draw(root);
         }
@@ -44,14 +44,6 @@ public class TutorialLevel extends Level {
         for (Platform platform : this.platforms) {
             platform.drawPlatform();
         }
-    }
-
-    private void fillGapsWithLava(double screenHeight) {
-        // gap between platform 1 (0-450) and 2 (500-700)
-        this.blocks.add(createLavaColumn(450, screenHeight - 280, 50, 600));
-
-        // gap between platform 2 (500-700) and 3 (780-930)
-        this.blocks.add(createLavaColumn(700, screenHeight - 280, 80, 600));
     }
 
     private static LavaBlock createLavaColumn(double x, double y, double width, double height) {

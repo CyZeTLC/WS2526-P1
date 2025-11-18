@@ -116,8 +116,12 @@ public class FloatingPlatformBlock extends Block {
 
         current.setX(nextX);
         current.setY(nextY);
-        this.getSprite().setX(nextX - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
-        this.getSprite().setY(nextY - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+
+        if (Game.getInstance().getScreenManager().getCurrentScreen() instanceof GameScreen) {
+            this.getSprite().setX(nextX - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
+            this.getSprite().setY(nextY - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+        }
+
         this.setDelta(nextX - oldX, nextY - oldY);
 
         this.advanceAnimation(deltaSeconds);

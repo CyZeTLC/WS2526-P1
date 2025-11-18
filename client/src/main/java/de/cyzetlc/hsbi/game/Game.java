@@ -50,7 +50,10 @@ public class Game extends Application {
         instance = this;
         thePlayer = new EntityPlayer();
 
-        SoundManager.setVolume(20);
+        config = new JsonConfig("./config.json");
+
+        SoundManager.setMuted(this.config.getObject().getBoolean("soundMuted"));
+        SoundManager.setVolume(this.config.getObject().getDouble("soundVolume"));
 
         EventManager.register(new PacketListener());
         EventManager.register(new UserMessageListener());

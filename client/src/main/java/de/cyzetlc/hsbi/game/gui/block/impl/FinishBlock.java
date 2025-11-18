@@ -5,19 +5,20 @@ import de.cyzetlc.hsbi.game.gui.block.AnimatedBlock;
 import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.world.Location;
 
-public class ServerBlock extends AnimatedBlock {
-    public ServerBlock(Location location) {
+public class FinishBlock extends AnimatedBlock {
+    public FinishBlock(Location location) {
         super(location, new String[] {
-                "/assets/hud/PlatformServerMehreZustände/Zugeschnitten1.png",
-                "/assets/hud/PlatformServerMehreZustände/Zugeschnitten1 - Lichtzustand1.png"
+                "/assets/tileset/finish/finish_first.png",
+                "/assets/tileset/finish/finish_second.png"
         });
         this.setMaterial(Material.SERVER);
-        this.setWidth(64);
-        this.setHeight(128);
+        this.setCollideAble(false);
+        this.setWidth(45);
+        this.setHeight(90);
     }
 
     @Override
     public void onCollide(Player player) {
-
+        player.setHealth(0.0F);
     }
 }
