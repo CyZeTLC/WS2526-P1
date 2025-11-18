@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game;
 
+import de.cyzetlc.hsbi.game.audio.Music;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.event.EventManager;
@@ -65,6 +66,8 @@ public class Game extends Application {
         screenManager.showScreen(new MainMenuScreen(screenManager));
 
         this.setCurrentLevel(new TutorialLevel());
+
+        SoundManager.playBackground(Music.MENU, true);
     }
 
     /**

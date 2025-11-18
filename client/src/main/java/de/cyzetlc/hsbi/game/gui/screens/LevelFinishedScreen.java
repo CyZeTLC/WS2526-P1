@@ -25,8 +25,6 @@ public class LevelFinishedScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        SoundManager.playBackground(Music.MENU, true);
-
         UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
 
         UIUtils.drawRect(root, width/2 - 300, height/2 - 300, 600, 600, Color.BLACK).setOpacity(0.4);

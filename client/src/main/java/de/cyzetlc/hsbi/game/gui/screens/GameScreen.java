@@ -64,14 +64,14 @@ public class GameScreen implements GuiScreen {
     public void initialize() {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
+        this.player = Game.thePlayer;
 
-        this.setupBackgroundVideo(width, height);
-        SoundManager.playBackground(Music.GAME, true);
-        player = Game.thePlayer;
+        //this.setupBackgroundVideo(width, height);
+        UIUtils.drawImage(root, "/assets/hud/background.png", 0,0, width, height);
+
         if (player.getHealth() <= 0) {
             player.setHealth(player.getMaxHealth());
         }
-        //player.drawPlayer(root, 20, height - 450);
         player.drawPlayer(root, 20 - cameraX,
                 height - 450 - cameraY);
 
