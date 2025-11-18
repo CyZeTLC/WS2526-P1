@@ -29,30 +29,30 @@ public class MainMenuScreen implements GuiScreen {
         double height = screenManager.getStage().getHeight();
 
         UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
-        UIUtils.drawCenteredText(root, "STEAL THE FILES", 0, 50, false).setId("menu-title");
-        UIUtils.drawCenteredButton(root, "Spiel starten", 0, 120, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
-        UIUtils.drawCenteredButton(root, "Mehrspieler", 0, 200, false, "mainmenu-button", () -> screenManager.showScreen(new MultiplayerScreen(screenManager)));
-        UIUtils.drawCenteredButton(root, "Einstellungen", 0, 280, false, "mainmenu-button", () -> screenManager.showScreen(new SettingsScreen(screenManager)));
-        UIUtils.drawCenteredButton(root, "Beenden", 0, 360, false, "mainmenu-button", screenManager::closeScreen);
+        UIUtils.drawCenteredText(root, "STEAL THE FILES", 0, height / 2 - 230, false).setId("menu-title");
+        UIUtils.drawCenteredButton(root, "Spiel starten", 0, height / 2 - 150, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
+        UIUtils.drawCenteredButton(root, "Mehrspieler", 0, height / 2 - 70, false, "mainmenu-button", () -> screenManager.showScreen(new MultiplayerScreen(screenManager)));
+        UIUtils.drawCenteredButton(root, "Einstellungen", 0, height / 2 + 10, false, "mainmenu-button", () -> screenManager.showScreen(new SettingsScreen(screenManager)));
+        UIUtils.drawCenteredButton(root, "Beenden", 0, height / 2 + 90, false, "mainmenu-button", screenManager::closeScreen);
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
 
         // Achievements
-        UIUtils.drawRect(root, 60, 200, 400, height-400, Color.DARKGRAY).setOpacity(0.6);
-        Text achievementsLbl = UIUtils.drawText(root, "Achievements", 200, 235, "achievements");
+        UIUtils.drawRect(root, 60, height / 2 - 200, 400, 400, Color.valueOf("#222626")).setOpacity(0.6);
+        Text achievementsLbl = UIUtils.drawText(root, "Achievements", 200, height / 2 - 165, "achievements");
         achievementsLbl.setLayoutX((445-UIUtils.getTextWidth(achievementsLbl))/2);
-        this.drawAchievementProgress();
+        this.drawAchievementProgress(height / 2 - 130);
     }
 
-    public void drawAchievementProgress() {
+    public void drawAchievementProgress(double y) {
         for (int i = 0; i < 5; i++) {
             double progress = new Random().nextDouble(1);
             int fullWidth = 360;
             double greenWidth = 360 * progress;
             double blackWidth = fullWidth-greenWidth;
-            UIUtils.drawText(root, "No. " + i + ": " + Math.round(progress*100) + "%", 80, 265 + i*60);
-            UIUtils.drawRect(root, 80, 270 + i*60, greenWidth, 20, Color.GREEN);
-            UIUtils.drawRect(root, 80+greenWidth, 270 + i*60, blackWidth, 20, Color.BLACK);
+            UIUtils.drawText(root, "No. " + i + ": " + Math.round(progress*100) + "%", 80, y - 5 + i*60);
+            UIUtils.drawRect(root, 80, y + i*60, greenWidth, 20, Color.GREEN);
+            UIUtils.drawRect(root, 80+greenWidth, y + i*60, blackWidth, 20, Color.BLACK);
         }
     }
 
