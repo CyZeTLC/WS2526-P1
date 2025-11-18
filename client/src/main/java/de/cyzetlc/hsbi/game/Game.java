@@ -88,6 +88,13 @@ public class Game extends Application {
         SoundManager.playBackground(Music.MENU, true);
     }
 
+    @Override
+    public void stop()  {
+        getLogger().info("Shutting down..");
+
+        this.getQueryHandler().stop();
+    }
+
     /**
      * It creates a new QueryHandler object with the credentials from the config file, and then creates a table if it
      * doesn't exist
