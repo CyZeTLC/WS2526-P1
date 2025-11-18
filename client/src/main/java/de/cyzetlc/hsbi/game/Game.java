@@ -52,18 +52,33 @@ public class Game extends Application {
         instance = this;
         thePlayer = new EntityPlayer();
 
+        getLogger().info("Starting Steal The Files v0.1 BETA..");
+        getLogger().info("Loading configuration..");
+
         config = new JsonConfig("./config.json");
+
+        getLogger().info("Configuration loaded successfully!");
+        getLogger().info("Applying sound-settings from config..");
 
         SoundManager.setMuted(this.config.getObject().getBoolean("soundMuted"));
         SoundManager.setVolume(this.config.getObject().getDouble("soundVolume"));
+
+        getLogger().info("SoundManger loaded successfully!");
+        getLogger().info("Registering EventListener..");
 
         EventManager.register(new PacketListener());
         EventManager.register(new UserMessageListener());
         EventManager.register(new KeyListener());
         EventManager.register(new PlayerListener());
 
+        getLogger().info("EventListener registered successfully!");
+        getLogger().info("Loading ScreenManger..");
+
         screenManager = new ScreenManager(primaryStage);
         screenManager.showScreen(new MainMenuScreen(screenManager));
+
+        getLogger().info("ScreenManager loaded & displayed MainMenu successfully!");
+        getLogger().info("Client started successfully!");
 
         this.setCurrentLevel(new TutorialLevel());
 
