@@ -11,7 +11,7 @@ public class FinishBlock extends AnimatedBlock {
                 "/assets/tileset/finish/finish_first.png",
                 "/assets/tileset/finish/finish_second.png"
         });
-        this.setMaterial(Material.SERVER);
+        this.setMaterial(Material.FINISH_FLAG);
         this.setCollideAble(false);
         this.setWidth(45);
         this.setHeight(90);
