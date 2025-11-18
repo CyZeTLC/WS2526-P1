@@ -29,6 +29,7 @@ Text {
 #menu-title {
     -fx-font-size: 48px;
     -fx-fill: #ffffff;
+    -fx-font-weight: bold;
 }
 
 #achievements {
@@ -88,4 +89,13 @@ Text {
         linear-gradient(#ffe066, #ccaa00),
         #ffcc00;
     -fx-effect: dropshadow(gaussian, rgba(255,204,0,0.8), 12, 0, 0, 0);
+}
+
+#stats-line {
+    -fx-font-size: 26px;
+}
+
+#stats-line-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
 }
