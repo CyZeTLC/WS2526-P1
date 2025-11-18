@@ -19,8 +19,9 @@ public class MultiplayerScreen implements GuiScreen {
         this.screenManager = screenManager;
     }
 
+
     @Override
-    public void update(double delta) {
+    public void initialize() {
         double height = screenManager.getStage().getScene().getHeight();
         double width = screenManager.getStage().getScene().getWidth();
 
@@ -53,10 +54,5 @@ public class MultiplayerScreen implements GuiScreen {
     @Override
     public String getName() {
         return "Multiplayer";
-    }
-
-    @Override
-    public void initialize() {
-
     }
 }
