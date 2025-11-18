@@ -6,11 +6,12 @@ import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.Player;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.Material;
+import de.cyzetlc.hsbi.game.gui.block.PerkBlock;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
-public class SpeedBoostBlock extends Block {
+public class SpeedBoostBlock extends PerkBlock {
     private boolean isTriggered = false;
 
     public SpeedBoostBlock(Location location) {
@@ -35,10 +36,5 @@ public class SpeedBoostBlock extends Block {
             });
             delay.play();
         }
-    }
-
-    @Override
-    public void update() {
-        super.update();
     }
 }
