@@ -37,8 +37,13 @@ public class LevelFinishedScreen implements GuiScreen {
             Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
         });
 
+        long millis = System.currentTimeMillis() - Game.getInstance().getCurrentLevel().getLevelStarted();
+        long secs = millis / 1000;
+        long mins = secs / 60;
+        long restsecs = secs % 60;
+
         UIUtils.drawCenteredText(root, Game.getInstance().getCurrentLevel().getName() + " abgeschlossen", 0, 300, false, "stats-line-title");
-        UIUtils.drawCenteredText(root, "Benötigte Zeit: " + 125 + " Sekunden", 0, 380, false, "stats-line");
+        UIUtils.drawCenteredText(root, "Benötigte Zeit: " + mins + ":" + restsecs, 0, 380, false, "stats-line");
         UIUtils.drawCenteredText(root, "Punkte: " + 345, 0, 420, false, "stats-line");
         UIUtils.drawCenteredText(root, "Gegner getötet: " + 2, 0, 460, false, "stats-line");
         UIUtils.drawCenteredText(root, "Leben verloren: " + 0, 0, 500, false, "stats-line");

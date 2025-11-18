@@ -17,11 +17,14 @@ public abstract class Level {
 
     protected final List<Block> blocks;
 
+    private long levelStarted;
+
     public Level(String name) {
         this.name = name;
 
         this.platforms = new ArrayList<>();
         this.blocks =  new ArrayList<>();
+        this.levelStarted = System.currentTimeMillis();
     }
 
     public abstract void draw(double width, double height, Pane root);
