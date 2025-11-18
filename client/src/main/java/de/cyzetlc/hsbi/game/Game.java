@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class Game extends Application {
     @Getter
-    private static final Logger logger = LoggerFactory.getLogger(Game.class.getName());
+    private static Logger logger;
 
     public static EntityPlayer thePlayer;
 
@@ -49,6 +49,10 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        System.setProperty("startTime",
+                new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new java.util.Date()));
+
+        logger = LoggerFactory.getLogger(Game.class.getName());
         instance = this;
         thePlayer = new EntityPlayer();
 
