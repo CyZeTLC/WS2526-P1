@@ -21,12 +21,14 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(1318, height - 300, 400, 600, root));
         platforms.add(new Platform(1800, height - 400, 100, 600, root));
         platforms.add(new Platform(2000, height - 400, 500, 600, root));
+        platforms.add(new Platform(780, height - 450, 100, 50, root));
 
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
         this.blocks.add(new FinishBlock(new Location(2400, height - 490)));
         this.blocks.add(createLavaColumn(930, height - 80, 388, 300));
+        this.blocks.add(new FolderBlock(new Location(800, height - 482)));
 
         // floating platform connects upper islands
         this.blocks.add(new FloatingPlatformBlock(
