@@ -41,8 +41,14 @@ public class EntityPlayer extends Player {
 
         this.sprite.setX(screenX);
         this.sprite.setY(screenY);
-        this.nameTag.setLayoutX(screenX + this.nameTag.getLayoutBounds().getWidth() / 2 - this.getWidth() * 1.4);
-        this.nameTag.setLayoutY(screenY - 25);
+
+        double tagWidth = this.nameTag.prefWidth(-1);
+
+        double centeredX = screenX + (this.getWidth() / 2) - (tagWidth / 2);
+        double centeredY = screenY - 25;
+
+        this.nameTag.setLayoutX(centeredX);
+        this.nameTag.setLayoutY(centeredY);
 
         // Richtung wechseln
         if (direction != null) {
