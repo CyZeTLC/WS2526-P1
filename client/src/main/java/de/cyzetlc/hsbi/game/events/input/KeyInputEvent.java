@@ -1,4 +1,4 @@
-package de.cyzetlc.hsbi.game.events;
+package de.cyzetlc.hsbi.game.events.input;
 
 import de.cyzetlc.hsbi.game.event.Event;
 import javafx.scene.input.KeyCode;

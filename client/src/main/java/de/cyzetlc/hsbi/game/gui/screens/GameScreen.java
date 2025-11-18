@@ -1,88 +1,236 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.audio.Music;
+import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
+import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
+import de.cyzetlc.hsbi.game.gui.block.Block;
+import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
-import de.cyzetlc.hsbi.game.world.Location;
+import de.cyzetlc.hsbi.game.world.Direction;
 import javafx.scene.control.Button;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import lombok.Getter;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements GuiScreen {
     private final Pane root = new Pane();
     private final ScreenManager screenManager;
 
     private EntityPlayer player;
-    private double dx = 1; // Bewegung in X-Richtung
-    private double dy = 0.5; // Bewegung in Y-Richtung
+    private double dx = 1; // movement in X direction
+    private double dy = 0.5; // movement in Y direction
 
-    private final Text fpsLbl;
+    private Text debugLbl;
+    private Text healthLbl;
+    private Text volumeLbl;
+    private Button muteBtn;
+    private int volumeStep = 5; // 0-5 => 0-100%
+
+    private boolean paused = false;
+    private Pane pauseOverlay;
+
+    private boolean gameOverTriggered = false;
+
+    @Getter
+    private double cameraX = 0;
+
+    @Getter
+    private double cameraY = 0;
+
+    private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
+
+    private final double marginX = 400;
+    private final double marginY = 150;
 
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+    }
 
-        // Beispiel: Spielfigur
-        player = Game.thePlayer;
-        player.drawPlayer(root, 20, 20);
+    @Override
+    public void initialize() {
+        double width = screenManager.getStage().getWidth();
+        double height = screenManager.getStage().getHeight();
+        this.player = Game.thePlayer;
 
-        // Zurück zum Menü
-        Button backButton = new Button("Zurück");
-        backButton.setLayoutX(10);
-        backButton.setLayoutY(10);
-        backButton.setOnAction(e -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        //this.setupBackgroundVideo(width, height);
+        UIUtils.drawImage(root, "/assets/hud/background.png", 0,0, width, height);
 
-        this.fpsLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
+        if (player.getHealth() <= 0) {
+            player.setHealth(player.getMaxHealth());
+        }
+        player.drawPlayer(root, 20 - cameraX,
+                height - 450 - cameraY);
 
-        root.getChildren().add(backButton);
+        Game.getInstance().getCurrentLevel().getBlocks().clear();
+        Game.getInstance().getCurrentLevel().getPlatforms().clear();
+        Game.getInstance().getCurrentLevel().draw(width, height, root);
+
+        // back to menu
+        UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
+
+        this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
+        this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
+        //this.setupSoundControls(width);
+        this.setupPauseOverlay(width, height);
+
+        this.drawHealth(width);
     }
 
     @Override
     public void update(double delta) {
+        if (player.getHealth() <= 0) {
+            this.handleGameOver();
+            return;
+        }
+
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        // einfache Bewegung
-        player.getLocation().setX(player.getLocation().getX() + dx);
-        player.getLocation().setY(player.getLocation().getY() + dy);
+        double gravity = Game.gravity;       // gravity strength
+        double moveSpeed = Game.moveSpeed;    // horizontal speed
+        double jumpPower = Game.jumpPower;    // jump power
+        boolean onGround = false;
+        boolean hittingCeiling = false;
 
-        if (screenManager.getInputManager().isPressed(KeyCode.W)) {
-            dy -= 4 * delta;
-            dy = -2.5;
-            dx = 0;
-        } else if (screenManager.getInputManager().isPressed(KeyCode.S)) {
-            dy += 4 * delta;
-            dy = 2.5;
-            dx = 0;
+        double x = player.getLocation().getX();
+        double y = player.getLocation().getY();
+
+        // input
+        if (screenManager.getInputManager().isPressed(KeyCode.A)) {
+            dx = -moveSpeed * delta;
+            player.setDirection(Direction.WALK_LEFT);
         } else if (screenManager.getInputManager().isPressed(KeyCode.D)) {
-            dx += 4 * delta;
-            dx = 2.5;
-            dy = 0;
-        } else if (screenManager.getInputManager().isPressed(KeyCode.A)) {
-            dx -= 4 * delta;
-            dx = -2.5;
-            dy = 0;
+            dx = moveSpeed * delta;
+            player.setDirection(Direction.WALK_RIGHT);
         } else {
-            if (dx > 0) dx = 1;
-            else dx = -1;
-
-            if (dy > 0) dy = 0.5;
-            else dy = -0.5;
+            dx = 0;
         }
 
-        if (screenManager.getInputManager().isPressed(KeyCode.F3) && screenManager.getInputManager().isPressed(KeyCode.R)) {
-            player.setLocation(new Location(width/2-10,height/2-10));
+        // gravity
+        dy += gravity * delta;
+
+        // tentative position
+        double nextX = x + dx;
+        double nextY = y + dy;
+
+        Rectangle2D nextBounds = new Rectangle2D(nextX, nextY, player.getWidth(), player.getHeight());
+
+        // platform collisions
+        for (Platform platform : Game.getInstance().getCurrentLevel().getPlatforms()) {
+            Rectangle2D pBounds = platform.getBounds();
+            platform.update(this);
+
+            if (nextBounds.intersects(pBounds)) {
+                // landing from above
+                if (y + player.getHeight() <= platform.getY()) {
+                    nextY = platform.getY() - player.getHeight();
+                    dy = 0;
+                    onGround = true;
+                }
+                // collision from below
+                if (dy < 0 && y >= platform.getY() + platform.getHeight() && nextY <= platform.getY() + platform.getHeight()) {
+                    nextY = platform.getY() + platform.getHeight();
+                    hittingCeiling = true;
+                    dy = 0;
+                } else {
+                    hittingCeiling = false;
+                }
+
+                // side collision
+                if (x + player.getWidth() <= platform.getX()) {
+                    nextX = platform.getX() - player.getWidth();
+                    dx = 0;
+                }
+                else if (x >= platform.getX() + platform.getWidth()) {
+                    nextX = platform.getX() + platform.getWidth();
+                    dx = 0;
+                }
+            }
         }
 
-        // Kollision mit Rand
-        if (player.getLocation().getX() <= 20 || player.getLocation().getX() >= width-20) dx *= -1;
-        else
-        if (player.getLocation().getY() <= 20 || player.getLocation().getY() >= height-20) dy *= -1;
+        // block collisions
+        for (Block block : Game.getInstance().getCurrentLevel().getBlocks()) {
+            Rectangle2D pBounds = block.getBounds();
+            block.update();
 
-        this.fpsLbl.setText("FPS: " + (int) screenManager.getCurrentFps());
-        this.player.update();
+            if (nextBounds.intersects(pBounds) && block.isActive()) {
+                block.onCollide(player);
+
+                if (block.isCollideAble()) {
+                    // landing from above
+                    if (y + player.getHeight() <= block.getLocation().getY()) {
+                        nextY = block.getLocation().getY() - player.getHeight();
+                        nextX += block.getDeltaX(); // follow moving platform x movement
+                        dy = 0;
+                        onGround = true;
+                    }
+                    // left
+                    else if (x + player.getWidth() <= block.getLocation().getX()) {
+                        nextX = block.getLocation().getX() - player.getWidth();
+                        dx = 0;
+                    }
+                    // right
+                    else if (x >= block.getLocation().getX() + block.getWidth()) {
+                        nextX = block.getLocation().getX() + block.getWidth();
+                        dx = 0;
+                    }
+                }
+            }
+        }
+
+        // window bounds
+        if (nextX < 0) nextX = 0;
+        //if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
+
+        // fell out of the world -> game over
+        double screenNextY = nextY - this.cameraY;
+        if (screenNextY + player.getHeight() > height) {
+            if (player.getHealth() > 0) {
+                player.setHealth(0);
+            }
+            this.handleGameOver();
+            return;
+        }
+
+        // jump (only if on ground)
+        if (screenManager.getInputManager().isPressed(KeyCode.SPACE) && dy == 0 && !hittingCeiling) {
+            dy = -jumpPower * delta;
+            player.setDirection(Direction.JUMP);
+        }
+
+        // apply position
+        player.getLocation().setX(nextX);
+        player.getLocation().setY(nextY);
+
+        this.updateCamera(width, height);
+
+        this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
+                " | onGround: " + onGround +
+                " | moveSpeed: " + moveSpeed +
+                " | jumpPower: " + jumpPower +
+                " | cameraX: " + (int) cameraX +
+                " | cameraY: " + (int) cameraY +
+                " | Location: " + player.getLocation().toString());
+
+        int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
+        this.healthLbl.setText("HP: " + hpPercent + "%");
+
+        player.update();
     }
 
     @Override
@@ -94,5 +242,163 @@ public class GameScreen implements GuiScreen {
     public String getName() {
         return "GameScreen";
     }
-}
 
+    private void updateCamera(double width, double height) {
+        double playerScreenX = player.getLocation().getX() - this.cameraX;
+        double playerScreenY = player.getLocation().getY() - this.cameraY;
+
+        double targetCamX = this.cameraX;
+        double targetCamY = this.cameraY;
+
+        if (playerScreenX > width - this.marginX) {
+            targetCamX += playerScreenX - (width - this.marginX);
+        } else if (playerScreenX < this.marginX) {
+            targetCamX -= (this.marginX - playerScreenX);
+        }
+
+        if (playerScreenY > height - this.marginY) {
+            targetCamY += playerScreenY - (height - this.marginY);
+        } else if (playerScreenY < this.marginY) {
+            targetCamY -= (this.marginY - playerScreenY);
+        }
+
+        // sanftes Folgen (definiert durch cameraSmooth)
+        this.cameraX += (targetCamX - this.cameraX) * this.cameraSmooth;
+        this.cameraY += (targetCamY - this.cameraY) * this.cameraSmooth;
+
+        if (this.cameraX < 0) this.cameraX = 0;
+        if (this.cameraY < 0) this.cameraY = 0;
+    }
+
+    private void setupPauseOverlay(double width, double height) {
+        this.pauseOverlay = new Pane();
+        UIUtils.drawRect(pauseOverlay, 0, 0, width, height, Color.BLACK).setOpacity(0.5);
+        Text title = UIUtils.drawCenteredText(pauseOverlay, "Pause", 0, height / 2 - 120, false);
+        title.setFill(Color.WHITE);
+
+        UIUtils.drawCenteredButton(pauseOverlay, "Weiter", 0, height / 2 - 50, false, this::togglePause);
+        UIUtils.drawCenteredButton(pauseOverlay, "Zum Menu", 0, height / 2 + 20, false, () -> {
+            this.paused = false;
+            this.pauseOverlay.setVisible(false);
+            screenManager.showScreen(new MainMenuScreen(screenManager));
+        });
+
+        this.pauseOverlay.setVisible(false);
+        root.getChildren().add(pauseOverlay);
+    }
+
+    private void togglePause() {
+        this.paused = !this.paused;
+        if (this.pauseOverlay != null) {
+            this.pauseOverlay.setVisible(this.paused);
+        }
+    }
+
+    private void handleGameOver() {
+        if (this.gameOverTriggered) {
+            return;
+        }
+        this.gameOverTriggered = true;
+        if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
+            this.screenManager.showScreen(new MainMenuScreen(screenManager));
+        }
+    }
+
+    private void setupBackgroundVideo(double width, double height) {
+        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4d";
+        File file = new File(videoPath);
+        if (!file.exists()) {
+            //UIUtils.drawRect(root, 0, 0, width, height, Color.rgb(28, 20, 20));
+            UIUtils.drawImage(root, "/assets/hud/background.png", 0,0, width, height);
+            return;
+        }
+
+        try {
+            Media media = new Media(file.toURI().toString());
+            MediaPlayer player = new MediaPlayer(media);
+            player.setCycleCount(MediaPlayer.INDEFINITE);
+            MediaView view = new MediaView(player);
+            view.setFitWidth(width);
+            view.setFitHeight(height);
+            view.setPreserveRatio(false);
+            root.getChildren().add(view); // add first so other nodes render above
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Could not load video: " + videoPath);
+            e.printStackTrace();
+            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
+        }
+    }
+
+    private void setupSoundControls(double width) {
+        double panelWidth = 220;
+        double panelHeight = 120;
+        double x = width - panelWidth - 20;
+        double y = 80;
+
+        UIUtils.drawRect(root, x, y, panelWidth, panelHeight, Color.BLACK).setOpacity(0.55);
+        Text title = UIUtils.drawText(root, "Sound", x + 10, y + 22);
+        title.setFill(Color.WHITE);
+
+        this.volumeStep = (int) Math.round(SoundManager.getVolume() * 5);
+        this.volumeLbl = UIUtils.drawText(root, "", x + 10, y + 45);
+        this.volumeLbl.setFill(Color.WHITE);
+
+        UIUtils.drawButton(root, "-", x + 10, y + 60, () -> changeVolume(-1));
+        UIUtils.drawButton(root, "+", x + 50, y + 60, () -> changeVolume(1));
+        this.muteBtn = UIUtils.drawButton(root, "", x + 90, y + 60, this::toggleMute);
+
+        this.updateVolumeLabel();
+        this.updateMuteButton();
+    }
+
+    private void drawHealth(double width) {
+        int heartSize = 32;
+        int padding = 4;
+        int maxLives = (int) player.getMaxHealth();
+
+        double lives = player.getHealth();
+
+        int startX = (int) (width - (maxLives * (heartSize + padding)) - 16);
+
+        for (int i = 0; i < maxLives; i++) {
+            int x = startX + i * (heartSize + padding);
+
+            if (lives >= i + 1) {
+                UIUtils.drawImage(root, "/assets/hud/heart_full.png", x, 16, heartSize, heartSize);
+            } else if (lives > i && lives < i + 1) {
+                UIUtils.drawImage(root, "/assets/hud/heart_half.png", x, 16, heartSize, heartSize);
+
+            } else {
+                UIUtils.drawImage(root, "/assets/hud/heart_empty.png", x, 16, heartSize, heartSize);
+            }
+        }
+    }
+
+    private void changeVolume(int delta) {
+        this.volumeStep = Math.max(0, Math.min(5, this.volumeStep + delta));
+        double newVolume = this.volumeStep / 5.0;
+        SoundManager.setVolume(newVolume);
+        if (SoundManager.isMuted() && newVolume > 0) {
+            SoundManager.setMuted(false);
+        }
+        this.updateVolumeLabel();
+        this.updateMuteButton();
+    }
+
+    private void toggleMute() {
+        SoundManager.setMuted(!SoundManager.isMuted());
+        this.updateMuteButton();
+        this.updateVolumeLabel();
+    }
+
+    private void updateVolumeLabel() {
+        int percent = (int) Math.round(SoundManager.getVolume() * 100);
+        String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
+        this.volumeLbl.setText("Lautstaerke: " + percent + "% (" + this.volumeStep + "/5)" + muteSuffix);
+    }
+
+    private void updateMuteButton() {
+        this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+    }
+}

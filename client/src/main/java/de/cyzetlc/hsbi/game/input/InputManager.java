@@ -1,7 +1,7 @@
 package de.cyzetlc.hsbi.game.input;
 
-import de.cyzetlc.hsbi.game.events.InputType;
-import de.cyzetlc.hsbi.game.events.KeyInputEvent;
+import de.cyzetlc.hsbi.game.events.input.InputType;
+import de.cyzetlc.hsbi.game.events.input.KeyInputEvent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 

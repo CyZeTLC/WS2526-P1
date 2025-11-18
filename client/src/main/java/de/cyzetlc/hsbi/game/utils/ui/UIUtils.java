@@ -6,6 +6,7 @@ import de.cyzetlc.hsbi.game.audio.SoundManager;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -147,6 +148,29 @@ public class UIUtils {
         Button button = new Button(label);
         button.setLayoutX(x);
         button.setLayoutY(y);
+        button.setFocusTraversable(false);
+        button.setOnAction(e -> {
+            SoundManager.play(Sound.CLICK);
+            onClick.run();
+        });
+        parent.getChildren().add(button);
+        return button;
+    }
+
+    /**
+     * Zeichnet einen einfachen Button in eine Pane.
+     *
+     * @param parent Pane, in die der Button eingefügt wird
+     * @param x      X-Position
+     * @param y      Y-Position
+     * @return der erstellte Button
+     */
+    public static Button drawButton(Pane parent, String label, double x, double y, String id, Runnable onClick) {
+        Button button = new Button(label);
+        button.setLayoutX(x);
+        button.setLayoutY(y);
+        button.setFocusTraversable(false);
+        button.setId(id);
         button.setOnAction(e -> {
             SoundManager.play(Sound.CLICK);
             onClick.run();
@@ -175,8 +199,34 @@ public class UIUtils {
      * @param y      Y-Position
      * @return der erstellte Button
      */
+    public static Button drawButton(Pane parent, String label, double x, double y, String id) {
+        return drawButton(parent, label, x, y, id, () -> {});
+    }
+
+    /**
+     * Zeichnet einen einfachen Button in eine Pane.
+     *
+     * @param parent Pane, in die der Button eingefügt wird
+     * @param x      X-Position
+     * @param y      Y-Position
+     * @return der erstellte Button
+     */
     public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical, Runnable onClick) {
         Button button = drawButton(parent, label, x, y, onClick);
+        centerButton(button, parent, vertical);
+        return button;
+    }
+
+    /**
+     * Zeichnet einen einfachen Button in eine Pane.
+     *
+     * @param parent Pane, in die der Button eingefügt wird
+     * @param x      X-Position
+     * @param y      Y-Position
+     * @return der erstellte Button
+     */
+    public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical, String id, Runnable onClick) {
+        Button button = drawButton(parent, label, x, y, id, onClick);
         centerButton(button, parent, vertical);
         return button;
     }
@@ -233,5 +283,44 @@ public class UIUtils {
         view.setFitHeight(height);
         parent.getChildren().add(view);
         return view;
+    }
+
+    public static Slider drawCenteredSlider(Pane parent, double min, double max, double value, double y, boolean verticalCenter) {
+
+        Slider slider = new Slider(min, max, value);
+        slider.applyCss();
+        slider.setPrefWidth(200);
+        parent.getChildren().add(slider);
+
+        Runnable doCenter = () -> {
+            double sliderWidth = slider.getWidth();
+            double sliderHeight = slider.getHeight();
+
+            double x = (parent.getWidth() - sliderWidth) / 2.0;
+            slider.setLayoutX(x);
+
+            if (verticalCenter) {
+                double yCentered = (parent.getHeight() - sliderHeight) / 2.0;
+                slider.setLayoutY(yCentered);
+            } else {
+                slider.setLayoutY(y);
+            }
+        };
+
+        Platform.runLater(doCenter);
+
+        ChangeListener<Number> parentSizeListener = (obs, o, n) -> Platform.runLater(doCenter);
+        parent.widthProperty().addListener(parentSizeListener);
+        if (verticalCenter) parent.heightProperty().addListener(parentSizeListener);
+
+        slider.widthProperty().addListener((obs, o, n) -> Platform.runLater(doCenter));
+
+        return slider;
+    }
+
+
+    public static double getTextWidth(Text text) {
+        text.applyCss();
+        return text.getLayoutBounds().getWidth();
     }
 }

@@ -7,5 +7,7 @@ public interface GuiScreen {
 
     String getName();
 
+    void initialize();
+
     default void update(double delta) {}
 }

@@ -4,8 +4,10 @@ import de.cyzetlc.hsbi.game.input.InputManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
@@ -35,6 +37,7 @@ public class ScreenManager {
         this.stage.setFullScreen(true);
         this.stage.setFullScreenExitHint("");
         this.stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        this.stage.getIcons().add(new Image(getClass().getResource("/assets/icon.png").toExternalForm()));
         this.stage.show();
 
         this.inputManager = new InputManager();
@@ -74,6 +77,7 @@ public class ScreenManager {
 
     public void showScreen(GuiScreen screen) {
         this.currentScreen = screen;
+        screen.initialize();
         Platform.runLater(() -> stage.getScene().setRoot(screen.getRoot()));
     }
 
