@@ -12,6 +12,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class ScreenManager {
     private final Stage stage;
@@ -26,6 +29,8 @@ public class ScreenManager {
     private boolean running = true;
 
     private InputManager inputManager;
+
+    private List<GuiScreen> screenList = new ArrayList<>();
 
     public ScreenManager(Stage stage) {
         this.stage = stage;
@@ -77,7 +82,11 @@ public class ScreenManager {
 
     public void showScreen(GuiScreen screen) {
         this.currentScreen = screen;
-        screen.initialize();
+        if (!this.screenList.contains(screen)) {
+            screen.initialize();
+        }
+
+        this.screenList.add(screen);
         Platform.runLater(() -> stage.getScene().setRoot(screen.getRoot()));
     }
 

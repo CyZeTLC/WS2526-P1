@@ -43,6 +43,9 @@ public class Game extends Application {
     @Getter @Setter
     private Level currentLevel;
 
+    @Getter
+    private MainMenuScreen mainMenuScreen;
+
     public static double gravity = 15;       // Stärke der Schwerkraft
     public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
     public static double jumpPower = 800;    // Sprungkraft
@@ -82,7 +85,8 @@ public class Game extends Application {
         getLogger().info("Loading ScreenManger..");
 
         screenManager = new ScreenManager(primaryStage);
-        screenManager.showScreen(new MainMenuScreen(screenManager));
+        mainMenuScreen = new MainMenuScreen(screenManager);
+        screenManager.showScreen(mainMenuScreen);
 
         getLogger().info("ScreenManager loaded & displayed MainMenu successfully!");
         getLogger().info("Client started successfully!");

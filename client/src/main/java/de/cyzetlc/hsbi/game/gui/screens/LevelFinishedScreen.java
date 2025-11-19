@@ -34,7 +34,7 @@ public class LevelFinishedScreen implements GuiScreen {
             Game.getInstance().getScreenManager().showScreen(new GameScreen(Game.getInstance().getScreenManager()));
         });
         UIUtils.drawCenteredButton(root, "Zum Hauptmenü", 0, height / 2 + 230, false, "mainmenu-button", () -> {
-            Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
+            Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen());
         });
 
         long millis = System.currentTimeMillis() - Game.getInstance().getCurrentLevel().getLevelStarted();

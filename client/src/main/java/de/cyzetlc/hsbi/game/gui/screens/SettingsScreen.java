@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.audio.Music;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
@@ -39,7 +40,7 @@ public class SettingsScreen implements GuiScreen {
             // wenn ingame zurück
 
             // sonst
-            screenManager.showScreen(new MainMenuScreen(screenManager));
+            screenManager.showScreen(Game.getInstance().getMainMenuScreen());
         });
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
