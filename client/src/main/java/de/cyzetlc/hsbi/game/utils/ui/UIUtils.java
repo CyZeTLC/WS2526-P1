@@ -295,7 +295,7 @@ public class UIUtils {
      * Zeichnet einen animierten Hintergrund als einfache Frame-Schleife.
      */
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, String... framePaths) {
-        return drawAnimatedBackground(parent, width, height, Duration.millis(180), framePaths);
+        return drawAnimatedBackground(parent, width, height, Duration.millis(300), framePaths);
     }
 
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, Duration frameDuration, String... framePaths) {
