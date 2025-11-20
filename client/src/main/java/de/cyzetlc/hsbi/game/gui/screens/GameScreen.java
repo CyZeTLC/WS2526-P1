@@ -67,7 +67,10 @@ public class GameScreen implements GuiScreen {
         this.player = Game.thePlayer;
 
         //this.setupBackgroundVideo(width, height);
-        UIUtils.drawImage(root, "/assets/hud/background.png", 0,0, width, height);
+        UIUtils.drawAnimatedBackground(root, width, height,
+                "/assets/hud/BackgroundMainZustand1.png",
+                "/assets/hud/BackgroundMainZustand2.png",
+                "/assets/hud/BackgroundMainZustand3.png");
 
         if (player.getHealth() <= 0) {
             player.setHealth(player.getMaxHealth());
@@ -309,7 +312,10 @@ public class GameScreen implements GuiScreen {
         File file = new File(videoPath);
         if (!file.exists()) {
             //UIUtils.drawRect(root, 0, 0, width, height, Color.rgb(28, 20, 20));
-            UIUtils.drawImage(root, "/assets/hud/background.png", 0,0, width, height);
+            UIUtils.drawAnimatedBackground(root, width, height,
+                    "/assets/hud/BackgroundMainZustand1.png",
+                    "/assets/hud/BackgroundMainZustand2.png",
+                    "/assets/hud/BackgroundMainZustand3.png");
             return;
         }
 

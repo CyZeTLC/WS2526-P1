@@ -25,7 +25,10 @@ public class LevelFinishedScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
+        UIUtils.drawAnimatedBackground(root, width, height,
+                "/assets/hud/BackgroundMainZustand1.png",
+                "/assets/hud/BackgroundMainZustand2.png",
+                "/assets/hud/BackgroundMainZustand3.png");
 
         UIUtils.drawRect(root, width/2 - 300, height/2 - 300, 600, 600, Color.BLACK).setOpacity(0.4);
         UIUtils.drawCenteredText(root, "Level geschafft!", 0, 50, false).setId("menu-title");

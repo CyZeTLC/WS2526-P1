@@ -34,7 +34,10 @@ public class SettingsScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
+        UIUtils.drawAnimatedBackground(root, width, height,
+                "/assets/hud/BackgroundMainZustand1.png",
+                "/assets/hud/BackgroundMainZustand2.png",
+                "/assets/hud/BackgroundMainZustand3.png");
         UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
         UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
             // wenn ingame zurück
