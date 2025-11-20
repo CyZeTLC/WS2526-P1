@@ -15,6 +15,8 @@ public class SoundManager {
 
     private static final Map<String, Media> mediaCache = new HashMap<>();
     private static double globalVolume = 1.0;
+    private static final Object duckLock = new Object();
+    private static int duckDepth = 0;
 
     @Getter
     private static boolean muted = false;
@@ -54,6 +56,36 @@ public class SoundManager {
         } catch (Exception e) {
             System.err.println("Fehler beim Abspielen von Sound: " + sound.path);
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Spielt einen Soundeffekt und duckt gleichzeitig die Hintergrundmusik auf einen Zielwert.
+     *
+     * @param sound          zu spielender Effekt
+     * @param volumeOverride Lautstaerke des Effekts (0.0 - 1.0)
+     * @param duckVolume     Lautstaerke fuer die Hintergrundmusik waehrend des Effekts (0.0 - 1.0)
+     */
+    public static void playWithDuck(Sound sound, double volumeOverride, double duckVolume) {
+        try {
+            Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
+            MediaPlayer player = new MediaPlayer(media);
+
+            double effectiveVolume = muted ? 0.0 : Math.min(Math.max(0.0, volumeOverride), 1.0);
+            player.setVolume(effectiveVolume);
+
+            duckBackground(duckVolume);
+
+            player.setOnEndOfMedia(() -> {
+                player.dispose();
+                unduckBackground();
+            });
+            player.setOnError(SoundManager::unduckBackground);
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Fehler beim Abspielen von Sound: " + sound.path);
+            e.printStackTrace();
+            unduckBackground();
         }
     }
 
@@ -121,6 +153,27 @@ public class SoundManager {
     private static void applyVolume(MediaPlayer player) {
         if (player != null) {
             player.setVolume(muted ? 0.0 : globalVolume);
+        }
+    }
+
+    private static void duckBackground(double duckVolume) {
+        synchronized (duckLock) {
+            duckDepth++;
+            if (backgroundPlayer != null) {
+                double target = Math.min(Math.max(0.0, duckVolume), globalVolume);
+                backgroundPlayer.setVolume(muted ? 0.0 : target);
+            }
+        }
+    }
+
+    private static void unduckBackground() {
+        synchronized (duckLock) {
+            if (duckDepth > 0) {
+                duckDepth--;
+            }
+            if (duckDepth == 0) {
+                applyVolume(backgroundPlayer);
+            }
         }
     }
 

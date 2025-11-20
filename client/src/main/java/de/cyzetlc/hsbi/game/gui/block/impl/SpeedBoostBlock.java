@@ -27,7 +27,7 @@ public class SpeedBoostBlock extends PerkBlock {
             this.isTriggered = true;
             this.setActive(false); // block verschwindet
 
-            SoundManager.play(Sound.SPEED_BUFF, 0.35);
+            SoundManager.playWithDuck(Sound.SPEED_BUFF, 0.5, 0.12);
 
             PauseTransition delay = new PauseTransition(Duration.seconds(10));
             delay.setOnFinished(event -> {
