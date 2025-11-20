@@ -39,6 +39,25 @@ public class SoundManager {
     }
 
     /**
+     * Spielt einen kurzen Soundeffekt mit expliziter Lautstaerke (0.0 - 1.0).
+     * Respektiert mute und begrenzt auf die aktuell gesetzte globale Lautstaerke.
+     */
+    public static void play(Sound sound, double volumeOverride) {
+        try {
+            Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
+
+            MediaPlayer player = new MediaPlayer(media);
+            double effectiveVolume = muted ? 0.0 : Math.min(Math.max(0.0, volumeOverride), globalVolume);
+            player.setVolume(effectiveVolume);
+            player.setOnEndOfMedia(player::dispose); // Ressourcen freigeben
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Fehler beim Abspielen von Sound: " + sound.path);
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Spielt Musik im Hintergrund. Stoppt vorher laufende Musik automatisch.
      * @param music   Audiodatei
      * @param looping true, wenn die Musik unendlich wiederholt werden soll

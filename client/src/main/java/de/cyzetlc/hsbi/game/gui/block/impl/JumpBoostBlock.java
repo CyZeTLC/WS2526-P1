@@ -27,7 +27,7 @@ public class JumpBoostBlock extends PerkBlock {
             this.isTriggered = true;
             this.setActive(false); // block verschwindet
 
-            SoundManager.play(Sound.JUMP_BOOST);
+            SoundManager.play(Sound.JUMP_BOOST, 0.35);
 
             PauseTransition delay = new PauseTransition(Duration.seconds(10));
             delay.setOnFinished(event -> {
