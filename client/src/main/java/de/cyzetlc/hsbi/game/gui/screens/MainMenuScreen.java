@@ -6,6 +6,7 @@ import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
@@ -26,10 +27,9 @@ public class MainMenuScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawAnimatedBackground(root, width, height,
-                "/assets/hud/BackgroundMainZustand1.png",
-                "/assets/hud/BackgroundMainZustand2.png",
-                "/assets/hud/BackgroundMainZustand3.png");
+        UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
+                "/assets/hud/BackgroundZustand1.png",
+                "/assets/hud/BackgroundZustand2.png");
 
         UIUtils.drawCenteredText(root, "STEAL THE FILES", 0, height / 2 - 230, false).setId("menu-title");
         UIUtils.drawCenteredButton(root, "Spiel starten", 0, height / 2 - 150, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));

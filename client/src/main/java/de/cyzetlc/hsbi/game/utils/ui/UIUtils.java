@@ -12,13 +12,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.util.Arrays;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UIUtils {
 
@@ -295,13 +298,44 @@ public class UIUtils {
      * Zeichnet einen animierten Hintergrund als einfache Frame-Schleife.
      */
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, String... framePaths) {
-        return drawAnimatedBackground(parent, width, height, Duration.millis(300), framePaths);
+        return drawAnimatedBackground(parent, width, height, Duration.millis(800), framePaths);
     }
 
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, Duration frameDuration, String... framePaths) {
-        Image[] frames = Arrays.stream(framePaths)
-                .map(path -> new Image(UIUtils.class.getResourceAsStream(path)))
-                .toArray(Image[]::new);
+        List<Image> frameList = new ArrayList<>();
+        for (String path : framePaths) {
+            InputStream stream = UIUtils.class.getResourceAsStream(path);
+            if (stream != null) {
+                frameList.add(new Image(stream));
+            }
+        }
+
+        if (frameList.isEmpty()) {
+            String[] fallbackOld = {
+                    "/assets/hud/BackgroundMainZustand1.png",
+                    "/assets/hud/BackgroundMainZustand2.png",
+                    "/assets/hud/BackgroundMainZustand3.png"
+            };
+            for (String path : fallbackOld) {
+                InputStream stream = UIUtils.class.getResourceAsStream(path);
+                if (stream != null) {
+                    frameList.add(new Image(stream));
+                }
+            }
+        }
+
+        if (frameList.isEmpty()) {
+            InputStream fallback = UIUtils.class.getResourceAsStream("/assets/hud/background.png");
+            if (fallback != null) {
+                frameList.add(new Image(fallback));
+            }
+        }
+
+        if (frameList.isEmpty()) {
+            frameList.add(new WritableImage(1, 1));
+        }
+
+        Image[] frames = frameList.toArray(new Image[0]);
 
         ImageView view = new ImageView(frames[0]);
         view.setX(0);
@@ -311,16 +345,18 @@ public class UIUtils {
         view.setPreserveRatio(false);
         parent.getChildren().add(view);
 
-        int[] frameIndex = {0};
-        Timeline loop = new Timeline(
-                new KeyFrame(frameDuration, e -> {
-                    frameIndex[0] = (frameIndex[0] + 1) % frames.length;
-                    view.setImage(frames[frameIndex[0]]);
-                })
-        );
-        loop.setCycleCount(Animation.INDEFINITE);
-        loop.play();
-        view.getProperties().put("backgroundLoop", loop); // keep reference alive
+        if (frames.length > 1) {
+            int[] frameIndex = {0};
+            Timeline loop = new Timeline(
+                    new KeyFrame(frameDuration, e -> {
+                        frameIndex[0] = (frameIndex[0] + 1) % frames.length;
+                        view.setImage(frames[frameIndex[0]]);
+                    })
+            );
+            loop.setCycleCount(Animation.INDEFINITE);
+            loop.play();
+            view.getProperties().put("backgroundLoop", loop); // keep reference alive
+        }
         return view;
     }
 

@@ -11,6 +11,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
@@ -34,10 +35,9 @@ public class SettingsScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawAnimatedBackground(root, width, height,
-                "/assets/hud/BackgroundMainZustand1.png",
-                "/assets/hud/BackgroundMainZustand2.png",
-                "/assets/hud/BackgroundMainZustand3.png");
+        UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
+                "/assets/hud/BackgroundZustand1.png",
+                "/assets/hud/BackgroundZustand2.png");
         UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
         UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
             // wenn ingame zurück

@@ -20,6 +20,7 @@ import javafx.scene.text.Text;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.util.Duration;
 import lombok.Getter;
 
 import java.io.File;
@@ -67,10 +68,9 @@ public class GameScreen implements GuiScreen {
         this.player = Game.thePlayer;
 
         //this.setupBackgroundVideo(width, height);
-        UIUtils.drawAnimatedBackground(root, width, height,
-                "/assets/hud/BackgroundMainZustand1.png",
-                "/assets/hud/BackgroundMainZustand2.png",
-                "/assets/hud/BackgroundMainZustand3.png");
+        UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
+                "/assets/hud/BackgroundZustand1.png",
+                "/assets/hud/BackgroundZustand2.png");
 
         if (player.getHealth() <= 0) {
             player.setHealth(player.getMaxHealth());
@@ -312,10 +312,9 @@ public class GameScreen implements GuiScreen {
         File file = new File(videoPath);
         if (!file.exists()) {
             //UIUtils.drawRect(root, 0, 0, width, height, Color.rgb(28, 20, 20));
-            UIUtils.drawAnimatedBackground(root, width, height,
-                    "/assets/hud/BackgroundMainZustand1.png",
-                    "/assets/hud/BackgroundMainZustand2.png",
-                    "/assets/hud/BackgroundMainZustand3.png");
+            UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
+                    "/assets/hud/BackgroundZustand1.png",
+                    "/assets/hud/BackgroundZustand2.png");
             return;
         }
 
