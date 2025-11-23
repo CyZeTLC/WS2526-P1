@@ -23,6 +23,7 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(2000, height - 400, 500, 600, root));
         platforms.add(new Platform(780, height - 450, 100, 50, root));
 
+        this.blocks.add(new USBStickBlock(new Location(1200, height - 332)));
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
