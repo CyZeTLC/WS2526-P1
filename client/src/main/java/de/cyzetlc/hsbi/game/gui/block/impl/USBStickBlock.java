@@ -33,6 +33,8 @@ public class USBStickBlock extends PerkBlock {
         super(location);
         this.setMaterial(Material.USB_STICK);
         this.setCollideAble(false);
+        this.setWidth(28);
+        this.setHeight(60);
     }
 
     @Override
