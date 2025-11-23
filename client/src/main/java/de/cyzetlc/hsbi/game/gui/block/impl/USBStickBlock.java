@@ -18,8 +18,7 @@ public class USBStickBlock extends PerkBlock {
             "/assets/USB-Stick/USB-Stick-Raw.png",
             "/assets/USB-Stick/USB-Stick-Gelb.png",
             "/assets/USB-Stick/USB-Stick-Gr\u00fcn.png",
-            "/assets/USB-Stick/USB-Stick-Rot.png",
-            "/assets/USB-Stick/USB-Stick-Totenkopf.png"
+            "/assets/USB-Stick/USB-Stick-Rot.png"
     };
 
     private final List<Image> frames = new ArrayList<>();
