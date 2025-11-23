@@ -19,6 +19,28 @@
     </properties>
 
     <dependencies>
+        <!-- JavaFX (platform-specific classifier: win) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <classifier>win</classifier>
+        </dependency>
+
         <dependency>
             <groupId>de.cyzetlc.hsbi</groupId>
             <artifactId>core</artifactId>
