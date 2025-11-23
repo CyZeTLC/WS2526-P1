@@ -15,12 +15,15 @@ import javafx.util.Duration;
 public class FinishBlock extends AnimatedBlock {
     public FinishBlock(Location location) {
         super(location, new String[] {
-                "/assets/tileset/finish/finish_first.png",
-                "/assets/tileset/finish/finish_second.png"
+                "/assets/USB-Stick/PortalTutorial/Portal1-removebg-preview.png",
+                "/assets/USB-Stick/PortalTutorial/Portal2-removebg-preview.png",
+                "/assets/USB-Stick/PortalTutorial/Portal3-removebg-preview.png",
+                "/assets/USB-Stick/PortalTutorial/Portal4-removebg-preview.png",
+                "/assets/USB-Stick/PortalTutorial/Portal5-removebg-preview.png"
         });
         this.setMaterial(Material.FINISH_FLAG);
         this.setCollideAble(false);
-        this.setWidth(45);
+        this.setWidth(90);
         this.setHeight(90);
     }
 

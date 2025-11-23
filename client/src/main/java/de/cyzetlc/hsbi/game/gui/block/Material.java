@@ -10,7 +10,7 @@ public enum Material {
     SPEED_PERK("/assets/tileset/speed.png"),
     USB_STICK("/assets/USB-Stick/USB-Stick-Raw.png"),
     FOLDER_ITEM("/assets/tileset/folder.png"),
-    FINISH_FLAG("/assets/tileset/finish/finish_first.png"),
+    FINISH_FLAG("/assets/USB-Stick/PortalTutorial/Portal1-removebg-preview.png"),
     SERVER("/assets/hud/PlatformServerMehreZustände/Zugeschnitten1.png"),
     FLOATING_PLATFORM("/assets/movingplatform/1MovingPlatform32x64.png");
 
