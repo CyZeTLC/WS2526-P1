@@ -63,6 +63,8 @@ public class GameScreen implements GuiScreen {
 
     @Override
     public void initialize() {
+        root.getChildren().clear();
+
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
         this.player = Game.thePlayer;

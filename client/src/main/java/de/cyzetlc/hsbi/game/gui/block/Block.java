@@ -75,7 +75,9 @@ public abstract class Block {
         this.setWidth((float) this.sprite.getFitWidth());
         this.setHeight((float) this.sprite.getFitHeight());
 
-        pane.getChildren().add(sprite);
+        if (!pane.getChildren().contains(sprite)) {
+            pane.getChildren().add(sprite);
+        }
     }
 
     public void setActive(boolean active) {
