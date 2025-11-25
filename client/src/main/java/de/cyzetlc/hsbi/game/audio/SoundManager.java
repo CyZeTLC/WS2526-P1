@@ -129,6 +129,18 @@ public class SoundManager {
         }
     }
 
+    /** Laedt alle Sounds und Musiktitel einmalig in den Cache (async). */
+    public static void preloadAll() {
+        CompletableFuture.runAsync(() -> {
+            for (Sound sound : Sound.values()) {
+                mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
+            }
+            for (Music music : Music.values()) {
+                mediaCache.computeIfAbsent(music.path(), SoundManager::loadMedia);
+            }
+        });
+    }
+
     /** Setzt die globale Lautstaerke (0.0 - 1.0) */
     public static void setVolume(double volume) {
         globalVolume = Math.max(0, Math.min(1, volume));
