@@ -5,7 +5,9 @@ import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.event.EventManager;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
+import de.cyzetlc.hsbi.game.gui.screens.LoadingScreen;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
+import de.cyzetlc.hsbi.game.gui.screens.SettingsScreen;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.listener.KeyListener;
@@ -45,6 +47,9 @@ public class Game extends Application {
 
     @Getter
     private MainMenuScreen mainMenuScreen;
+
+    @Getter
+    private SettingsScreen settingsScreen;
 
     public static double gravity = 15;       // Stärke der Schwerkraft
     public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
@@ -86,7 +91,8 @@ public class Game extends Application {
 
         screenManager = new ScreenManager(primaryStage);
         mainMenuScreen = new MainMenuScreen(screenManager);
-        screenManager.showScreen(mainMenuScreen);
+        settingsScreen = new SettingsScreen(screenManager);
+        screenManager.showScreen(new LoadingScreen(screenManager));
 
         getLogger().info("ScreenManager loaded & displayed MainMenu successfully!");
         getLogger().info("Client started successfully!");
