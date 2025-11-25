@@ -3,6 +3,10 @@ package de.cyzetlc.hsbi.game.gui.screens;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -27,9 +31,41 @@ public class MainMenuScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
-                "/assets/hud/BackgroundZustand1.png",
-                "/assets/hud/BackgroundZustand2.png");
+        /*
+        Background mit Bewegung von links nach rechts (so ähnlich wie in Minecraft halt)
+         */
+        ImageView bg1 = UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
+        ImageView bg2 = UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
+
+        bg1.setFitWidth(width);
+        bg1.setFitHeight(height);
+
+        bg2.setFitWidth(width);
+        bg2.setFitHeight(height);
+        bg2.setTranslateX(width);
+
+        double speed = 1;
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.millis(16), e -> {
+
+                    // beide verschieben sich nach rechts
+                    bg1.setTranslateX(bg1.getTranslateX() + speed);
+                    bg2.setTranslateX(bg2.getTranslateX() + speed);
+
+                    // Wenn ein Bild rechts komplett raus ist -> an linke Position setzen
+                    if (bg1.getTranslateX() >= width) {
+                        bg1.setTranslateX(bg2.getTranslateX() - width);
+                    }
+
+                    if (bg2.getTranslateX() >= width) {
+                        bg2.setTranslateX(bg1.getTranslateX() - width);
+                    }
+                })
+        );
+
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
 
         UIUtils.drawCenteredText(root, "STEAL THE FILES", 0, height / 2 - 230, false).setId("menu-title");
         UIUtils.drawCenteredButton(root, "Spiel starten", 0, height / 2 - 150, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
