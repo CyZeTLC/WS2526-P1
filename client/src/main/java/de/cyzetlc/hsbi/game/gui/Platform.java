@@ -135,19 +135,29 @@ public class Platform {
             }
 
             double currentY = y;
+            boolean failed = false;
+
             for (int j = 0; j < fullTilesY; j++) {
                 double tileDrawHeight = (j == fullTilesY - 1 && height % TILE_SIZE != 0) ? remainingHeight : TILE_SIZE;
                 double tileY = currentY;
 
-                ImageView tileView = tiles.get(index++);
-                tileView.setVisible(true);
-                tileView.setX(tileX - camX);
-                tileView.setY(tileY - camY);
-                tileView.setFitWidth(tileDrawWidth);
-                tileView.setFitHeight(tileDrawHeight);
+                try {
+                    ImageView tileView = tiles.get(index++);
+                    tileView.setVisible(true);
+                    tileView.setX(tileX - camX);
+                    tileView.setY(tileY - camY);
+                    tileView.setFitWidth(tileDrawWidth);
+                    tileView.setFitHeight(tileDrawHeight);
+                } catch (IndexOutOfBoundsException e) {
+                    Game.getLogger().error(e.getMessage());
+                    failed = true;
+                    break;
+                }
 
                 currentY += tileDrawHeight;
             }
+
+            if (failed) break;
         }
     }
 
