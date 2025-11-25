@@ -3,6 +3,7 @@ package de.cyzetlc.hsbi.game.gui;
 import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
+import de.cyzetlc.hsbi.game.utils.ui.ImageAssets;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -19,7 +20,7 @@ public class Platform {
     private Pane pane;
 
     private static final String TILESET_PATH = Material.FLOOR.texturePath;
-    private static final Image TILESET_IMAGE = new Image(TILESET_PATH);
+    private static final Image TILESET_IMAGE = ImageAssets.get(TILESET_PATH);
     private static final int TILE_SIZE = 32;
 
     private List<ImageView> tiles = new ArrayList<>();
