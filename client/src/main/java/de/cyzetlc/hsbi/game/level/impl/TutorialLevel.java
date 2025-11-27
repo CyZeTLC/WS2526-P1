@@ -7,6 +7,10 @@ import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class TutorialLevel extends Level {
     public TutorialLevel() {
         super("Tutorial");
@@ -23,13 +27,15 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(2000, height - 400, 500, 600, root));
         platforms.add(new Platform(780, height - 450, 100, 50, root));
 
+        // Lava pools for every gap between ground platforms
+        this.addLavaBetweenPlatforms(height);
+
         // USB-Stick auf der ersten Plattform platziert
         this.blocks.add(new USBStickBlock(new Location(200, height - 360)));
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
         this.blocks.add(new FinishBlock(new Location(2400, height - 490)));
-        this.blocks.add(createLavaColumn(930, height - 80, 388, 300));
         this.blocks.add(new FolderBlock(new Location(800, height - 482)));
 
         // floating platform connects upper islands
@@ -55,6 +61,33 @@ public class TutorialLevel extends Level {
         lava.setWidth(width);
         lava.setHeight(height);
         return lava;
+    }
+
+    private void addLavaBetweenPlatforms(double sceneHeight) {
+        double lavaTop = sceneHeight - 80;
+        double lavaHeight = 300;
+
+        List<Platform> groundPlatforms = new ArrayList<>();
+        for (Platform platform : this.platforms) {
+            boolean nearGround = platform.getY() >= sceneHeight - 350;
+            boolean tallEnough = platform.getHeight() >= 400;
+            if (nearGround || tallEnough) { // skip tiny floating platforms
+                groundPlatforms.add(platform);
+            }
+        }
+        groundPlatforms.sort(Comparator.comparingDouble(Platform::getX));
+
+        for (int i = 0; i < groundPlatforms.size() - 1; i++) {
+            Platform current = groundPlatforms.get(i);
+            Platform next = groundPlatforms.get(i + 1);
+
+            double gapStart = current.getX() + current.getWidth();
+            double gapWidth = next.getX() - gapStart;
+
+            if (gapWidth > 0) {
+                this.blocks.add(createLavaColumn(gapStart, lavaTop, gapWidth, lavaHeight));
+            }
+        }
     }
 
     @Override

@@ -7,6 +7,10 @@ import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class SecondLevel extends Level {
     public SecondLevel() {
         super("Second");
@@ -29,6 +33,8 @@ public class SecondLevel extends Level {
         platforms.add(new Platform(4400, height - 360, 250, 610, root));
         platforms.add(new Platform(4800, height - 300, 400, 550, root));
 
+        this.addLavaBetweenPlatforms(height);
+
 
 // --- FLYING PLATFORMS (schwebend) ---
 
@@ -50,7 +56,6 @@ public class SecondLevel extends Level {
 // --- LAVA COLUMNS (Gefahr) ---
         blocks.add(createLavaColumn(2000, height - 200, 80, 200));
         blocks.add(createLavaColumn(2400, height - 220, 80, 220));
-        blocks.add(createLavaColumn(3200, height - 180, 100, 180));
 
 
 // --- BLOCKS / ITEMS ---
@@ -77,6 +82,33 @@ public class SecondLevel extends Level {
 
         for (Platform platform : this.platforms) {
             platform.drawPlatform();
+        }
+    }
+
+    private void addLavaBetweenPlatforms(double sceneHeight) {
+        double lavaTop = sceneHeight - 80;
+        double lavaHeight = 300;
+
+        List<Platform> groundPlatforms = new ArrayList<>();
+        for (Platform platform : this.platforms) {
+            boolean nearGround = platform.getY() >= sceneHeight - 350;
+            boolean tallEnough = platform.getHeight() >= 400;
+            if (nearGround || tallEnough) {
+                groundPlatforms.add(platform);
+            }
+        }
+        groundPlatforms.sort(Comparator.comparingDouble(Platform::getX));
+
+        for (int i = 0; i < groundPlatforms.size() - 1; i++) {
+            Platform current = groundPlatforms.get(i);
+            Platform next = groundPlatforms.get(i + 1);
+
+            double gapStart = current.getX() + current.getWidth();
+            double gapWidth = next.getX() - gapStart;
+
+            if (gapWidth > 0) {
+                this.blocks.add(createLavaColumn(gapStart, lavaTop, gapWidth, lavaHeight));
+            }
         }
     }
 
