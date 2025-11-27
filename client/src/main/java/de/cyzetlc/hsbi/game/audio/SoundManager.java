@@ -15,6 +15,8 @@ public class SoundManager {
 
     private static final Map<String, Media> mediaCache = new HashMap<>();
     private static double globalVolume = 1.0;
+    private static final double DB_BOOST = 10.0;
+    private static final double DB_FACTOR = Math.pow(10.0, DB_BOOST / 20.0); // ~3.162
     private static final Object duckLock = new Object();
     private static int duckDepth = 0;
 
@@ -49,7 +51,9 @@ public class SoundManager {
             Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
 
             MediaPlayer player = new MediaPlayer(media);
-            double effectiveVolume = muted ? 0.0 : Math.min(Math.max(0.0, volumeOverride), globalVolume);
+            double base = clamp01(volumeOverride);
+            double limited = Math.min(base, globalVolume);
+            double effectiveVolume = muted ? 0.0 : boostedVolume(limited);
             player.setVolume(effectiveVolume);
             player.setOnEndOfMedia(player::dispose); // Ressourcen freigeben
             player.play();
@@ -71,7 +75,8 @@ public class SoundManager {
             Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
             MediaPlayer player = new MediaPlayer(media);
 
-            double effectiveVolume = muted ? 0.0 : Math.min(Math.max(0.0, volumeOverride), 1.0);
+            double base = clamp01(volumeOverride);
+            double effectiveVolume = muted ? 0.0 : boostedVolume(base);
             player.setVolume(effectiveVolume);
 
             duckBackground(duckVolume);
@@ -164,7 +169,7 @@ public class SoundManager {
 
     private static void applyVolume(MediaPlayer player) {
         if (player != null) {
-            player.setVolume(muted ? 0.0 : globalVolume);
+            player.setVolume(muted ? 0.0 : boostedVolume(globalVolume));
         }
     }
 
@@ -172,8 +177,8 @@ public class SoundManager {
         synchronized (duckLock) {
             duckDepth++;
             if (backgroundPlayer != null) {
-                double target = Math.min(Math.max(0.0, duckVolume), globalVolume);
-                backgroundPlayer.setVolume(muted ? 0.0 : target);
+                double targetBase = Math.max(duckVolume, globalVolume);
+                backgroundPlayer.setVolume(muted ? 0.0 : boostedVolume(targetBase));
             }
         }
     }
@@ -215,5 +220,16 @@ public class SoundManager {
     /** Entfernt alle gecachten Media-Objekte */
     public static void clearCache() {
         mediaCache.clear();
+    }
+
+    private static double boostedVolume(double baseVolume) {
+        double boosted = clamp01(baseVolume) * DB_FACTOR;
+        return clamp01(boosted);
+    }
+
+    private static double clamp01(double value) {
+        if (value < 0.0) return 0.0;
+        if (value > 1.0) return 1.0;
+        return value;
     }
 }
