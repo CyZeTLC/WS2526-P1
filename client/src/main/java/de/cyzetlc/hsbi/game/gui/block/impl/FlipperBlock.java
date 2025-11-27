@@ -13,6 +13,10 @@ import javafx.scene.layout.Pane;
 
 public class FlipperBlock extends PerkBlock {
     private boolean collected = false;
+    private final double baseY;
+    private double frameTimer = 0;
+    private long lastFrameTimeNanos = 0L;
+    private boolean upDown = false;
 
     public FlipperBlock(Location location) {
         super(location);
@@ -20,6 +24,7 @@ public class FlipperBlock extends PerkBlock {
         this.setCollideAble(false);
         this.setWidth(0);
         this.setHeight(0);
+        this.baseY = location.getY();
     }
 
     @Override
@@ -54,5 +59,30 @@ public class FlipperBlock extends PerkBlock {
 
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        long now = System.nanoTime();
+        if (this.lastFrameTimeNanos == 0L) {
+            this.lastFrameTimeNanos = now;
+            return;
+        }
+        double deltaSeconds = (now - this.lastFrameTimeNanos) / 1_000_000_000.0;
+        this.lastFrameTimeNanos = now;
+        this.frameTimer += deltaSeconds;
+        if (this.frameTimer >= 0.6) {
+            this.frameTimer -= 0.6;
+            if (this.upDown) {
+                this.getLocation().setY(Math.max(baseY - 10, this.getLocation().getY() - 5));
+                this.upDown = false;
+            } else {
+                double nextY = this.getLocation().getY() + 5;
+                this.getLocation().setY(Math.min(baseY, nextY));
+                this.upDown = true;
+            }
+        }
     }
 }
