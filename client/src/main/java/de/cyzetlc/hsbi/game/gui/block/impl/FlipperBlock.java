@@ -34,8 +34,7 @@ public class FlipperBlock extends PerkBlock {
 
     @Override
     public void draw(Pane pane) {
-        this.pane = pane;
-        this.sprite = ImageAssets.getBlockImage(this.getMaterial());
+        super.draw(pane);
         this.sprite.setPreserveRatio(true);
 
         double targetWidth = 140;
@@ -55,9 +54,5 @@ public class FlipperBlock extends PerkBlock {
 
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
-
-        if (!pane.getChildren().contains(sprite)) {
-            pane.getChildren().add(sprite);
-        }
     }
 }
