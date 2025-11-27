@@ -34,6 +34,7 @@ public class SecondLevel extends Level {
         platforms.add(new Platform(4800, height - 300, 400, 550, root));
 
         this.addLavaBetweenPlatforms(height);
+        this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
 
 
 // --- FLYING PLATFORMS (schwebend) ---
