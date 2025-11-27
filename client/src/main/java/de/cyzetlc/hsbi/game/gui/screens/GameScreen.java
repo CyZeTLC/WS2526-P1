@@ -8,6 +8,8 @@ import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Block;
+import de.cyzetlc.hsbi.game.gui.block.impl.LaserBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.RobotEnemyBlock;
 import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
@@ -169,12 +171,35 @@ public class GameScreen implements GuiScreen {
         }
 
         // block collisions
-        for (Block block : Game.getInstance().getCurrentLevel().getBlocks()) {
+        List<Block> pendingBlocks = new ArrayList<>();
+        List<Block> blocks = Game.getInstance().getCurrentLevel().getBlocks();
+        for (Block block : blocks) {
             Rectangle2D pBounds = block.getBounds();
             block.update();
 
+            if (block instanceof RobotEnemyBlock enemy) {
+                LaserBlock laser = enemy.tryFire(player);
+                if (laser != null) {
+                    laser.draw(root);
+                    pendingBlocks.add(laser);
+                }
+            }
+
             if (nextBounds.intersects(pBounds) && block.isActive()) {
-                block.onCollide(player);
+                if (block instanceof RobotEnemyBlock enemy) {
+                    double enemyTop = enemy.getLocation().getY();
+                    boolean stomp = (y + player.getHeight() <= enemyTop + 6) && dy > 0;
+                    if (stomp) {
+                        enemy.kill();
+                        nextY = enemyTop - player.getHeight();
+                        dy = -jumpPower * delta * 0.6;
+                    } else {
+                        enemy.hitPlayer(player);
+                    }
+                    // continue with collision resolution but skip duplicate onCollide
+                } else {
+                    block.onCollide(player);
+                }
 
                 if (block.isCollideAble()) {
                     // landing from above
@@ -196,6 +221,9 @@ public class GameScreen implements GuiScreen {
                     }
                 }
             }
+        }
+        if (!pendingBlocks.isEmpty()) {
+            blocks.addAll(pendingBlocks);
         }
 
         // window bounds
