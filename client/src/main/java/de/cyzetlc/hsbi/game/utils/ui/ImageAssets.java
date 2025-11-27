@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageAssets {
-    private static HashMap<Material, ImageView> cachedBlockImages = new HashMap<>();
+    private static HashMap<Material, Image> cachedBlockImages = new HashMap<>();
 
     private static final Map<String, Image> cache = new HashMap<>();
 
@@ -36,11 +36,16 @@ public class ImageAssets {
         }
     }
 
-    public static void cacheBlockImage(Material material, ImageView view) {
-        cachedBlockImages.put(material, view);
+    public static void cacheBlockImage(Material material, Image image) {
+        cachedBlockImages.put(material, image);
     }
 
     public static ImageView getBlockImage(Material material) {
-        return cachedBlockImages.get(material);
+        Image image = cachedBlockImages.get(material);
+        if (image == null && material.texturePath != null && !material.texturePath.isEmpty()) {
+            image = new Image(ImageAssets.class.getResource(material.texturePath).toExternalForm());
+            cachedBlockImages.put(material, image);
+        }
+        return image == null ? new ImageView() : new ImageView(image);
     }
 }

@@ -11,7 +11,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -54,7 +53,10 @@ public class LoadingScreen implements GuiScreen {
          * Load assets
          */
         for (Material material : Material.values()) {
-            ImageAssets.cacheBlockImage(material, new ImageView(new Image(getClass().getResource(material.texturePath).toExternalForm())));
+            if (material.texturePath != null && !material.texturePath.isEmpty()) {
+                Image image = new Image(getClass().getResource(material.texturePath).toExternalForm());
+                ImageAssets.cacheBlockImage(material, image);
+            }
             ImageAssets.warm();
         }
 
