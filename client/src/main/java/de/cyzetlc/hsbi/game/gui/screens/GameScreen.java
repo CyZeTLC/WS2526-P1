@@ -195,6 +195,7 @@ public class GameScreen implements GuiScreen {
             if (nextBounds.intersects(pBounds) && block.isActive()) {
                 if (block instanceof GasBarrierBlock barrier && interactPressed && player.hasFlipper()) {
                     barrier.deactivate();
+                    continue;
                 }
                 if (block instanceof RobotEnemyBlock enemy) {
                     double enemyTop = enemy.getLocation().getY();

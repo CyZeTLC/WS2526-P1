@@ -54,8 +54,15 @@ public class LoadingScreen implements GuiScreen {
          */
         for (Material material : Material.values()) {
             if (material.texturePath != null && !material.texturePath.isEmpty()) {
-                Image image = new Image(getClass().getResource(material.texturePath).toExternalForm());
-                ImageAssets.cacheBlockImage(material, image);
+                try {
+                    var url = getClass().getResource(material.texturePath);
+                    if (url != null) {
+                        Image image = new Image(url.toExternalForm());
+                        ImageAssets.cacheBlockImage(material, image);
+                    }
+                } catch (Exception ignored) {
+                    // skip missing asset to avoid crash
+                }
             }
             ImageAssets.warm();
         }
