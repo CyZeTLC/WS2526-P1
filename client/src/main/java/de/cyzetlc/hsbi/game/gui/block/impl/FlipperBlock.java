@@ -33,6 +33,7 @@ public class FlipperBlock extends PerkBlock {
             return;
         }
         this.collected = true;
+        player.setFlipperCollected(true);
         SoundManager.play(Sound.CLICK);
         this.setActive(false);
     }

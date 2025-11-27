@@ -6,6 +6,8 @@ import de.cyzetlc.hsbi.game.event.impl.damage.PlayerDamageEvent;
 import java.util.Random;
 
 public class Player extends Entity {
+    private boolean flipperCollected = false;
+
     public Player() {
         super();
         this.setDisplayName("Player" + new Random().nextInt(999));
@@ -24,5 +26,13 @@ public class Player extends Entity {
     @Override
     public void update() {
 
+    }
+
+    public boolean hasFlipper() {
+        return flipperCollected;
+    }
+
+    public void setFlipperCollected(boolean flipperCollected) {
+        this.flipperCollected = flipperCollected;
     }
 }

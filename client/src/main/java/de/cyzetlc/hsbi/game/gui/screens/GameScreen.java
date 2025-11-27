@@ -9,6 +9,7 @@ import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.LaserBlock;
+import de.cyzetlc.hsbi.game.gui.block.impl.GasBarrierBlock;
 import de.cyzetlc.hsbi.game.gui.block.impl.RobotEnemyBlock;
 import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
@@ -59,6 +60,9 @@ public class GameScreen implements GuiScreen {
     private final double marginX = 400;
     private final double marginY = 150;
 
+    private Text flipperHint;
+    private boolean flipperHintShown = false;
+
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
@@ -94,6 +98,8 @@ public class GameScreen implements GuiScreen {
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
         //this.setupSoundControls(width);
         this.setupPauseOverlay(width, height);
+        this.flipperHint = UIUtils.drawText(root, "", 10, 135);
+        this.flipperHint.setVisible(false);
 
         this.drawHealth(width);
     }
@@ -113,6 +119,7 @@ public class GameScreen implements GuiScreen {
         double jumpPower = Game.jumpPower;    // jump power
         boolean onGround = false;
         boolean hittingCeiling = false;
+        boolean interactPressed = screenManager.getInputManager().isPressed(KeyCode.E);
 
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
@@ -186,6 +193,9 @@ public class GameScreen implements GuiScreen {
             }
 
             if (nextBounds.intersects(pBounds) && block.isActive()) {
+                if (block instanceof GasBarrierBlock barrier && interactPressed && player.hasFlipper()) {
+                    barrier.deactivate();
+                }
                 if (block instanceof RobotEnemyBlock enemy) {
                     double enemyTop = enemy.getLocation().getY();
                     boolean stomp = (y + player.getHeight() <= enemyTop + 6) && dy > 0;
@@ -262,6 +272,12 @@ public class GameScreen implements GuiScreen {
 
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
         this.healthLbl.setText("HP: " + hpPercent + "%");
+
+        if (player.hasFlipper() && !flipperHintShown) {
+            flipperHint.setText("Druecke E damit der Flipper mit Gegenstaenden interagiert");
+            flipperHint.setVisible(true);
+            flipperHintShown = true;
+        }
 
         player.update();
     }

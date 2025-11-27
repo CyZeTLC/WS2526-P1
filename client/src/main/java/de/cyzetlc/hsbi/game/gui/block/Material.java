@@ -11,6 +11,7 @@ public enum Material {
     SPEED_PERK("/assets/tileset/speed.png"),
     ROBOT_ENEMY("/assets/tileset/roboter_enemy.png"),
     ROBOT_LASER("/assets/tileset/robot_laser.png"),
+    GAS_BARRIER("/assets/lavaset/SchrankeGas.png"),
     USB_STICK("/assets/USB-Stick/USB-Stick-Raw.png"),
     FOLDER_ITEM("/assets/tileset/folder.png"),
     FINISH_FLAG("/assets/USB-Stick/PortalTutorial/Portal1-removebg-preview.png"),
