@@ -68,8 +68,10 @@ public abstract class Block {
         this.sprite.setFitHeight(spriteHeight);
 
         // Startposition
-        this.sprite.setX(this.getLocation().getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
-        this.sprite.setY(this.getLocation().getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+        if (Game.getInstance().getScreenManager().getCurrentScreen() instanceof GameScreen) {
+            this.sprite.setX(this.getLocation().getX() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
+            this.sprite.setY(this.getLocation().getY() - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraY());
+        }
 
         // Bounding Box (fuer Kollisionen)
         this.setWidth((float) this.sprite.getFitWidth());
