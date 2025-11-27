@@ -7,7 +7,7 @@ public enum Material {
     FLOOR("/assets/tileset/floor_tiles.png"),
     LAVA("/assets/lavaset/1Lava32x64.png"),
     JUMP_PERK("/assets/tileset/jump_boost.png"),
-    FLIPPER("/assets/tileset/flipper.png"),
+    FLIPPER("/assets/tileset/flipper_item.png"),
     SPEED_PERK("/assets/tileset/speed.png"),
     USB_STICK("/assets/USB-Stick/USB-Stick-Raw.png"),
     FOLDER_ITEM("/assets/tileset/folder.png"),

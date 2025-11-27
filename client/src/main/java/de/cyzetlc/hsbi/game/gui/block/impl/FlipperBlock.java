@@ -14,6 +14,8 @@ public class FlipperBlock extends PerkBlock {
         super(location);
         this.setMaterial(Material.FLIPPER);
         this.setCollideAble(false);
+        this.setWidth(96);
+        this.setHeight(48);
     }
 
     @Override
