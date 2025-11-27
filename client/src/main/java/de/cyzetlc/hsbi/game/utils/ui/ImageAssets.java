@@ -14,9 +14,7 @@ public class ImageAssets {
     private static final Map<String, Image> cache = new HashMap<>();
 
     public static Image get(String path) {
-        return cache.computeIfAbsent(path, p ->
-                new Image(ImageAssets.class.getResourceAsStream(p))
-        );
+        return cache.computeIfAbsent(path, ImageAssets::getImageResource);
     }
 
     public static void warm() {
