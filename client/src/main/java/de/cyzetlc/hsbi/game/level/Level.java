@@ -27,6 +27,8 @@ public abstract class Level {
         this.levelStarted = System.currentTimeMillis();
     }
 
+    public void onFinish() { }
+
     public abstract void draw(double width, double height, Pane root);
 
     public abstract void update();

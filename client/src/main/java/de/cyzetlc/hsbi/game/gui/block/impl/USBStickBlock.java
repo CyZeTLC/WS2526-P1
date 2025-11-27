@@ -60,7 +60,10 @@ public class USBStickBlock extends PerkBlock {
         this.triggered = true;
         this.setActive(false);
         Game.thePlayer.setCanCollectFiles(true);
-        SoundManager.playWithDuck(Sound.USB_STICK, 1.0, 0.06);
+
+        if (!Game.getInstance().getConfig().getObject().getBoolean("tutorialFinished")) {
+            SoundManager.playWithDuck(Sound.USB_STICK, 1.0, 0.06);
+        }
     }
 
     private void loadFrames() {

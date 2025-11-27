@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.level.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.*;
@@ -54,6 +55,13 @@ public class TutorialLevel extends Level {
         for (Platform platform : this.platforms) {
             platform.drawPlatform();
         }
+    }
+
+    @Override
+    public void onFinish() {
+        super.onFinish();
+        Game.getInstance().getConfig().getObject().put("tutorialFinished", true);
+        Game.getInstance().getConfig().save();
     }
 
     private static LavaBlock createLavaColumn(double x, double y, double width, double height) {

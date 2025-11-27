@@ -29,6 +29,7 @@ public class FinishBlock extends AnimatedBlock {
 
     @Override
     public void onCollide(Player player) {
+        Game.getInstance().getCurrentLevel().onFinish();
         Game.getInstance().getScreenManager().showScreen(new LevelFinishedScreen(Game.getInstance().getScreenManager()));
     }
 }
