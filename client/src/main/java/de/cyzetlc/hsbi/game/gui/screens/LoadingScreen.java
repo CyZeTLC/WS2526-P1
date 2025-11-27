@@ -45,27 +45,32 @@ public class LoadingScreen implements GuiScreen {
         Timeline timeline = new Timeline();
 
         KeyValue kvWidth = new KeyValue(progress.widthProperty(), barWidth);
-        KeyFrame kf = new KeyFrame(Duration.millis(5000), kvWidth);
+        KeyFrame kf = new KeyFrame(Duration.millis(3000), kvWidth);
 
         timeline.getKeyFrames().add(kf);
 
         /*
          * Load assets
          */
-        for (Material material : Material.values()) {
-            if (material.texturePath != null && !material.texturePath.isEmpty()) {
-                try {
-                    var url = getClass().getResource(material.texturePath);
-                    if (url != null) {
-                        Image image = new Image(url.toExternalForm());
-                        ImageAssets.cacheBlockImage(material, image);
+        new Thread() {
+            @Override
+            public void run() {
+                for (Material material : Material.values()) {
+                    if (material.texturePath != null && !material.texturePath.isEmpty()) {
+                        try {
+                            var url = getClass().getResource(material.texturePath);
+                            if (url != null) {
+                                Image image = new Image(url.toExternalForm());
+                                ImageAssets.cacheBlockImage(material, image);
+                            }
+                        } catch (Exception ignored) {
+                            // skip missing asset to avoid crash
+                        }
                     }
-                } catch (Exception ignored) {
-                    // skip missing asset to avoid crash
+                    ImageAssets.warm();
                 }
             }
-            ImageAssets.warm();
-        }
+        }.start();
 
         timeline.setOnFinished(e -> Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen()));
 

@@ -18,7 +18,6 @@ public class SecondLevel extends Level {
 
     @Override
     public void draw(double width, double height, Pane root) {
-        // example platforms (placeholder layout)
         // --- PLATFORM SECTION (bodennahe Plattformen) ---
         platforms.add(new Platform(0, height - 250, 500, 550, root));        // Start
         platforms.add(new Platform(600, height - 300, 300, 600, root));
@@ -35,9 +34,9 @@ public class SecondLevel extends Level {
 
         this.addLavaBetweenPlatforms(height);
         this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
-        this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 200), 120, 200));
+        this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
         this.blocks.add(new RobotEnemyBlock(new Location(4700, height - 300 - 64), 200, 90));
-
+        this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
 
 // --- FLYING PLATFORMS (schwebend) ---
 
