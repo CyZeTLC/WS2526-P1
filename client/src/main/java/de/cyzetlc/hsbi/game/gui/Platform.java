@@ -38,7 +38,10 @@ public class Platform {
     }
 
     public void drawPlatform() {
-        final int TILE_SIZE = 32;
+        if (pane != null && !tiles.isEmpty()) {
+            pane.getChildren().removeAll(tiles);
+            tiles.clear();
+        }
 
         // Breite aufteilen
         int fullTilesX = (int) (width / TILE_SIZE);
@@ -119,6 +122,14 @@ public class Platform {
         int remainingHeight = (int) (height % TILE_SIZE);
         if (remainingHeight != 0) fullTilesY++;
 
+        int expectedTiles = fullTilesX * fullTilesY;
+        if (tiles.size() != expectedTiles) {
+            this.rebuildTiles();
+            if (tiles.size() != expectedTiles) {
+                return; // Avoid OOB if rebuild failed for some reason
+            }
+        }
+
         int index = 0;
 
         for (int i = 0; i < fullTilesX; i++) {
@@ -159,6 +170,14 @@ public class Platform {
 
             if (failed) break;
         }
+    }
+
+    private void rebuildTiles() {
+        if (pane != null && !tiles.isEmpty()) {
+            pane.getChildren().removeAll(tiles);
+        }
+        tiles.clear();
+        drawPlatform();
     }
 
     public Rectangle2D getBounds() {
