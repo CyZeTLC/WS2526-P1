@@ -10,6 +10,7 @@ public class PlayerListener {
     public void handleDamage(PlayerDamageEvent e) {
         if (e.getNewHealth() == 0) {
             Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
+            Game.thePlayer.setCanCollectFiles(false);
         }
     }
 }

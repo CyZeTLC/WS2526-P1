@@ -21,6 +21,9 @@ public class EntityPlayer extends Player {
     @Setter
     private Direction direction;
 
+    @Setter
+    private boolean canCollectFiles = false;
+
     public EntityPlayer() {
         super();
     }
