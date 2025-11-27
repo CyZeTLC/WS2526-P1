@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.gui.block.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.audio.Sound;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.Player;
@@ -16,7 +17,9 @@ public class FolderBlock extends PerkBlock {
 
     @Override
     public void onCollide(Player player) {
-        this.setActive(false);
-        SoundManager.play(Sound.CLICK);
+        if (Game.thePlayer.isCanCollectFiles()) {
+            this.setActive(false);
+            SoundManager.play(Sound.CLICK);
+        }
     }
 }

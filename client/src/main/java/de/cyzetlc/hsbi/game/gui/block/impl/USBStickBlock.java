@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.gui.block.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.audio.Sound;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.Player;
@@ -58,6 +59,7 @@ public class USBStickBlock extends PerkBlock {
         }
         this.triggered = true;
         this.setActive(false);
+        Game.thePlayer.setCanCollectFiles(true);
         SoundManager.playWithDuck(Sound.USB_STICK, 1.0, 0.06);
     }
 
