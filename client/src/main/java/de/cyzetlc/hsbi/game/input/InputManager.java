@@ -10,6 +10,7 @@ import java.util.Set;
 
 public class InputManager {
     private final Set<KeyCode> pressedKeys = new HashSet<>();
+    private final Set<KeyCode> justPressedKeys = new HashSet<>();
     private double mouseX = 0;
     private double mouseY = 0;
 
@@ -17,6 +18,9 @@ public class InputManager {
         KeyInputEvent keyInputEvent = new KeyInputEvent();
 
         scene.setOnKeyPressed(event -> {
+            if (!pressedKeys.contains(event.getCode())) {
+                justPressedKeys.add(event.getCode()); // merken, dass Taste in diesem Frame neu gedrückt wurde
+            }
             pressedKeys.add(event.getCode());
 
             keyInputEvent.setInputType(InputType.PRESSED);
@@ -43,6 +47,16 @@ public class InputManager {
 
     public boolean isPressed(KeyCode key) {
         return pressedKeys.contains(key);
+    }
+
+    /**
+     * Liefert true genau im Frame des Tastendrucks (entprellt).
+     * Danach wird der Status entfernt, sodass die Taste nicht mehrfach toggelt.
+     */
+    public boolean pollJustPressed(KeyCode key) {
+        boolean hit = justPressedKeys.contains(key);
+        justPressedKeys.remove(key);
+        return hit;
     }
 
     public double getMouseX() {

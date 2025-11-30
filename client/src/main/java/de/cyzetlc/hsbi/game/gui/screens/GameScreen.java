@@ -67,12 +67,15 @@ public class GameScreen implements GuiScreen {
     private Text filesProgressLbl;
     private int totalFolderCount = 0;
 
-    // HUD/Debug-Toggles
+    // HUD/Debug toggles
+    private boolean showTooltips = true; // F1
+    private boolean showDebugBar = true; // F2
+    private Text debugBarLbl;
     private Text tipsLbl;
-    private Text debugToggleLbl;
-    private boolean showHudTips = true;
+    private Text debugStatusLbl;
     private boolean lastF1 = false;
     private boolean lastF2 = false;
+    private boolean lastF3 = false;
 
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
@@ -107,6 +110,8 @@ public class GameScreen implements GuiScreen {
 
         this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
+        this.debugLbl.setVisible(false); // alte Debug-Anzeige verstecken, ersetzen wir durch debugBarLbl
+        this.healthLbl.setVisible(false); // HP kommt in der neuen Debug-Bar/Quest-Anzeige vor
         //this.setupSoundControls(width);
         this.setupPauseOverlay(width, height);
         this.flipperHint = UIUtils.drawText(root, "", 10, 135);
@@ -117,9 +122,16 @@ public class GameScreen implements GuiScreen {
         this.filesProgressLbl = UIUtils.drawText(root, "", 10, 175);
         this.updateFolderProgress();
 
-        // HUD-Hinweise und Debug-Status (F1/F2)
-        this.debugToggleLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, height - 60);
-        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug (NoClip+GodMode)", 10, height - 40);
+        // HUD-Hinweise und Debug-Status (F1/F2/F3) oben links in Giftgrün
+        this.debugBarLbl = UIUtils.drawText(root, "", 10, 20);
+        this.debugBarLbl.setFill(Color.rgb(80, 255, 80));
+        this.debugStatusLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, 60);
+        this.debugStatusLbl.setFill(Color.rgb(80, 255, 80));
+        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 80);
+        this.tipsLbl.setFill(Color.rgb(80, 255, 80));
+        this.debugBarLbl.setVisible(showDebugBar);
+        this.debugStatusLbl.setVisible(showTooltips);
+        this.tipsLbl.setVisible(showTooltips);
 
         this.drawHealth(width);
     }
@@ -140,25 +152,36 @@ public class GameScreen implements GuiScreen {
         boolean onGround = false;
         boolean hittingCeiling = false;
         boolean interactPressed = screenManager.getInputManager().isPressed(KeyCode.E);
-        boolean f1 = screenManager.getInputManager().isPressed(KeyCode.F1);
-        boolean f2 = screenManager.getInputManager().isPressed(KeyCode.F2);
+        boolean f1 = screenManager.getInputManager().pollJustPressed(KeyCode.F1);
+        boolean f2 = screenManager.getInputManager().pollJustPressed(KeyCode.F2);
+        boolean f3 = screenManager.getInputManager().pollJustPressed(KeyCode.F3);
 
-        // Tooltips toggeln (F1, entprellt)
-        if (f1 && !lastF1) {
-            showHudTips = !showHudTips;
-            tipsLbl.setVisible(showHudTips);
-            debugToggleLbl.setVisible(showHudTips);
+        // Tooltips toggeln (F1)
+        if (f1) {
+            showTooltips = !showTooltips;
+            tipsLbl.setVisible(showTooltips);
+            debugStatusLbl.setVisible(showTooltips);
+            questLbl.setVisible(showTooltips);
+            filesProgressLbl.setVisible(showTooltips);
         }
-        lastF1 = f1;
 
-        // Debug (NoClip + GodMode) toggeln (F2, entprellt)
-        if (f2 && !lastF2) {
+        // Debug-Leiste toggeln (F2)
+        if (f2) {
+            showDebugBar = !showDebugBar;
+            debugBarLbl.setVisible(showDebugBar);
+        }
+
+        // NoClip + GodMode toggeln (F3)
+        if (f3) {
             boolean enable = !player.isNoClipEnabled();
             player.setNoClip(enable);
             player.setGodMode(enable);
-            debugToggleLbl.setText(enable ? "DEBUG: NoClip+GodMode AKTIV" : "DEBUG: AUS");
         }
-        lastF2 = f2;
+
+        // Debug-Status-Text aktualisieren (anzeige nur wenn Tooltips an)
+        if (showTooltips) {
+            debugStatusLbl.setText(player.isNoClipEnabled() ? "DEBUG: NoClip+GodMode AN" : "DEBUG: AUS");
+        }
 
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
@@ -175,10 +198,7 @@ public class GameScreen implements GuiScreen {
             player.getLocation().setX(nx);
             player.getLocation().setY(ny);
             this.updateCamera(width, height);
-            this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
-                    " | NoClip: true | God: " + player.isGodModeEnabled() +
-                    " | Location: " + player.getLocation().toString());
-            this.healthLbl.setText("HP: " + (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0) + "%");
+            this.updateDebugBar(onGround, moveSpeed, jumpPower);
             this.updateFolderProgress();
             if (player.hasFlipper()) {
                 flipperHint.setText("Flipper vorhanden: E zum Deaktivieren von Gas");
@@ -331,15 +351,7 @@ public class GameScreen implements GuiScreen {
 
         this.updateCamera(width, height);
 
-        this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
-                " | onGround: " + onGround +
-                " | moveSpeed: " + moveSpeed +
-                " | jumpPower: " + jumpPower +
-                " | cameraX: " + (int) cameraX +
-                " | cameraY: " + (int) cameraY +
-                " | Location: " + player.getLocation().toString() +
-                " | Cursor: X: " + (int) screenManager.getInputManager().getMouseX() +
-                ", Y: " + (int) screenManager.getInputManager().getMouseY());
+        this.updateDebugBar(onGround, moveSpeed, jumpPower);
 
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
         this.healthLbl.setText("HP: " + hpPercent + "%");
@@ -524,6 +536,28 @@ public class GameScreen implements GuiScreen {
 
     private void updateMuteButton() {
         this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+    }
+
+    /**
+     * Aktualisiert die Debug-Bar oben links in Giftgrün. Sichtbar nur wenn showDebugBar = true.
+     */
+    private void updateDebugBar(boolean onGround, double moveSpeed, double jumpPower) {
+        if (this.debugBarLbl == null) return;
+        this.debugBarLbl.setVisible(showDebugBar);
+        if (!showDebugBar) {
+            return;
+        }
+        String line1 = "FPS: " + (int) screenManager.getCurrentFps()
+                + " | onGround: " + onGround
+                + " | moveSpeed: " + moveSpeed
+                + " | jumpPower: " + jumpPower;
+        String line2 = "cameraX: " + (int) cameraX
+                + " | cameraY: " + (int) cameraY
+                + " | Location: " + player.getLocation().toString();
+        String line3 = "HP: " + (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0)
+                + " | NoClip: " + player.isNoClipEnabled()
+                + " | God: " + player.isGodModeEnabled();
+        this.debugBarLbl.setText(line1 + "\n" + line2 + "\n" + line3);
     }
 
     private int countFolderBlocks() {
