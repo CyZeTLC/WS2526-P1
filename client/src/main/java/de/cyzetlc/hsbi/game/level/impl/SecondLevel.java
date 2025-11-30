@@ -46,6 +46,13 @@ public class SecondLevel extends Level {
         this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
         this.blocks.add(new RobotEnemyBlock(new Location(4700, height - 300 - 64), 200, 90));
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
+        // moving platform at mid height similar to tutorial
+        this.blocks.add(new FloatingPlatformBlock(
+                new Location(900, height - 430),
+                new Location(1250, height - 430),
+                120,
+                0
+        ));
 
 // --- FLYING PLATFORMS (schwebend) ---
 
@@ -100,24 +107,17 @@ public class SecondLevel extends Level {
         double lavaTop = sceneHeight - 80;
         double lavaHeight = 300;
 
-        List<Platform> groundPlatforms = new ArrayList<>();
-        for (Platform platform : this.platforms) {
-            boolean nearGround = platform.getY() >= sceneHeight - 350;
-            boolean tallEnough = platform.getHeight() >= 400;
-            if (nearGround || tallEnough) {
-                groundPlatforms.add(platform);
-            }
-        }
-        groundPlatforms.sort(Comparator.comparingDouble(Platform::getX));
+        List<Platform> ordered = new ArrayList<>(this.platforms);
+        ordered.sort(Comparator.comparingDouble(Platform::getX));
 
-        for (int i = 0; i < groundPlatforms.size() - 1; i++) {
-            Platform current = groundPlatforms.get(i);
-            Platform next = groundPlatforms.get(i + 1);
+        for (int i = 0; i < ordered.size() - 1; i++) {
+            Platform current = ordered.get(i);
+            Platform next = ordered.get(i + 1);
 
             double gapStart = current.getX() + current.getWidth();
             double gapWidth = next.getX() - gapStart;
 
-            if (gapWidth > 0) {
+            if (gapWidth > 1) {
                 this.blocks.add(createLavaColumn(gapStart, lavaTop, gapWidth, lavaHeight));
             }
         }

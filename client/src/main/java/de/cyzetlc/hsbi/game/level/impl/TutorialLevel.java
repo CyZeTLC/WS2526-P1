@@ -75,24 +75,17 @@ public class TutorialLevel extends Level {
         double lavaTop = sceneHeight - 80;
         double lavaHeight = 300;
 
-        List<Platform> groundPlatforms = new ArrayList<>();
-        for (Platform platform : this.platforms) {
-            boolean nearGround = platform.getY() >= sceneHeight - 350;
-            boolean tallEnough = platform.getHeight() >= 400;
-            if (nearGround || tallEnough) { // skip tiny floating platforms
-                groundPlatforms.add(platform);
-            }
-        }
-        groundPlatforms.sort(Comparator.comparingDouble(Platform::getX));
+        List<Platform> ordered = new ArrayList<>(this.platforms);
+        ordered.sort(Comparator.comparingDouble(Platform::getX));
 
-        for (int i = 0; i < groundPlatforms.size() - 1; i++) {
-            Platform current = groundPlatforms.get(i);
-            Platform next = groundPlatforms.get(i + 1);
+        for (int i = 0; i < ordered.size() - 1; i++) {
+            Platform current = ordered.get(i);
+            Platform next = ordered.get(i + 1);
 
             double gapStart = current.getX() + current.getWidth();
             double gapWidth = next.getX() - gapStart;
 
-            if (gapWidth > 0) {
+            if (gapWidth > 1) {
                 this.blocks.add(createLavaColumn(gapStart, lavaTop, gapWidth, lavaHeight));
             }
         }
