@@ -9,15 +9,15 @@ import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
 
 public class RobotEnemyBlock extends Block {
-    private final double minX;
-    private final double maxX;
-    private double baseY;
-    private final double platformTopY;
-    private final double speed;
-    private boolean dead = false;
+    protected final double minX;
+    protected final double maxX;
+    protected double baseY;
+    protected final double platformTopY;
+    protected final double speed;
+    protected boolean dead = false;
     private long lastUpdateNanos = 0L;
-    private double fireTimer = 0;
-    private final double fireCooldown = 2.2;
+    protected double fireTimer = 0;
+    protected final double fireCooldown = 2.2;
     private double lastHitTime = -1;
 
     public RobotEnemyBlock(Location location, double patrolWidth, double speed) {

@@ -3,6 +3,7 @@ package de.cyzetlc.hsbi.game.level.impl;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.*;
+import de.cyzetlc.hsbi.game.gui.block.impl.BossRobotBlock;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.audio.Sound;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
@@ -42,8 +43,8 @@ public class SecondLevel extends Level {
         this.addLavaBetweenPlatforms(height);
         this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
         this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
-        // Boss robot on final platform
-        this.blocks.add(new RobotEnemyBlock(new Location(5000, height - 300), 500, 180));
+        // Boss robot on final platform (platform top = height - 300)
+        this.blocks.add(new BossRobotBlock(new Location(5000, height - 300), 500, 180));
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
         // moving platform at mid height similar to tutorial
         this.blocks.add(new FloatingPlatformBlock(
