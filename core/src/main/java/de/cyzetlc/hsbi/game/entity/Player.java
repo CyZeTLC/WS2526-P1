@@ -20,6 +20,10 @@ public class Player extends Entity {
 
     @Override
     public void setHealth(float health) {
+        // Im GodMode ignorieren wir jede Reduktion der Lebenspunkte, damit der Spieler nicht sterben kann.
+        if (this.isGodModeEnabled() && health < this.getHealth()) {
+            return;
+        }
         if (health < this.getHealth()) {
             new PlayerDamageEvent(this, this.getHealth()-health, DamageCause.ITEM).call();
         }

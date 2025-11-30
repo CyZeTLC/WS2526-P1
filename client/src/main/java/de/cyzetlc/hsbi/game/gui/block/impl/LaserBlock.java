@@ -32,6 +32,11 @@ public class LaserBlock extends Block {
     @Override
     public void onCollide(de.cyzetlc.hsbi.game.entity.Player player) {
         if (!this.isActive()) return;
+        // GodMode frisst den Treffer, aber der Laser verschwindet trotzdem.
+        if (player.isGodModeEnabled()) {
+            this.setActive(false);
+            return;
+        }
         player.setHealth(player.getHealth() - 1f);
         this.setActive(false);
     }
