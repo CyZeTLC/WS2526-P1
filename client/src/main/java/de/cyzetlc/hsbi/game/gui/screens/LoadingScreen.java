@@ -16,14 +16,47 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+/**
+ * The {@code LoadingScreen} class displays a visual loading progress bar
+ * while essential game assets (textures, materials) are loaded in the background.
+ * <p>
+ * This screen ensures that all necessary resources are prepared before transitioning
+ * the user to the main menu. The loading time is primarily synchronized with an
+ * animated progress bar timeline for a smooth user experience.
+ *
+ * @author Tom Coombs
+ * @author Leonardo (aka. Phantomic)
+ *
+ * @see GuiScreen
+ * @see ScreenManager
+ * @see Material
+ */
 public class LoadingScreen implements GuiScreen {
     private final Pane root = new Pane();
     private final ScreenManager screenManager;
 
+    /**
+     * Constructs a new LoadingScreen.
+     *
+     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     */
     public LoadingScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
+    /**
+     * Initializes the LoadingScreen, sets up the background, the title,
+     * the progress bar animation, and starts the asynchronous asset loading thread.
+     * <p>
+     * The method performs the following main steps:
+     * <ul>
+     * <li>Draws the animated background and centered "Lade..." text.</li>
+     * <li>Creates and visualizes the static background and dynamic foreground of the progress bar.</li>
+     * <li>Initializes a {@code Timeline} for the progress bar animation (currently set to 3 seconds).</li>
+     * <li>Starts a separate thread to iterate through all {@code Material} values and load/cache their textures.</li>
+     * <li>Sets the {@code Timeline}'s completion handler to switch to the {@code MainMenuScreen}.</li>
+     * </ul>
+     */
     @Override
     public void initialize() {
         double width = screenManager.getStage().getWidth();
@@ -81,16 +114,21 @@ public class LoadingScreen implements GuiScreen {
 
     }
 
-    @Override
-    public void update(double delta) {
-
-    }
-
+    /**
+     * Retrieves the root pane of the LoadingScreen, which contains all visual elements.
+     *
+     * @return The JavaFX {@code Pane} used as the root container.
+     */
     @Override
     public Pane getRoot() {
         return root;
     }
 
+    /**
+     * Returns the identifying name of this screen.
+     *
+     * @return The constant screen name "LoadingScreen".
+     */
     @Override
     public String getName() {
         return "LoadingScreen";
