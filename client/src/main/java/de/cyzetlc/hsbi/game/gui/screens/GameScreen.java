@@ -546,7 +546,7 @@ public class GameScreen implements GuiScreen {
      */
     private void layoutHudPositions() {
         int hudX = 10;
-        int hudStartY = 110;    // ausreichend Abstand unter "Zurück" / "Pause"
+        int hudStartY = 140;    // weiter unter den Buttons, damit nichts überlappt
         int lineHeight = 18;    // fester Zeilenabstand
         int y = hudStartY;
 
