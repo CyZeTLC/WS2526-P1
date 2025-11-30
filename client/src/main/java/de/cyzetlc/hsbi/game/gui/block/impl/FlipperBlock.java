@@ -7,26 +7,21 @@ import de.cyzetlc.hsbi.game.entity.Player;
 import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.gui.block.PerkBlock;
 import de.cyzetlc.hsbi.game.gui.screens.GameScreen;
-import de.cyzetlc.hsbi.game.utils.ui.ImageAssets;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
 
 public class FlipperBlock extends PerkBlock {
     private boolean collected = false;
-    private final double baseY;
-    private double frameTimer = 0;
-    private long lastFrameTimeNanos = 0L;
-    private boolean upDown = false;
 
     public FlipperBlock(Location location) {
         super(location);
         this.setMaterial(Material.FLIPPER);
         this.setCollideAble(false);
-        this.setWidth(64);
-        this.setHeight(32);
-        double hoverOffset = 80; // lift the sprite so it floats above ground
+        // shrink uniformly and lift so it floats like other perks
+        double hoverOffset = 60;
         this.getLocation().setY(location.getY() - hoverOffset);
-        this.baseY = this.getLocation().getY();
+        this.setWidth(96);
+        this.setHeight(96);
     }
 
     @Override
@@ -45,7 +40,7 @@ public class FlipperBlock extends PerkBlock {
         super.draw(pane);
         this.sprite.setPreserveRatio(true);
 
-        double targetWidth = 140;
+        double targetWidth = 96;
         this.sprite.setFitWidth(targetWidth);
         this.sprite.setFitHeight(targetWidth); // height will be reduced by preserveRatio
 
@@ -62,30 +57,5 @@ public class FlipperBlock extends PerkBlock {
 
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
-    }
-
-    @Override
-    public void update() {
-        super.update();
-
-        long now = System.nanoTime();
-        if (this.lastFrameTimeNanos == 0L) {
-            this.lastFrameTimeNanos = now;
-            return;
-        }
-        double deltaSeconds = (now - this.lastFrameTimeNanos) / 1_000_000_000.0;
-        this.lastFrameTimeNanos = now;
-        this.frameTimer += deltaSeconds;
-        if (this.frameTimer >= 0.6) {
-            this.frameTimer -= 0.6;
-            if (this.upDown) {
-                this.getLocation().setY(Math.max(baseY - 10, this.getLocation().getY() - 5));
-                this.upDown = false;
-            } else {
-                double nextY = this.getLocation().getY() + 5;
-                this.getLocation().setY(Math.min(baseY, nextY));
-                this.upDown = true;
-            }
-        }
     }
 }
