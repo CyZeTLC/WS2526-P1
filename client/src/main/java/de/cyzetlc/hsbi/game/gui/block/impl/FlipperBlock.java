@@ -24,7 +24,9 @@ public class FlipperBlock extends PerkBlock {
         this.setCollideAble(false);
         this.setWidth(64);
         this.setHeight(32);
-        this.baseY = location.getY();
+        double hoverOffset = 80; // lift the sprite so it floats above ground
+        this.getLocation().setY(location.getY() - hoverOffset);
+        this.baseY = this.getLocation().getY();
     }
 
     @Override
