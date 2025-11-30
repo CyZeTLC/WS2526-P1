@@ -118,25 +118,23 @@ public class GameScreen implements GuiScreen {
         this.flipperHint.setVisible(false);
 
         this.totalFolderCount = this.countFolderBlocks();
-        this.questLbl = UIUtils.drawText(root, "Quest: Sammel alle Files mit deinem USB Stick", 10, 155);
-        this.filesProgressLbl = UIUtils.drawText(root, "", 10, 175);
+        this.questLbl = UIUtils.drawText(root, "Quest: Sammel alle Files mit deinem USB Stick", 10, 0);
+        this.filesProgressLbl = UIUtils.drawText(root, "", 10, 0);
         this.updateFolderProgress();
 
-        // HUD-Hinweise und Debug-Status (F1/F2/F3) direkt unter den Buttons in Giftgrün
-        // Startposition deutlich unter den Buttons, damit keine Überlappung entsteht
-        this.debugBarLbl = UIUtils.drawText(root, "", 10, 120);
+        // HUD-Hinweise und Debug-Status (F1/F2/F3) in Giftgrün, Positionierung erfolgt zentral
+        this.debugBarLbl = UIUtils.drawText(root, "", 10, 0);
         this.debugBarLbl.setFill(Color.rgb(80, 255, 80));
-        this.debugStatusLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, 142);
+        this.debugStatusLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, 0);
         this.debugStatusLbl.setFill(Color.rgb(80, 255, 80));
-        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 164);
+        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 0);
         this.tipsLbl.setFill(Color.rgb(80, 255, 80));
         this.debugBarLbl.setVisible(showDebugBar);
         this.debugStatusLbl.setVisible(showTooltips);
         this.tipsLbl.setVisible(showTooltips);
 
-        // Quest-/Progress-Texte etwas weiter unten, damit nichts überlappt
-        this.questLbl.setY(200);
-        this.filesProgressLbl.setY(220);
+        // Gemeinsame HUD-Positionierung (unter Buttons, fester Zeilenabstand, keine Überlappungen)
+        layoutHudPositions();
 
         this.drawHealth(width);
     }
@@ -541,6 +539,42 @@ public class GameScreen implements GuiScreen {
 
     private void updateMuteButton() {
         this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+    }
+
+    /**
+     * Setzt die Y-Positionen aller HUD-Texte konsistent unterhalb der Buttons.
+     */
+    private void layoutHudPositions() {
+        int hudX = 10;
+        int hudStartY = 110;    // ausreichend Abstand unter "Zurück" / "Pause"
+        int lineHeight = 18;    // fester Zeilenabstand
+        int y = hudStartY;
+
+        if (this.debugBarLbl != null) {
+            this.debugBarLbl.setX(hudX);
+            this.debugBarLbl.setY(y);
+            // debugBarLbl enthält 3 Zeilen (per \n)
+            y += lineHeight * 3;
+        }
+        if (this.debugStatusLbl != null) {
+            this.debugStatusLbl.setX(hudX);
+            this.debugStatusLbl.setY(y);
+            y += lineHeight;
+        }
+        if (this.tipsLbl != null) {
+            this.tipsLbl.setX(hudX);
+            this.tipsLbl.setY(y);
+            y += lineHeight * 2; // etwas Luft zu Quest
+        }
+        if (this.questLbl != null) {
+            this.questLbl.setX(hudX);
+            this.questLbl.setY(y);
+            y += lineHeight;
+        }
+        if (this.filesProgressLbl != null) {
+            this.filesProgressLbl.setX(hudX);
+            this.filesProgressLbl.setY(y);
+        }
     }
 
     /**
