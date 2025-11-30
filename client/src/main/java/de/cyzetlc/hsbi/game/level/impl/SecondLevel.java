@@ -44,7 +44,8 @@ public class SecondLevel extends Level {
         this.addLavaBetweenPlatforms(height);
         this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
         this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
-        this.blocks.add(new RobotEnemyBlock(new Location(4700, height - 300 - 64), 200, 90));
+        // Robot on the barrier platform (same height as the gas cloud)
+        this.blocks.add(new RobotEnemyBlock(new Location(4470, height - 360 - 64), 200, 90));
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
         // moving platform at mid height similar to tutorial
         this.blocks.add(new FloatingPlatformBlock(
