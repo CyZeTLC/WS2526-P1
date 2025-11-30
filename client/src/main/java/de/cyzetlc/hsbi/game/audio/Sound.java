@@ -7,7 +7,8 @@ public enum Sound {
     JUMP("/assets/audio/jump.mp3"),
     JUMP_BOOST("/assets/audio/SoundEvents/Jump-Boost-Soundwav.wav"),
     SPEED_BUFF("/assets/audio/SoundEvents/Speed-Buff-Sound.wav"),
-    USB_STICK("/assets/audio/SoundEvents/USB-StickSound.wav");
+    USB_STICK("/assets/audio/SoundEvents/USB-StickSound.wav"),
+    ZIEL_ERREICHT("/assets/audio/SoundEvents/Ziel-erreicht-Sound.wav");
 
     public final String path;
 
