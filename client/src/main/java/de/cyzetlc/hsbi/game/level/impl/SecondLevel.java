@@ -107,7 +107,14 @@ public class SecondLevel extends Level {
         double lavaTop = sceneHeight - 80;
         double lavaHeight = 300;
 
-        List<Platform> ordered = new ArrayList<>(this.platforms);
+        List<Platform> ordered = new ArrayList<>();
+        for (Platform platform : this.platforms) {
+            boolean nearGround = platform.getY() >= sceneHeight - 400;
+            boolean tallEnough = platform.getHeight() >= 400;
+            if (nearGround || tallEnough) {
+                ordered.add(platform);
+            }
+        }
         ordered.sort(Comparator.comparingDouble(Platform::getX));
 
         for (int i = 0; i < ordered.size() - 1; i++) {
