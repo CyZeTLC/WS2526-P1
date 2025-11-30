@@ -551,34 +551,42 @@ public class GameScreen implements GuiScreen {
      */
     private void layoutHudPositions() {
         int hudX = 10;
-        int hudStartY = 140;    // weiter unter den Buttons, damit nichts überlappt
-        int lineHeight = 18;    // fester Zeilenabstand
+        int hudStartY = 140;       // Start unter den Buttons
+        int hudLineHeight = 18;    // Zeilenabstand innerhalb eines Blocks
+        int hudBlockSpacing = 10;  // Abstand zwischen Blöcken
         int y = hudStartY;
 
+        // Block 1: FPS / Debug-Infos (3 Zeilen in debugBarLbl)
         if (this.debugBarLbl != null) {
             this.debugBarLbl.setX(hudX);
             this.debugBarLbl.setY(y);
-            // debugBarLbl enthält 3 Zeilen (per \n)
-            y += lineHeight * 3;
+            y += hudLineHeight * 3;     // drei Zeilen im Text
+            y += hudBlockSpacing;       // Abstand zum nächsten Block
         }
+
+        // Block 2: Status + Debug-State + Tooltips
         if (this.debugStatusLbl != null) {
             this.debugStatusLbl.setX(hudX);
             this.debugStatusLbl.setY(y);
-            y += lineHeight;
+            y += hudLineHeight;
         }
         if (this.tipsLbl != null) {
             this.tipsLbl.setX(hudX);
             this.tipsLbl.setY(y);
-            y += lineHeight * 2; // etwas Luft zu Quest
+            y += hudLineHeight;
         }
+        y += hudBlockSpacing * 2; // größerer Abstand vor dem Quest-Block
+
+        // Block 3: Quest + Files
         if (this.questLbl != null) {
             this.questLbl.setX(hudX);
             this.questLbl.setY(y);
-            y += lineHeight;
+            y += hudLineHeight;
         }
         if (this.filesProgressLbl != null) {
             this.filesProgressLbl.setX(hudX);
             this.filesProgressLbl.setY(y);
+            y += hudLineHeight;
         }
     }
 
