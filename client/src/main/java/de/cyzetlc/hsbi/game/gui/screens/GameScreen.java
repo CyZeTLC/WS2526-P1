@@ -405,8 +405,11 @@ public class GameScreen implements GuiScreen {
         this.cameraX += (targetCamX - this.cameraX) * this.cameraSmooth;
         this.cameraY += (targetCamY - this.cameraY) * this.cameraSmooth;
 
-        if (this.cameraX < 0) this.cameraX = 0;
-        if (this.cameraY < 0) this.cameraY = 0;
+        // Kamera-Clamp nur im Normalmodus; im NoClip darf man frei fliegen
+        if (!player.isNoClipEnabled()) {
+            if (this.cameraX < 0) this.cameraX = 0;
+            if (this.cameraY < 0) this.cameraY = 0;
+        }
     }
 
     private void setupPauseOverlay(double width, double height) {
