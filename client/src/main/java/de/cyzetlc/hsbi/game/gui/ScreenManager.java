@@ -17,6 +17,8 @@ import java.util.List;
 
 @Getter
 public class ScreenManager {
+    public static final String WINDOW_TITLE = "WS2526-P1-StealTheFiles";
+
     private final Stage stage;
     private GuiScreen currentScreen;
     private long lastTime = 0;
@@ -35,7 +37,7 @@ public class ScreenManager {
     public ScreenManager(Stage stage) {
         this.stage = stage;
         this.stage.setScene(new Scene(new Pane(), 1200, 800));
-        this.stage.setTitle("WS2526-P1");
+        this.stage.setTitle(WINDOW_TITLE);
         this.stage.getScene().getStylesheets().add(getClass().getResource("/assets/style.css").toExternalForm());
         this.stage.setResizable(false);
         this.stage.initStyle(StageStyle.UNDECORATED);
