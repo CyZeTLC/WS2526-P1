@@ -48,8 +48,8 @@ public class SecondLevel extends Level {
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
         // moving platform at mid height similar to tutorial
         this.blocks.add(new FloatingPlatformBlock(
-                new Location(900, height - 430),
-                new Location(1250, height - 430),
+                new Location(1060, height - 430),
+                new Location(1360, height - 430),
                 120,
                 0
         ));
