@@ -37,8 +37,6 @@ public class SecondLevel extends Level {
         platforms.add(new Platform(2900, height - 330, 300, 580, root));
         platforms.add(new Platform(3300, height - 260, 700, 510, root));
 
-        platforms.add(new Platform(4100, height - 320, 200, 570, root));
-        platforms.add(new Platform(4400, height - 360, 250, 610, root));
         platforms.add(new Platform(4800, height - 300, 900, 550, root));
 
         this.addLavaBetweenPlatforms(height);
