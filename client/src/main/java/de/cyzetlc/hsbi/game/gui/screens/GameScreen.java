@@ -564,16 +564,16 @@ public class GameScreen implements GuiScreen {
             y += hudBlockSpacing;       // Abstand zum nächsten Block
         }
 
-        // Block 2: Status + Debug-State + Tooltips
+        // Block 2: Status + Debug-State + Tooltips (entzerrt)
         if (this.debugStatusLbl != null) {
             this.debugStatusLbl.setX(hudX);
             this.debugStatusLbl.setY(y);
-            y += hudLineHeight;
+            y += hudLineHeight + 4; // zusätzlicher Abstand
         }
         if (this.tipsLbl != null) {
             this.tipsLbl.setX(hudX);
             this.tipsLbl.setY(y);
-            y += hudLineHeight;
+            y += hudLineHeight + 4; // zusätzlicher Abstand
         }
         y += hudBlockSpacing * 2; // größerer Abstand vor dem Quest-Block
 
@@ -584,6 +584,7 @@ public class GameScreen implements GuiScreen {
             y += hudLineHeight;
         }
         if (this.filesProgressLbl != null) {
+            y += 6; // Files etwas weiter unter die Quest schieben
             this.filesProgressLbl.setX(hudX);
             this.filesProgressLbl.setY(y);
             y += hudLineHeight;
