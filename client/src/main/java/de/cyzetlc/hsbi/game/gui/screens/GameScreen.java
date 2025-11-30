@@ -40,8 +40,6 @@ public class GameScreen implements GuiScreen {
 
     private Text debugLbl;
     private Text healthLbl;
-    private Text volumeLbl;
-    private Button muteBtn;
     private int volumeStep = 5; // 0-5 => 0-100%
 
     private boolean paused = false;
@@ -69,10 +67,8 @@ public class GameScreen implements GuiScreen {
 
     // HUD/Debug toggles
     private boolean showTooltips = true; // F1
-    private boolean showDebugBar = true; // F2
-    private Text debugBarLbl;
+    private boolean showDebugBar = false; // F2
     private Text tipsLbl;
-    private Text debugStatusLbl;
     private boolean lastF1 = false;
     private boolean lastF2 = false;
     private boolean lastF3 = false;
@@ -89,7 +85,6 @@ public class GameScreen implements GuiScreen {
         double height = screenManager.getStage().getHeight();
         this.player = Game.thePlayer;
 
-        //this.setupBackgroundVideo(width, height);
         UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
                 "/assets/hud/BackgroundZustand1.png",
                 "/assets/hud/BackgroundZustand2.png");
@@ -112,8 +107,6 @@ public class GameScreen implements GuiScreen {
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
         this.debugLbl.setVisible(false); // alte Debug-Anzeige verstecken, ersetzen wir durch debugBarLbl
         this.healthLbl.setVisible(false); // HP kommt in der neuen Debug-Bar/Quest-Anzeige vor
-        //this.setupSoundControls(width);
-        this.setupPauseOverlay(width, height);
         this.flipperHint = UIUtils.drawText(root, "", 10, 135);
         this.flipperHint.setVisible(false);
 
@@ -123,19 +116,12 @@ public class GameScreen implements GuiScreen {
         this.updateFolderProgress();
 
         // HUD-Hinweise und Debug-Status (F1/F2/F3) in Giftgrün, Positionierung erfolgt zentral
-        this.debugBarLbl = UIUtils.drawText(root, "", 10, 0);
-        this.debugBarLbl.setFill(Color.rgb(80, 255, 80));
-        this.debugStatusLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, 0);
-        this.debugStatusLbl.setFill(Color.rgb(80, 255, 80));
         this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 0);
         this.tipsLbl.setFill(Color.rgb(80, 255, 80));
-        this.debugBarLbl.setVisible(showDebugBar);
-        this.debugStatusLbl.setVisible(showTooltips);
         this.tipsLbl.setVisible(showTooltips);
 
-        // Gemeinsame HUD-Positionierung (unter Buttons, fester Zeilenabstand, keine Überlappungen)
-        layoutHudPositions();
-
+        this.layoutHudPositions();
+        this.setupPauseOverlay(width, height);
         this.drawHealth(width);
     }
 
@@ -163,7 +149,7 @@ public class GameScreen implements GuiScreen {
         if (f1) {
             showTooltips = !showTooltips;
             tipsLbl.setVisible(showTooltips);
-            debugStatusLbl.setVisible(showTooltips);
+            //debugStatusLbl.setVisible(showTooltips);
             questLbl.setVisible(showTooltips);
             filesProgressLbl.setVisible(showTooltips);
         }
@@ -171,7 +157,6 @@ public class GameScreen implements GuiScreen {
         // Debug-Leiste toggeln (F2)
         if (f2) {
             showDebugBar = !showDebugBar;
-            debugBarLbl.setVisible(showDebugBar);
         }
 
         // NoClip + GodMode toggeln (F3)
@@ -183,7 +168,7 @@ public class GameScreen implements GuiScreen {
 
         // Debug-Status-Text aktualisieren (anzeige nur wenn Tooltips an)
         if (showTooltips) {
-            debugStatusLbl.setText(player.isNoClipEnabled() ? "DEBUG: NoClip+GodMode AN" : "DEBUG: AUS");
+            //debugStatusLbl.setText(player.isNoClipEnabled() ? "DEBUG: NoClip+GodMode AN" : "DEBUG: AUS");
         }
 
         double x = player.getLocation().getX();
@@ -372,16 +357,6 @@ public class GameScreen implements GuiScreen {
         player.update();
     }
 
-    @Override
-    public Pane getRoot() {
-        return root;
-    }
-
-    @Override
-    public String getName() {
-        return "GameScreen";
-    }
-
     private void updateCamera(double width, double height) {
         double playerScreenX = player.getLocation().getX() - this.cameraX;
         double playerScreenY = player.getLocation().getY() - this.cameraY;
@@ -446,56 +421,6 @@ public class GameScreen implements GuiScreen {
         }
     }
 
-    private void setupBackgroundVideo(double width, double height) {
-        String videoPath = "client/src/main/java/de/cyzetlc/hsbi/game/gui/screens/Loop Matrix Desktop Wallpaper Full HD (1080p_30fps_H264-128kbit_AAC).mp4d";
-        File file = new File(videoPath);
-        if (!file.exists()) {
-            //UIUtils.drawRect(root, 0, 0, width, height, Color.rgb(28, 20, 20));
-            UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
-                    "/assets/hud/BackgroundZustand1.png",
-                    "/assets/hud/BackgroundZustand2.png");
-            return;
-        }
-
-        try {
-            Media media = new Media(file.toURI().toString());
-            MediaPlayer player = new MediaPlayer(media);
-            player.setCycleCount(MediaPlayer.INDEFINITE);
-            MediaView view = new MediaView(player);
-            view.setFitWidth(width);
-            view.setFitHeight(height);
-            view.setPreserveRatio(false);
-            root.getChildren().add(view); // add first so other nodes render above
-            player.play();
-        } catch (Exception e) {
-            System.err.println("Could not load video: " + videoPath);
-            e.printStackTrace();
-            UIUtils.drawRect(root, 0, 0, width, height, Color.LIGHTBLUE);
-        }
-    }
-
-    private void setupSoundControls(double width) {
-        double panelWidth = 220;
-        double panelHeight = 120;
-        double x = width - panelWidth - 20;
-        double y = 80;
-
-        UIUtils.drawRect(root, x, y, panelWidth, panelHeight, Color.BLACK).setOpacity(0.55);
-        Text title = UIUtils.drawText(root, "Sound", x + 10, y + 22);
-        title.setFill(Color.WHITE);
-
-        this.volumeStep = (int) Math.round(SoundManager.getVolume() * 5);
-        this.volumeLbl = UIUtils.drawText(root, "", x + 10, y + 45);
-        this.volumeLbl.setFill(Color.WHITE);
-
-        UIUtils.drawButton(root, "-", x + 10, y + 60, () -> changeVolume(-1));
-        UIUtils.drawButton(root, "+", x + 50, y + 60, () -> changeVolume(1));
-        this.muteBtn = UIUtils.drawButton(root, "", x + 90, y + 60, this::toggleMute);
-
-        this.updateVolumeLabel();
-        this.updateMuteButton();
-    }
-
     private void drawHealth(double width) {
         int heartSize = 32;
         int padding = 4;
@@ -519,33 +444,6 @@ public class GameScreen implements GuiScreen {
         }
     }
 
-    private void changeVolume(int delta) {
-        this.volumeStep = Math.max(0, Math.min(5, this.volumeStep + delta));
-        double newVolume = this.volumeStep / 5.0;
-        SoundManager.setVolume(newVolume);
-        if (SoundManager.isMuted() && newVolume > 0) {
-            SoundManager.setMuted(false);
-        }
-        this.updateVolumeLabel();
-        this.updateMuteButton();
-    }
-
-    private void toggleMute() {
-        SoundManager.setMuted(!SoundManager.isMuted());
-        this.updateMuteButton();
-        this.updateVolumeLabel();
-    }
-
-    private void updateVolumeLabel() {
-        int percent = (int) Math.round(SoundManager.getVolume() * 100);
-        String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
-        this.volumeLbl.setText("Lautstaerke: " + percent + "% (" + this.volumeStep + "/5)" + muteSuffix);
-    }
-
-    private void updateMuteButton() {
-        this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
-    }
-
     /**
      * Setzt die Y-Positionen aller HUD-Texte konsistent unterhalb der Buttons.
      */
@@ -556,20 +454,8 @@ public class GameScreen implements GuiScreen {
         int hudBlockSpacing = 10;  // Abstand zwischen Blöcken
         int y = hudStartY;
 
-        // Block 1: FPS / Debug-Infos (3 Zeilen in debugBarLbl)
-        if (this.debugBarLbl != null) {
-            this.debugBarLbl.setX(hudX);
-            this.debugBarLbl.setY(y);
-            y += hudLineHeight * 3;     // drei Zeilen im Text
-            y += hudBlockSpacing;       // Abstand zum nächsten Block
-        }
 
         // Block 2: Status + Debug-State + Tooltips (entzerrt)
-        if (this.debugStatusLbl != null) {
-            this.debugStatusLbl.setX(hudX);
-            this.debugStatusLbl.setY(y);
-            y += hudLineHeight + 4; // zusätzlicher Abstand
-        }
         if (this.tipsLbl != null) {
             this.tipsLbl.setX(hudX);
             this.tipsLbl.setY(y);
@@ -595,8 +481,6 @@ public class GameScreen implements GuiScreen {
      * Aktualisiert die Debug-Bar oben links in Giftgrün. Sichtbar nur wenn showDebugBar = true.
      */
     private void updateDebugBar(boolean onGround, double moveSpeed, double jumpPower) {
-        if (this.debugBarLbl == null) return;
-        this.debugBarLbl.setVisible(showDebugBar);
         if (!showDebugBar) {
             return;
         }
@@ -610,7 +494,6 @@ public class GameScreen implements GuiScreen {
         String line3 = "HP: " + (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0)
                 + " | NoClip: " + player.isNoClipEnabled()
                 + " | God: " + player.isGodModeEnabled();
-        this.debugBarLbl.setText(line1 + "\n" + line2 + "\n" + line3);
     }
 
     private int countFolderBlocks() {
@@ -634,5 +517,15 @@ public class GameScreen implements GuiScreen {
         int active = countActiveFolders();
         int collected = Math.max(0, this.totalFolderCount - active);
         this.filesProgressLbl.setText("Files: " + collected + "/" + this.totalFolderCount);
+    }
+
+    @Override
+    public Pane getRoot() {
+        return root;
+    }
+
+    @Override
+    public String getName() {
+        return "GameScreen";
     }
 }
