@@ -63,6 +63,10 @@ public class GameScreen implements GuiScreen {
     private Text flipperHint;
     private boolean flipperHintShown = false;
 
+    private Text questLbl;
+    private Text filesProgressLbl;
+    private int totalFolderCount = 0;
+
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
@@ -100,6 +104,11 @@ public class GameScreen implements GuiScreen {
         this.setupPauseOverlay(width, height);
         this.flipperHint = UIUtils.drawText(root, "", 10, 135);
         this.flipperHint.setVisible(false);
+
+        this.totalFolderCount = this.countFolderBlocks();
+        this.questLbl = UIUtils.drawText(root, "Quest: Sammel alle Files mit deinem USB Stick", 10, 155);
+        this.filesProgressLbl = UIUtils.drawText(root, "", 10, 175);
+        this.updateFolderProgress();
 
         this.drawHealth(width);
     }
@@ -282,6 +291,8 @@ public class GameScreen implements GuiScreen {
             flipperHintShown = true;
         }
 
+        this.updateFolderProgress();
+
         player.update();
     }
 
@@ -454,5 +465,28 @@ public class GameScreen implements GuiScreen {
 
     private void updateMuteButton() {
         this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+    }
+
+    private int countFolderBlocks() {
+        return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
+                .filter(block -> block instanceof de.cyzetlc.hsbi.game.gui.block.impl.FolderBlock)
+                .count();
+    }
+
+    private int countActiveFolders() {
+        return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
+                .filter(block -> block instanceof de.cyzetlc.hsbi.game.gui.block.impl.FolderBlock)
+                .filter(de.cyzetlc.hsbi.game.gui.block.Block::isActive)
+                .count();
+    }
+
+    private void updateFolderProgress() {
+        if (this.totalFolderCount == 0) {
+            this.filesProgressLbl.setText("Files: 0/0");
+            return;
+        }
+        int active = countActiveFolders();
+        int collected = Math.max(0, this.totalFolderCount - active);
+        this.filesProgressLbl.setText("Files: " + collected + "/" + this.totalFolderCount);
     }
 }

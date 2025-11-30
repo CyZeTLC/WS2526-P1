@@ -11,7 +11,8 @@ import javafx.scene.layout.Pane;
 public class RobotEnemyBlock extends Block {
     private final double minX;
     private final double maxX;
-    private final double baseY;
+    private double baseY;
+    private final double platformTopY;
     private final double speed;
     private boolean dead = false;
     private long lastUpdateNanos = 0L;
@@ -20,14 +21,15 @@ public class RobotEnemyBlock extends Block {
     private double lastHitTime = -1;
 
     public RobotEnemyBlock(Location location, double patrolWidth, double speed) {
-        super(location);
+        super(new Location(location.getX(), location.getY())); // store platform top; y adjusted after sprite size is known
         this.setMaterial(Material.ROBOT_ENEMY);
         this.setCollideAble(true);
         this.setWidth(0);
         this.setHeight(0);
         this.minX = location.getX();
         this.maxX = location.getX() + Math.max(0, patrolWidth);
-        this.baseY = location.getY();
+        this.platformTopY = location.getY();
+        this.baseY = platformTopY - 96; // temporary until sprite size is known
         this.speed = speed;
     }
 
@@ -39,6 +41,8 @@ public class RobotEnemyBlock extends Block {
         this.sprite.setFitHeight(96);
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
+        this.baseY = platformTopY - this.getHeight();
+        this.getLocation().setY(this.baseY);
         if (this.sprite.getParent() != null) {
             this.sprite.toFront();
         }

@@ -43,7 +43,7 @@ public class SecondLevel extends Level {
         this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
         this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
         // Boss robot on final platform
-        this.blocks.add(new RobotEnemyBlock(new Location(5000, height - 300 - 64), 500, 180));
+        this.blocks.add(new RobotEnemyBlock(new Location(5000, height - 300), 500, 180));
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
         // moving platform at mid height similar to tutorial
         this.blocks.add(new FloatingPlatformBlock(
