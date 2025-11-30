@@ -122,16 +122,20 @@ public class GameScreen implements GuiScreen {
         this.filesProgressLbl = UIUtils.drawText(root, "", 10, 175);
         this.updateFolderProgress();
 
-        // HUD-Hinweise und Debug-Status (F1/F2/F3) oben links in Giftgrün
-        this.debugBarLbl = UIUtils.drawText(root, "", 10, 20);
+        // HUD-Hinweise und Debug-Status (F1/F2/F3) direkt unter den Buttons in Giftgrün
+        this.debugBarLbl = UIUtils.drawText(root, "", 10, 60);
         this.debugBarLbl.setFill(Color.rgb(80, 255, 80));
-        this.debugStatusLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, 60);
+        this.debugStatusLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, 82);
         this.debugStatusLbl.setFill(Color.rgb(80, 255, 80));
-        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 80);
+        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 104);
         this.tipsLbl.setFill(Color.rgb(80, 255, 80));
         this.debugBarLbl.setVisible(showDebugBar);
         this.debugStatusLbl.setVisible(showTooltips);
         this.tipsLbl.setVisible(showTooltips);
+
+        // Quest-/Progress-Texte etwas weiter unten, damit nichts überlappt
+        this.questLbl.setY(134);
+        this.filesProgressLbl.setY(154);
 
         this.drawHealth(width);
     }
