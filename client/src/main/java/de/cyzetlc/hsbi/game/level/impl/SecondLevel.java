@@ -39,13 +39,13 @@ public class SecondLevel extends Level {
 
         platforms.add(new Platform(4100, height - 320, 200, 570, root));
         platforms.add(new Platform(4400, height - 360, 250, 610, root));
-        platforms.add(new Platform(4800, height - 300, 400, 550, root));
+        platforms.add(new Platform(4800, height - 300, 900, 550, root));
 
         this.addLavaBetweenPlatforms(height);
         this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
         this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
-        // Robot on the barrier platform (same height as the gas cloud)
-        this.blocks.add(new RobotEnemyBlock(new Location(4470, height - 360 - 64), 200, 90));
+        // Boss robot on final platform
+        this.blocks.add(new RobotEnemyBlock(new Location(5000, height - 300 - 64), 500, 180));
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
         // moving platform at mid height similar to tutorial
         this.blocks.add(new FloatingPlatformBlock(
@@ -91,7 +91,7 @@ public class SecondLevel extends Level {
 
 
 // --- FINISH ---
-        blocks.add(new FinishBlock(new Location(5000, height - 390)));
+        blocks.add(new FinishBlock(new Location(4800 + 900 - 150, height - 390)));
 
 
         // draw blocks
@@ -105,8 +105,8 @@ public class SecondLevel extends Level {
     }
 
     private void addLavaBetweenPlatforms(double sceneHeight) {
-        double lavaTop = sceneHeight - 80;
-        double lavaHeight = 300;
+        double lavaTop = sceneHeight - 70;
+        double lavaHeight = 250;
 
         List<Platform> ordered = new ArrayList<>();
         for (Platform platform : this.platforms) {

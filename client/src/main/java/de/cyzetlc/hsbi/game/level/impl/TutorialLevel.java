@@ -72,8 +72,8 @@ public class TutorialLevel extends Level {
     }
 
     private void addLavaBetweenPlatforms(double sceneHeight) {
-        double lavaTop = sceneHeight - 80;
-        double lavaHeight = 300;
+        double lavaTop = sceneHeight - 70;
+        double lavaHeight = 250;
 
         List<Platform> ordered = new ArrayList<>();
         for (Platform platform : this.platforms) {

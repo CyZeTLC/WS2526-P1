@@ -13,7 +13,6 @@ public class RobotEnemyBlock extends Block {
     private final double maxX;
     private final double baseY;
     private final double speed;
-    private boolean movingRight = true;
     private boolean dead = false;
     private long lastUpdateNanos = 0L;
     private double fireTimer = 0;
@@ -40,6 +39,9 @@ public class RobotEnemyBlock extends Block {
         this.sprite.setFitHeight(96);
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
+        if (this.sprite.getParent() != null) {
+            this.sprite.toFront();
+        }
     }
 
     @Override
@@ -69,17 +71,17 @@ public class RobotEnemyBlock extends Block {
 
         if (dead) return;
 
+        double targetX = Game.thePlayer != null ? Game.thePlayer.getLocation().getX() : this.getLocation().getX();
+        double clampedTarget = Math.max(minX, Math.min(maxX - this.getWidth(), targetX));
+
         double currentX = this.getLocation().getX();
-        double nextX = currentX + (movingRight ? speed : -speed) * delta;
-        if (nextX <= minX) {
-            nextX = minX;
-            movingRight = true;
+        double dx = clampedTarget - currentX;
+        double step = Math.signum(dx) * speed * delta;
+        if (Math.abs(step) > Math.abs(dx)) {
+            step = dx;
         }
-        double maxAllowedX = maxX - this.getWidth();
-        if (nextX >= maxAllowedX) {
-            nextX = maxAllowedX;
-            movingRight = false;
-        }
+        double nextX = currentX + step;
+
         this.getLocation().setX(nextX);
         this.getLocation().setY(baseY);
 
@@ -90,7 +92,9 @@ public class RobotEnemyBlock extends Block {
 
     public LaserBlock tryFire(EntityPlayer player) {
         if (dead || player == null) return null;
-        if (fireTimer < fireCooldown) return null;
+        boolean playerIsAbove = player.getLocation().getY() + player.getHeight() < this.getLocation().getY() + this.getHeight() * 0.5;
+        boolean closeHorizontally = Math.abs(player.getLocation().getX() - this.getLocation().getX()) < 220;
+        if (fireTimer < fireCooldown && !(playerIsAbove && closeHorizontally)) return null;
         fireTimer = 0;
 
         double playerX = player.getLocation().getX();
@@ -118,5 +122,6 @@ public class RobotEnemyBlock extends Block {
         double playerX = Game.thePlayer != null ? Game.thePlayer.getLocation().getX() : this.getLocation().getX();
         boolean faceRight = playerX >= this.getLocation().getX();
         this.sprite.setScaleX(faceRight ? 1 : -1);
+        this.sprite.toFront();
     }
 }
