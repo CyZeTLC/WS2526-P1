@@ -38,6 +38,10 @@ public class LavaBlock extends AnimatedBlock {
 
     @Override
     public void onCollide(Player player) {
+        // Lava darf im GodMode keinen Schaden anrichten.
+        if (player.isGodModeEnabled()) {
+            return;
+        }
         float newHealth = Math.max(0, player.getHealth() - 0.25f); // 25% Schaden pro Tick
         player.setHealth(newHealth);
         if (newHealth <= 0 && Game.getInstance() != null) {

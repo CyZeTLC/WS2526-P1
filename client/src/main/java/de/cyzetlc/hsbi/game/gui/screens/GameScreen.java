@@ -55,10 +55,7 @@ public class GameScreen implements GuiScreen {
     @Getter
     private double cameraY = 0;
 
-    private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
-
-    private final double marginX = 400;
-    private final double marginY = 150;
+    private final double cameraSmooth = 0.25; // wie schnell die Kamera folgt (etwas straffer fuer FlyMode)
 
     private Text flipperHint;
     private boolean flipperHintShown = false;
@@ -158,6 +155,7 @@ public class GameScreen implements GuiScreen {
         boolean f1 = screenManager.getInputManager().pollJustPressed(KeyCode.F1);
         boolean f2 = screenManager.getInputManager().pollJustPressed(KeyCode.F2);
         boolean f3 = screenManager.getInputManager().pollJustPressed(KeyCode.F3);
+        boolean noClip = player.isNoClipEnabled();
 
         // Tooltips toggeln (F1)
         if (f1) {
@@ -183,24 +181,29 @@ public class GameScreen implements GuiScreen {
 
         // Debug-Status-Text aktualisieren (anzeige nur wenn Tooltips an)
         if (showTooltips) {
-            debugStatusLbl.setText(player.isNoClipEnabled() ? "DEBUG: NoClip+GodMode AN" : "DEBUG: AUS");
+            String status = "NoClip: " + (player.isNoClipEnabled() ? "ON" : "OFF")
+                    + " | GodMode: " + (player.isGodModeEnabled() ? "ON" : "OFF");
+            debugStatusLbl.setText(status);
         }
 
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
 
         // NoClip: freie Bewegung ohne Gravitation/Kollision
-        if (player.isNoClipEnabled()) {
+        if (noClip) {
             double freeSpeed = moveSpeed * 1.8 * delta;
             double nx = x;
             double ny = y;
-            if (screenManager.getInputManager().isPressed(KeyCode.A)) nx -= freeSpeed;
-            if (screenManager.getInputManager().isPressed(KeyCode.D)) nx += freeSpeed;
-            if (screenManager.getInputManager().isPressed(KeyCode.W)) ny -= freeSpeed;
-            if (screenManager.getInputManager().isPressed(KeyCode.S)) ny += freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.A) || screenManager.getInputManager().isPressed(KeyCode.LEFT)) nx -= freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.D) || screenManager.getInputManager().isPressed(KeyCode.RIGHT)) nx += freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.W) || screenManager.getInputManager().isPressed(KeyCode.UP)) ny -= freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.S) || screenManager.getInputManager().isPressed(KeyCode.DOWN)) ny += freeSpeed;
             player.getLocation().setX(nx);
             player.getLocation().setY(ny);
-            this.updateCamera(width, height);
+            dx = 0; // Bewegungs-/Physikwerte ausgeschaltet, damit die normale Physik beim Reaktivieren sauber startet
+            dy = 0;
+            // Keine Gravitation oder Kollisionen anwenden – freie Bewegung im Fly/NoClip-Modus.
+            this.updateCamera(nx, ny, width, height);
             this.updateDebugBar(onGround, moveSpeed, jumpPower);
             this.updateFolderProgress();
             if (player.hasFlipper()) {
@@ -354,12 +357,12 @@ public class GameScreen implements GuiScreen {
         player.getLocation().setX(nextX);
         player.getLocation().setY(nextY);
 
-        this.updateCamera(width, height);
+        this.updateCamera(nextX, nextY, width, height);
 
         this.updateDebugBar(onGround, moveSpeed, jumpPower);
 
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
-        this.healthLbl.setText("HP: " + hpPercent + "%");
+        this.healthLbl.setText(player.isGodModeEnabled() ? "HP: GOD" : "HP: " + hpPercent + "%");
 
         if (player.hasFlipper() && !flipperHintShown) {
             flipperHint.setText("Druecke E damit der Flipper mit Gegenstaenden interagiert");
@@ -382,28 +385,17 @@ public class GameScreen implements GuiScreen {
         return "GameScreen";
     }
 
-    private void updateCamera(double width, double height) {
-        double playerScreenX = player.getLocation().getX() - this.cameraX;
-        double playerScreenY = player.getLocation().getY() - this.cameraY;
+    private void updateCamera(double playerX, double playerY, double width, double height) {
+        // Zentraler Follow-Point: nur hier pro Frame anpassen, damit keine widerspruechlichen Versatze auftreten.
+        double targetCamX = playerX - (width / 2.0) + (player.getWidth() / 2.0);
+        double targetCamY = playerY - (height / 2.0) + (player.getHeight() / 2.0);
 
-        double targetCamX = this.cameraX;
-        double targetCamY = this.cameraY;
-
-        if (playerScreenX > width - this.marginX) {
-            targetCamX += playerScreenX - (width - this.marginX);
-        } else if (playerScreenX < this.marginX) {
-            targetCamX -= (this.marginX - playerScreenX);
-        }
-
-        if (playerScreenY > height - this.marginY) {
-            targetCamY += playerScreenY - (height - this.marginY);
-        } else if (playerScreenY < this.marginY) {
-            targetCamY -= (this.marginY - playerScreenY);
-        }
-
-        // sanftes Folgen (definiert durch cameraSmooth)
         this.cameraX += (targetCamX - this.cameraX) * this.cameraSmooth;
         this.cameraY += (targetCamY - this.cameraY) * this.cameraSmooth;
+
+        // Kleine Differenzen sofort glätten, damit die Kamera bei hohen Geschwindigkeiten nicht hinterherhinkt.
+        if (Math.abs(targetCamX - this.cameraX) < 0.5) this.cameraX = targetCamX;
+        if (Math.abs(targetCamY - this.cameraY) < 0.5) this.cameraY = targetCamY;
 
         // Kamera-Clamp nur im Normalmodus; im NoClip darf man frei fliegen
         if (!player.isNoClipEnabled()) {
@@ -600,16 +592,22 @@ public class GameScreen implements GuiScreen {
         if (!showDebugBar) {
             return;
         }
+        boolean flyMode = player.isNoClipEnabled();
+        String hpText = player.isGodModeEnabled()
+                ? "GOD"
+                : String.valueOf((int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0)) + "%";
         String line1 = "FPS: " + (int) screenManager.getCurrentFps()
                 + " | onGround: " + onGround
                 + " | moveSpeed: " + moveSpeed
                 + " | jumpPower: " + jumpPower;
-        String line2 = "cameraX: " + (int) cameraX
-                + " | cameraY: " + (int) cameraY
-                + " | Location: " + player.getLocation().toString();
-        String line3 = "HP: " + (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0)
-                + " | NoClip: " + player.isNoClipEnabled()
-                + " | God: " + player.isGodModeEnabled();
+        String line2 = "X: " + (int) player.getLocation().getX()
+                + " | Y: " + (int) player.getLocation().getY()
+                + " | camX: " + (int) cameraX
+                + " | camY: " + (int) cameraY;
+        String line3 = "HP: " + hpText
+                + " | NoClip: " + (flyMode ? "ON" : "OFF")
+                + " | Fly: " + (flyMode ? "ON" : "OFF")
+                + " | God: " + (player.isGodModeEnabled() ? "ON" : "OFF");
         this.debugBarLbl.setText(line1 + "\n" + line2 + "\n" + line3);
     }
 

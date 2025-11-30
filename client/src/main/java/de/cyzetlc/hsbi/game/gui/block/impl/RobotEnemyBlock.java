@@ -112,6 +112,10 @@ public class RobotEnemyBlock extends Block {
 
     public void hitPlayer(de.cyzetlc.hsbi.game.entity.Player player) {
         if (dead) return;
+        // Treffer ignorieren, wenn der Spieler unverwundbar ist.
+        if (player.isGodModeEnabled()) {
+            return;
+        }
         double now = System.nanoTime() / 1e9;
         if (this.lastHitTime < 0 || now - this.lastHitTime > 0.5) {
             player.setHealth(player.getHealth() - 1f);
