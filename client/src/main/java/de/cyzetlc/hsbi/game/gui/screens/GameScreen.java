@@ -181,7 +181,7 @@ public class GameScreen implements GuiScreen {
 
         // Debug-Status-Text aktualisieren (anzeige nur wenn Tooltips an)
         if (showTooltips) {
-            String status = "NoClip: " + (player.isNoClipEnabled() ? "ON" : "OFF")
+            String status = "NoClip/Fly: " + (noClip ? "ON" : "OFF")
                     + " | GodMode: " + (player.isGodModeEnabled() ? "ON" : "OFF");
             debugStatusLbl.setText(status);
         }
@@ -340,11 +340,16 @@ public class GameScreen implements GuiScreen {
         // fell out of the world -> game over
         double screenNextY = nextY - this.cameraY;
         if (screenNextY + player.getHeight() > height) {
-            if (player.getHealth() > 0) {
-                player.setHealth(0);
+            if (!player.isGodModeEnabled()) {
+                if (player.getHealth() > 0) {
+                    player.setHealth(0);
+                }
+                this.handleGameOver();
+                return;
             }
-            this.handleGameOver();
-            return;
+            // In GodMode nie sterben – Spieler am unteren Bildschirmrand halten und Fallen stoppen.
+            nextY = this.cameraY + height - player.getHeight();
+            dy = 0;
         }
 
         // jump (only if on ground)
