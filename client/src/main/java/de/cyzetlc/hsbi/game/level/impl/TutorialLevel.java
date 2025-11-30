@@ -38,6 +38,7 @@ public class TutorialLevel extends Level {
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
         this.blocks.add(new FinishBlock(new Location(2400, height - 490)));
         this.blocks.add(new FolderBlock(new Location(800, height - 482)));
+        this.blocks.add(new RobotEnemyBlock(new Location(1475, 564), 0, 0)); // static placement for testing
 
         // floating platform connects upper islands
         this.blocks.add(new FloatingPlatformBlock(

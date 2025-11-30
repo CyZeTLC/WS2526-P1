@@ -9,7 +9,7 @@ public enum Material {
     JUMP_PERK("/assets/tileset/jump_boost.png"),
     FLIPPER("/assets/tileset/flipper_item.png"),
     SPEED_PERK("/assets/tileset/speed.png"),
-    ROBOT_ENEMY("/assets/tileset/roboter_enemy.png"),
+    ROBOT_ENEMY("/assets/roboter_enemy.png"),
     ROBOT_LASER("/assets/tileset/robot_laser.png"),
     GAS_BARRIER("/assets/lavaset/SchrankeGas.png"),
     USB_STICK("/assets/USB-Stick/USB-Stick-Raw.png"),

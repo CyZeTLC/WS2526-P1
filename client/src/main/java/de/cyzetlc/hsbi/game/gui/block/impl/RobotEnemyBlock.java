@@ -36,8 +36,8 @@ public class RobotEnemyBlock extends Block {
     public void draw(Pane pane) {
         super.draw(pane);
         this.sprite.setPreserveRatio(true);
-        this.sprite.setFitWidth(64);
-        this.sprite.setFitHeight(64);
+        this.sprite.setFitWidth(96);
+        this.sprite.setFitHeight(96);
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
     }
@@ -83,9 +83,7 @@ public class RobotEnemyBlock extends Block {
         this.getLocation().setX(nextX);
         this.getLocation().setY(baseY);
 
-        if (this.sprite != null) {
-            this.sprite.setScaleX(movingRight ? 1 : -1);
-        }
+        this.updateFacingToPlayer();
 
         fireTimer += delta;
     }
@@ -111,5 +109,14 @@ public class RobotEnemyBlock extends Block {
             player.setHealth(player.getHealth() - 1f);
             this.lastHitTime = now;
         }
+    }
+
+    private void updateFacingToPlayer() {
+        if (this.sprite == null) {
+            return;
+        }
+        double playerX = Game.thePlayer != null ? Game.thePlayer.getLocation().getX() : this.getLocation().getX();
+        boolean faceRight = playerX >= this.getLocation().getX();
+        this.sprite.setScaleX(faceRight ? 1 : -1);
     }
 }
