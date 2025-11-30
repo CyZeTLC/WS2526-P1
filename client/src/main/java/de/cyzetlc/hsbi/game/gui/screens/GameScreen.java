@@ -67,6 +67,13 @@ public class GameScreen implements GuiScreen {
     private Text filesProgressLbl;
     private int totalFolderCount = 0;
 
+    // HUD/Debug-Toggles
+    private Text tipsLbl;
+    private Text debugToggleLbl;
+    private boolean showHudTips = true;
+    private boolean lastF1 = false;
+    private boolean lastF2 = false;
+
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
@@ -110,6 +117,10 @@ public class GameScreen implements GuiScreen {
         this.filesProgressLbl = UIUtils.drawText(root, "", 10, 175);
         this.updateFolderProgress();
 
+        // HUD-Hinweise und Debug-Status (F1/F2)
+        this.debugToggleLbl = UIUtils.drawText(root, "DEBUG: AUS", 10, height - 60);
+        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug (NoClip+GodMode)", 10, height - 40);
+
         this.drawHealth(width);
     }
 
@@ -129,9 +140,52 @@ public class GameScreen implements GuiScreen {
         boolean onGround = false;
         boolean hittingCeiling = false;
         boolean interactPressed = screenManager.getInputManager().isPressed(KeyCode.E);
+        boolean f1 = screenManager.getInputManager().isPressed(KeyCode.F1);
+        boolean f2 = screenManager.getInputManager().isPressed(KeyCode.F2);
+
+        // Tooltips toggeln (F1, entprellt)
+        if (f1 && !lastF1) {
+            showHudTips = !showHudTips;
+            tipsLbl.setVisible(showHudTips);
+            debugToggleLbl.setVisible(showHudTips);
+        }
+        lastF1 = f1;
+
+        // Debug (NoClip + GodMode) toggeln (F2, entprellt)
+        if (f2 && !lastF2) {
+            boolean enable = !player.isNoClipEnabled();
+            player.setNoClip(enable);
+            player.setGodMode(enable);
+            debugToggleLbl.setText(enable ? "DEBUG: NoClip+GodMode AKTIV" : "DEBUG: AUS");
+        }
+        lastF2 = f2;
 
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
+
+        // NoClip: freie Bewegung ohne Gravitation/Kollision
+        if (player.isNoClipEnabled()) {
+            double freeSpeed = moveSpeed * 1.8 * delta;
+            double nx = x;
+            double ny = y;
+            if (screenManager.getInputManager().isPressed(KeyCode.A)) nx -= freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.D)) nx += freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.W)) ny -= freeSpeed;
+            if (screenManager.getInputManager().isPressed(KeyCode.S)) ny += freeSpeed;
+            player.getLocation().setX(nx);
+            player.getLocation().setY(ny);
+            this.updateCamera(width, height);
+            this.debugLbl.setText("FPS: " + (int) screenManager.getCurrentFps() +
+                    " | NoClip: true | God: " + player.isGodModeEnabled() +
+                    " | Location: " + player.getLocation().toString());
+            this.healthLbl.setText("HP: " + (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0) + "%");
+            this.updateFolderProgress();
+            if (player.hasFlipper()) {
+                flipperHint.setText("Flipper vorhanden: E zum Deaktivieren von Gas");
+                flipperHint.setVisible(true);
+            }
+            return; // Skip Kollisionen/Gravitation
+        }
 
         // input
         if (screenManager.getInputManager().isPressed(KeyCode.A)) {
@@ -206,7 +260,7 @@ public class GameScreen implements GuiScreen {
                 }
             }
 
-            if (nextBounds.intersects(pBounds) && block.isActive()) {
+            if (nextBounds.intersects(pBounds) && block.isActive() && !player.isNoClipEnabled()) {
                 if (block instanceof GasBarrierBlock barrier && interactPressed && player.hasFlipper()) {
                     barrier.deactivate();
                     continue;

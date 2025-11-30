@@ -43,7 +43,7 @@ public class GasBarrierBlock extends Block {
     @Override
     public void onCollide(Player player) {
         // Solange aktiv: sofort Schaden/Tod auslösen
-        if (!active) return;
+        if (!active || player.isGodModeEnabled() || player.isNoClipEnabled()) return;
         player.setHealth(0f);
     }
 

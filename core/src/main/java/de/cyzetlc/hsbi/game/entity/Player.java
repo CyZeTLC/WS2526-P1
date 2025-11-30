@@ -7,6 +7,9 @@ import java.util.Random;
 
 public class Player extends Entity {
     private boolean flipperCollected = false;
+    // Debug/Utility Flags
+    private boolean noClip = false;   // true = Kollisionen ignorieren / frei bewegen
+    private boolean godMode = false;  // true = kein Schaden
 
     public Player() {
         super();
@@ -34,5 +37,21 @@ public class Player extends Entity {
 
     public void setFlipperCollected(boolean flipperCollected) {
         this.flipperCollected = flipperCollected;
+    }
+
+    public boolean isNoClipEnabled() {
+        return noClip;
+    }
+
+    public void setNoClip(boolean noClip) {
+        this.noClip = noClip;
+    }
+
+    public boolean isGodModeEnabled() {
+        return godMode;
+    }
+
+    public void setGodMode(boolean godMode) {
+        this.godMode = godMode;
     }
 }
