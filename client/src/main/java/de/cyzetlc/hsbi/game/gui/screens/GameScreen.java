@@ -207,6 +207,8 @@ public class GameScreen implements GuiScreen {
                 flipperHint.setText("Flipper vorhanden: E zum Deaktivieren von Gas");
                 flipperHint.setVisible(true);
             }
+            // Sprite/Nametag auch im NoClip aktualisieren, damit er sichtbar mitfliegt
+            player.update();
             return; // Skip Kollisionen/Gravitation
         }
 
