@@ -41,7 +41,8 @@ public class SecondLevel extends Level {
         platforms.add(new Platform(4800, height - 300, 900, 550, root));
 
         this.addLavaBetweenPlatforms(height);
-        this.blocks.add(new FlipperBlock(new Location(220, height - 320)));
+        // Flipper-Schlüssel vor der Schranke platzieren
+        this.blocks.add(new FlipperItem(new Location(220, height - 320)));
         this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
         // Boss robot on final platform (platform top = height - 300)
         this.blocks.add(new BossRobotBlock(new Location(5000, height - 300), 500, 180));

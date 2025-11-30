@@ -11,7 +11,18 @@ import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 public class GasBarrierBlock extends Block {
-    private boolean deactivating = false;
+    /**
+     * Flag ob die Schranke noch tötet / blockiert.
+     */
+    private boolean active = true;
+    /**
+     * Fade-out Zustand nachdem der Spieler per E interagiert hat.
+     */
+    private boolean fadingOut = false;
+    /**
+     * Transparenz für manuelles Ausblenden, falls kein FadeTransition läuft.
+     */
+    private double alpha = 1.0;
 
     public GasBarrierBlock(Location location, double width, double height) {
         super(location);
@@ -26,23 +37,44 @@ public class GasBarrierBlock extends Block {
         super.draw(pane);
         this.sprite.setFitWidth(this.getWidth());
         this.sprite.setFitHeight(this.getHeight());
+        this.sprite.setOpacity(alpha);
     }
 
     @Override
     public void onCollide(Player player) {
-        if (deactivating) return;
-        player.setHealth(player.getHealth() - 1f);
+        // Solange aktiv: sofort Schaden/Tod auslösen
+        if (!active) return;
+        player.setHealth(0f);
     }
 
     public void deactivate() {
-        if (deactivating) return;
-        deactivating = true;
+        if (fadingOut || !active) return;
+        fadingOut = true;
+        // Kollision sofort deaktivieren, sobald der Spieler korrekt interagiert hat
+        this.setCollideAble(false);
         SoundManager.play(Sound.CLICK);
         FadeTransition ft = new FadeTransition(Duration.seconds(0.8), this.sprite);
         ft.setFromValue(1.0);
         ft.setToValue(0.0);
-        ft.setOnFinished(e -> this.setActive(false));
+        ft.setOnFinished(e -> {
+            this.active = false;
+            this.setActive(false);
+            this.alpha = 0;
+        });
         ft.play();
-        this.setCollideAble(false);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        // Falls aus irgendeinem Grund das FadeTransition nicht läuft: manuelles Ausblenden
+        if (fadingOut && active) {
+            alpha = Math.max(0, alpha - 0.05);
+            this.sprite.setOpacity(alpha);
+            if (alpha <= 0.0) {
+                active = false;
+                this.setActive(false);
+            }
+        }
     }
 }

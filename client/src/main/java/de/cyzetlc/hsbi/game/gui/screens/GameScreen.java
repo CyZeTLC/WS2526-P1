@@ -191,7 +191,12 @@ public class GameScreen implements GuiScreen {
         List<Block> blocks = Game.getInstance().getCurrentLevel().getBlocks();
         for (Block block : blocks) {
             Rectangle2D pBounds = block.getBounds();
-            block.update();
+            // Flipper-Item-Logik: Einsammeln & HUD-Flag setzen
+            if (block instanceof de.cyzetlc.hsbi.game.gui.block.impl.FlipperItem flipperItem) {
+                flipperItem.update(player);
+            } else {
+                block.update();
+            }
 
             if (block instanceof RobotEnemyBlock enemy) {
                 LaserBlock laser = enemy.tryFire(player);
