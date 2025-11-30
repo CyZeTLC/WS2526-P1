@@ -10,6 +10,8 @@ import java.util.Set;
 
 public class InputManager {
     private final Set<KeyCode> pressedKeys = new HashSet<>();
+    private double mouseX = 0;
+    private double mouseY = 0;
 
     public void register(Scene scene) {
         KeyInputEvent keyInputEvent = new KeyInputEvent();
@@ -28,9 +30,26 @@ public class InputManager {
             keyInputEvent.setKeyCode(event.getCode());
             keyInputEvent.call();
         });
+
+        scene.setOnMouseMoved(event -> {
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+        });
+        scene.setOnMouseDragged(event -> {
+            mouseX = event.getSceneX();
+            mouseY = event.getSceneY();
+        });
     }
 
     public boolean isPressed(KeyCode key) {
         return pressedKeys.contains(key);
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
     }
 }

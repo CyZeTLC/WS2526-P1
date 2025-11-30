@@ -269,7 +269,9 @@ public class GameScreen implements GuiScreen {
                 " | jumpPower: " + jumpPower +
                 " | cameraX: " + (int) cameraX +
                 " | cameraY: " + (int) cameraY +
-                " | Location: " + player.getLocation().toString());
+                " | Location: " + player.getLocation().toString() +
+                " | Cursor: X: " + (int) screenManager.getInputManager().getMouseX() +
+                ", Y: " + (int) screenManager.getInputManager().getMouseY());
 
         int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
         this.healthLbl.setText("HP: " + hpPercent + "%");
