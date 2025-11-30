@@ -50,6 +50,9 @@ import java.util.List;
  * <li><b>F3:</b> Toggles "NoClip" and "GodMode" (flight and invulnerability).</li>
  * </ul>
  *
+ * @author Tom Coombs
+ * @author Leonardo (aka. Phantomic)
+ *
  * @see GuiScreen
  * @see EntityPlayer
  * @see ScreenManager
