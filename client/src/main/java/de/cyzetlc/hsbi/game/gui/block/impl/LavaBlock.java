@@ -31,9 +31,6 @@ public class LavaBlock extends AnimatedBlock {
     @Override
     public void draw(Pane pane) {
         super.draw(pane);
-        // hide stretched base sprite; render tiled quads instead
-        this.getSprite().setVisible(false);
-        this.rebuildTiles(pane, this.getSprite().getImage());
     }
 
     @Override
@@ -47,105 +44,5 @@ public class LavaBlock extends AnimatedBlock {
         if (newHealth <= 0 && Game.getInstance() != null) {
             Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
         }
-    }
-
-    @Override
-    public void update() {
-        // keep animation timing from AnimatedBlock
-        super.update();
-
-        Image currentFrame = this.getSprite().getImage();
-        double camX = 0;
-        double camY = 0;
-        if (Game.getInstance() != null && Game.getInstance().getScreenManager().getCurrentScreen() instanceof GameScreen) {
-            GameScreen gs = (GameScreen) Game.getInstance().getScreenManager().getCurrentScreen();
-            camX = gs.getCameraX();
-            camY = gs.getCameraY();
-        }
-
-        // swap frame on tiles if animation advanced
-        if (currentFrame != null && currentFrame != lastFrame) {
-            for (ImageView tile : tiles) {
-                tile.setImage(currentFrame);
-            }
-            lastFrame = currentFrame;
-        }
-
-        double tileWidth = currentFrame != null && currentFrame.getWidth() > 0 ? currentFrame.getWidth() : 64;
-        double tileHeight = currentFrame != null && currentFrame.getHeight() > 0 ? currentFrame.getHeight() : 64;
-
-        int cols = (int) Math.ceil(this.getWidth() / tileWidth);
-        int rows = (int) Math.ceil(this.getHeight() / tileHeight);
-
-        int index = 0;
-        for (int i = 0; i < cols; i++) {
-            double drawW = (i == cols - 1) ? Math.min(tileWidth, this.getWidth() - (i * tileWidth)) : tileWidth;
-            for (int j = 0; j < rows; j++) {
-                if (index >= tiles.size()) {
-                    return; // safety
-                }
-                double drawH = (j == rows - 1) ? Math.min(tileHeight, this.getHeight() - (j * tileHeight)) : tileHeight;
-                double viewportW = currentFrame != null ? currentFrame.getWidth() * (drawW / tileWidth) : drawW;
-                double viewportH = currentFrame != null ? currentFrame.getHeight() * (drawH / tileHeight) : drawH;
-                ImageView tile = tiles.get(index++);
-                tile.setViewport(new Rectangle2D(0, 0, viewportW, viewportH));
-                tile.setFitWidth(drawW);
-                tile.setFitHeight(drawH);
-                tile.setX(this.getLocation().getX() + i * tileWidth - camX);
-                tile.setY(this.getLocation().getY() + j * tileHeight - camY);
-            }
-        }
-    }
-
-    @Override
-    public void setActive(boolean active) {
-        super.setActive(active);
-        if (!active && this.getPane() != null) {
-            this.getPane().getChildren().removeAll(tiles);
-        }
-    }
-
-    private void rebuildTiles(Pane pane, Image frame) {
-        if (pane == null) {
-            return;
-        }
-        pane.getChildren().removeAll(tiles);
-        tiles.clear();
-        if (frame == null) {
-            return;
-        }
-
-        double tileWidth = frame.getWidth() > 0 ? frame.getWidth() : 64;
-        double tileHeight = frame.getHeight() > 0 ? frame.getHeight() : 64;
-
-        int cols = (int) Math.ceil(this.getWidth() / tileWidth);
-        int rows = (int) Math.ceil(this.getHeight() / tileHeight);
-
-        double camX = 0;
-        double camY = 0;
-        if (Game.getInstance() != null && Game.getInstance().getScreenManager().getCurrentScreen() instanceof GameScreen) {
-            GameScreen gs = (GameScreen) Game.getInstance().getScreenManager().getCurrentScreen();
-            camX = gs.getCameraX();
-            camY = gs.getCameraY();
-        }
-
-        for (int i = 0; i < cols; i++) {
-            double drawW = (i == cols - 1) ? Math.min(tileWidth, this.getWidth() - (i * tileWidth)) : tileWidth;
-            for (int j = 0; j < rows; j++) {
-                double drawH = (j == rows - 1) ? Math.min(tileHeight, this.getHeight() - (j * tileHeight)) : tileHeight;
-                double viewportW = frame.getWidth() * (drawW / tileWidth);
-                double viewportH = frame.getHeight() * (drawH / tileHeight);
-                ImageView tile = new ImageView(frame);
-                tile.setSmooth(false);
-                tile.setViewport(new Rectangle2D(0, 0, viewportW, viewportH));
-                tile.setFitWidth(drawW);
-                tile.setFitHeight(drawH);
-                tile.setX(this.getLocation().getX() + i * tileWidth - camX);
-                tile.setY(this.getLocation().getY() + j * tileHeight - camY);
-                pane.getChildren().add(tile);
-                tiles.add(tile);
-            }
-        }
-        this.lastFrame = frame;
     }
 }

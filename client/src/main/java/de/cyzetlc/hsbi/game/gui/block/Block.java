@@ -31,7 +31,7 @@ public abstract class Block {
     @Getter @Setter
     private double width, height;
 
-    @Getter @Setter
+    @Getter
     private boolean active;
 
     @Getter

@@ -1,9 +1,9 @@
-package de.cyzetlc.hsbi.game.utils.database.mysql;
+package de.cyzetlc.hsbi.game.utils.json.database.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import de.cyzetlc.hsbi.game.utils.database.IDatabaseCredentials;
-import de.cyzetlc.hsbi.game.utils.database.IMySQLExtension;
+import de.cyzetlc.hsbi.game.utils.json.database.IDatabaseCredentials;
+import de.cyzetlc.hsbi.game.utils.json.database.IMySQLExtension;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

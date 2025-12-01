@@ -3,7 +3,6 @@ package de.cyzetlc.hsbi.game.level.impl;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.*;
-import de.cyzetlc.hsbi.game.gui.block.impl.BossRobotBlock;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.audio.Sound;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
@@ -40,44 +39,32 @@ public class SecondLevel extends Level {
 
         platforms.add(new Platform(4800, height - 300, 900, 550, root));
 
-        this.addLavaBetweenPlatforms(height);
         // Flipper-Schlüssel vor der Schranke platzieren
         this.blocks.add(new FlipperItem(new Location(220, height - 320)));
-        this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
+
         // Boss robot on final platform (platform top = height - 300)
-        this.blocks.add(new BossRobotBlock(new Location(5000, height - 300), 500, 180));
+        this.blocks.add(new RobotEnemyBlock(new Location(5000, height - 300 - 96), 500, 180));
         this.blocks.add(new JumpBoostBlock(new Location(3400, height - 300 - 32)));
-        // moving platform at mid height similar to tutorial
-        /*this.blocks.add(new FloatingPlatformBlock(
-                new Location(1060, height - 430),
-                new Location(1360, height - 430),
-                120,
-                0
-        ));*/
 
-// --- FLYING PLATFORMS (schwebend) ---
+        // --- FLYING PLATFORMS (schwebend) ---
 
-// frühe Schwebefläche
+        // frühe Schwebefläche
         platforms.add(new Platform(900, height - 550, 200, 50, root));     // mid-air
         blocks.add(new FolderBlock(new Location(980, height - 580)));       // Coin darauf
 
-// über Lava-Sektion
+        // über Lava-Sektion
         platforms.add(new Platform(2500, height - 600, 250, 250, root));    // hoch
         blocks.add(new FolderBlock(new Location(2600, height - 630)));      // Coin
 
-// dreifach-Sprung Kette
-        platforms.add(new Platform(3600, height - 500, 150, 200, root));
+        // dreifach-Sprung Kette
+        platforms.add(new Platform(3600, height - 410, 150, 110, root));
         platforms.add(new Platform(3800, height - 450, 150, 200, root));
         platforms.add(new Platform(4000, height - 500, 150, 200, root));
-        blocks.add(new JumpBoostBlock(new Location(3600, height - 470)));   // Boost öffnet neue Route
 
+        this.platforms.add(new Platform(4200, height-300, 400, 500, root));
+        //this.blocks.add(new GasBarrierBlock(new Location(4550, height - 300 - 128), 64, 128));
 
-// --- LAVA COLUMNS (Gefahr) ---
-        blocks.add(createLavaColumn(2000, height - 200, 80, 200));
-        blocks.add(createLavaColumn(2400, height - 220, 80, 220));
-
-
-// --- BLOCKS / ITEMS ---
+        // --- BLOCKS / ITEMS ---
         blocks.add(new FolderBlock(new Location(150, height - 282)));
         blocks.add(new FolderBlock(new Location(650, height - 330)));
         blocks.add(new FolderBlock(new Location(1200, height - 382)));
@@ -89,57 +76,28 @@ public class SecondLevel extends Level {
 
         blocks.add(new JumpBoostBlock(new Location(2000, height - 350)));  // Mid-level
 
-
-// --- FINISH ---
+        // --- FINISH ---
         blocks.add(new FinishBlock(new Location(4800 + 900 - 150, height - 390)));
 
+        //this.placeLavaBetweenPlatforms(height);
+
+        for (Platform platform : this.platforms) {
+            platform.drawPlatform();
+        }
 
         // draw blocks
         for (Block block : this.blocks) {
             block.draw(root);
         }
-
-        for (Platform platform : this.platforms) {
-            platform.drawPlatform();
-        }
-    }
-
-    private void addLavaBetweenPlatforms(double sceneHeight) {
-        double lavaTop = sceneHeight - 70;
-        double lavaHeight = 250;
-
-        List<Platform> ordered = new ArrayList<>();
-        for (Platform platform : this.platforms) {
-            boolean nearGround = platform.getY() >= sceneHeight - 400;
-            boolean tallEnough = platform.getHeight() >= 400;
-            if (nearGround || tallEnough) {
-                ordered.add(platform);
-            }
-        }
-        ordered.sort(Comparator.comparingDouble(Platform::getX));
-
-        for (int i = 0; i < ordered.size() - 1; i++) {
-            Platform current = ordered.get(i);
-            Platform next = ordered.get(i + 1);
-
-            double gapStart = current.getX() + current.getWidth();
-            double gapWidth = next.getX() - gapStart;
-
-            if (gapWidth > 1) {
-                this.blocks.add(createLavaColumn(gapStart, lavaTop, gapWidth, lavaHeight));
-            }
-        }
-    }
-
-    private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
-        LavaBlock lava = new LavaBlock(new Location(x, y));
-        lava.setWidth(width);
-        lava.setHeight(height);
-        return lava;
     }
 
     @Override
     public void update() {
 
+    }
+
+    @Override
+    public Level getNextLevel() {
+        return new BossLevel();
     }
 }

@@ -16,6 +16,8 @@ import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
 import javafx.scene.control.Button;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -100,6 +102,8 @@ public class GameScreen implements GuiScreen {
     private boolean lastF2 = false;
     private boolean lastF3 = false;
 
+    private List<ImageView> heartImageViews;
+
     /**
      * Constructs a new GameScreen.
      *
@@ -107,6 +111,7 @@ public class GameScreen implements GuiScreen {
      */
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
+        this.heartImageViews = new ArrayList<>();
     }
 
     /**
@@ -158,9 +163,9 @@ public class GameScreen implements GuiScreen {
         UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
         UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
 
-        this.debugLbl = UIUtils.drawText(root, "FPS: " + screenManager.getCurrentFps(), 10, 85);
+        this.debugLbl = UIUtils.drawText(root, "FPS: " + (int) screenManager.getCurrentFps(), 10, 85);
         this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
-        this.debugLbl.setVisible(false); // alte Debug-Anzeige verstecken, ersetzen wir durch debugBarLbl
+        this.debugLbl.setVisible(true); // alte Debug-Anzeige verstecken, ersetzen wir durch debugBarLbl
         this.healthLbl.setVisible(false); // HP kommt in der neuen Debug-Bar/Quest-Anzeige vor
         this.flipperHint = UIUtils.drawText(root, "", 10, 135);
         this.flipperHint.setVisible(false);
@@ -177,7 +182,8 @@ public class GameScreen implements GuiScreen {
 
         this.layoutHudPositions();
         this.setupPauseOverlay(width, height);
-        this.drawHealth(width);
+        //this.drawHealth(width);
+        this.createHealthBar(width);
     }
 
     /**
@@ -432,6 +438,7 @@ public class GameScreen implements GuiScreen {
         }
 
         this.updateFolderProgress();
+        this.updateHealth();
 
         player.update();
     }
@@ -534,31 +541,57 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
+     * Aktualisiert die Bilder (Source-URL) der bereits erstellten ImageView-Objekte
+     * basierend auf dem aktuellen Gesundheitswert des Spielers.
+     */
+    private void updateHealth() {
+        double lives = player.getHealth();
+        int maxLives = (int) player.getMaxHealth();
+
+        for (int i = 0; i < maxLives; i++) {
+            if (i >= this.heartImageViews.size()) {
+                break;
+            }
+
+            ImageView heart = this.heartImageViews.get(i);
+            String imagePath;
+
+            if (lives >= i + 1) {
+                imagePath = "/assets/hud/heart_full.png";
+            } else if (lives > i && lives < i + 1) {
+                imagePath = "/assets/hud/heart_half.png";
+            } else {
+                imagePath = "/assets/hud/heart_empty.png";
+            }
+
+            heart.setImage(new Image(imagePath));
+        }
+    }
+
+    /**
      * Draws the player's health bar visually using heart icons (full, half, empty).
      * The health display is aligned to the top-right corner of the screen.
      *
      * @param width The current width of the game window/stage, used for right-side alignment.
      */
-    private void drawHealth(double width) {
+    private void createHealthBar(double width) {
         int heartSize = 32;
         int padding = 4;
         int maxLives = (int) player.getMaxHealth();
-
-        double lives = player.getHealth();
 
         int startX = (int) (width - (maxLives * (heartSize + padding)) - 16);
 
         for (int i = 0; i < maxLives; i++) {
             int x = startX + i * (heartSize + padding);
 
-            if (lives >= i + 1) {
-                UIUtils.drawImage(root, "/assets/hud/heart_full.png", x, 16, heartSize, heartSize);
-            } else if (lives > i && lives < i + 1) {
-                UIUtils.drawImage(root, "/assets/hud/heart_half.png", x, 16, heartSize, heartSize);
+            ImageView heart = new ImageView("/assets/hud/heart_empty.png");
+            heart.setFitWidth(heartSize);
+            heart.setFitHeight(heartSize);
+            heart.setLayoutX(x);
+            heart.setLayoutY(16);
 
-            } else {
-                UIUtils.drawImage(root, "/assets/hud/heart_empty.png", x, 16, heartSize, heartSize);
-            }
+            root.getChildren().add(heart);
+            this.heartImageViews.add(heart);
         }
     }
 
@@ -613,13 +646,15 @@ public class GameScreen implements GuiScreen {
         String line1 = "FPS: " + (int) screenManager.getCurrentFps()
                 + " | onGround: " + onGround
                 + " | moveSpeed: " + moveSpeed
-                + " | jumpPower: " + jumpPower;
+                + " | jumpPower: " + jumpPower
+                + " | X: " + (int) player.getLocation().getX();
         String line2 = "cameraX: " + (int) cameraX
                 + " | cameraY: " + (int) cameraY
                 + " | Location: " + player.getLocation().toString();
         String line3 = "HP: " + (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0)
                 + " | NoClip: " + player.isNoClipEnabled()
                 + " | God: " + player.isGodModeEnabled();
+        this.debugLbl.setText(line1);
     }
 
     /**

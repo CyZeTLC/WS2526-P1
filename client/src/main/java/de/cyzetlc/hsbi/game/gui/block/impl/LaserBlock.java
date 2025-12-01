@@ -25,8 +25,8 @@ public class LaserBlock extends Block {
     public void draw(Pane pane) {
         super.draw(pane);
         this.sprite.setPreserveRatio(true);
-        this.sprite.setFitWidth(12);
-        this.sprite.setFitHeight(12);
+        this.sprite.setFitWidth(24);
+        this.sprite.setFitHeight(24);
     }
 
     @Override

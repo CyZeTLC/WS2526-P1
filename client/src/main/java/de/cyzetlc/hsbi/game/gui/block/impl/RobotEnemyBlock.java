@@ -7,41 +7,37 @@ import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.utils.ui.ImageAssets;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
+import lombok.Getter;
 
 public class RobotEnemyBlock extends Block {
     protected final double minX;
     protected final double maxX;
     protected double baseY;
-    protected final double platformTopY;
     protected final double speed;
+    @Getter
     protected boolean dead = false;
     private long lastUpdateNanos = 0L;
     protected double fireTimer = 0;
-    protected final double fireCooldown = 2.2;
+    protected final double fireCooldown = 1.2;
     private double lastHitTime = -1;
 
     public RobotEnemyBlock(Location location, double patrolWidth, double speed) {
-        super(new Location(location.getX(), location.getY())); // store platform top; y adjusted after sprite size is known
+        super(location);
         this.setMaterial(Material.ROBOT_ENEMY);
         this.setCollideAble(true);
-        this.setWidth(0);
-        this.setHeight(0);
+        this.setWidth(48);
+        this.setHeight(96);
         this.minX = location.getX();
         this.maxX = location.getX() + Math.max(0, patrolWidth);
-        this.platformTopY = location.getY();
-        this.baseY = platformTopY - 96; // temporary until sprite size is known
+        this.baseY = location.getY();
         this.speed = speed;
     }
 
     @Override
     public void draw(Pane pane) {
         super.draw(pane);
-        this.sprite.setPreserveRatio(true);
-        this.sprite.setFitWidth(96);
-        this.sprite.setFitHeight(96);
         this.setWidth((float) this.sprite.getBoundsInLocal().getWidth());
         this.setHeight((float) this.sprite.getBoundsInLocal().getHeight());
-        this.baseY = platformTopY - this.getHeight();
         this.getLocation().setY(this.baseY);
         if (this.sprite.getParent() != null) {
             this.sprite.toFront();
@@ -53,10 +49,6 @@ public class RobotEnemyBlock extends Block {
         // handled in GameScreen to avoid double processing
     }
 
-    public boolean isDead() {
-        return dead;
-    }
-
     public void kill() {
         this.dead = true;
         this.setActive(false);
@@ -65,6 +57,7 @@ public class RobotEnemyBlock extends Block {
 
     @Override
     public void update() {
+        super.update();
         long now = System.nanoTime();
         if (lastUpdateNanos == 0L) {
             lastUpdateNanos = now;
@@ -96,18 +89,23 @@ public class RobotEnemyBlock extends Block {
 
     public LaserBlock tryFire(EntityPlayer player) {
         if (dead || player == null) return null;
-        boolean playerIsAbove = player.getLocation().getY() + player.getHeight() < this.getLocation().getY() + this.getHeight() * 0.5;
-        boolean closeHorizontally = Math.abs(player.getLocation().getX() - this.getLocation().getX()) < 220;
-        if (fireTimer < fireCooldown && !(playerIsAbove && closeHorizontally)) return null;
+
+        // Spieler muss deutlich oberhalb sein (Sprung �ber den Boss)
+        //boolean playerAbove = player.getLocation().getY() + player.getHeight() < this.getLocation().getY();
+        boolean closeHorizontally = Math.abs(player.getLocation().getX() - this.getLocation().getX()) < 440;
+        if (!closeHorizontally) {
+            return null;
+        }
+        if (fireTimer < fireCooldown) {
+            return null;
+        }
         fireTimer = 0;
 
-        double playerX = player.getLocation().getX();
-        int dir = playerX >= this.getLocation().getX() ? 1 : -1;
+        int dir = player.getLocation().getX() >= this.getLocation().getX() ? 1 : -1;
         double eyeY = this.getLocation().getY() + this.getHeight() * 0.35;
         double spawnX = dir == 1 ? this.getLocation().getX() + this.getWidth() - 4 : this.getLocation().getX() - 8;
 
-        LaserBlock laser = new LaserBlock(new Location(spawnX, eyeY), dir, 280);
-        return laser;
+        return new LaserBlock(new Location(spawnX, eyeY), dir, 320);
     }
 
     public void hitPlayer(de.cyzetlc.hsbi.game.entity.Player player) {

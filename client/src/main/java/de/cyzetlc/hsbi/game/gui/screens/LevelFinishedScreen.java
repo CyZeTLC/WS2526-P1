@@ -32,10 +32,14 @@ public class LevelFinishedScreen implements GuiScreen {
 
         UIUtils.drawRect(root, width/2 - 300, height/2 - 300, 600, 600, Color.BLACK).setOpacity(0.4);
         UIUtils.drawCenteredText(root, "Level geschafft!", 0, 50, false).setId("menu-title");
-        UIUtils.drawCenteredButton(root, "Nächstes Level", 0, height / 2 + 150, false, "mainmenu-button", () -> {
-            Game.getInstance().setCurrentLevel(new SecondLevel());
-            Game.getInstance().getScreenManager().showScreen(new GameScreen(Game.getInstance().getScreenManager()));
-        });
+
+        if (Game.getInstance().getCurrentLevel().getNextLevel() != null) {
+            UIUtils.drawCenteredButton(root, "Nächstes Level", 0, height / 2 + 150, false, "mainmenu-button", () -> {
+                Game.getInstance().setCurrentLevel(Game.getInstance().getCurrentLevel().getNextLevel());
+                Game.getInstance().getScreenManager().showScreen(new GameScreen(Game.getInstance().getScreenManager()));
+                Game.getLogger().info(Game.getInstance().getCurrentLevel().getName() + " successfully loaded & saved!");
+            });
+        }
         UIUtils.drawCenteredButton(root, "Zum Hauptmenü", 0, height / 2 + 230, false, "mainmenu-button", () -> {
             Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen());
         });

@@ -8,7 +8,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ClientSubmitScorePacket extends Packet { // Muss 'Packet' erweitern und serialisierbar sein
     private final UUID playerId;
-    private final long finalScore;
+    private final long finalTime;
     private final String levelId;
 
     @Override

@@ -1,6 +1,6 @@
-package de.cyzetlc.hsbi.game.utils.database.mysql;
+package de.cyzetlc.hsbi.game.utils.json.database.mysql;
 
-import de.cyzetlc.hsbi.game.utils.database.IDatabaseCredentials;
+import de.cyzetlc.hsbi.game.utils.json.database.IDatabaseCredentials;
 
 public class MySQLCredentials implements IDatabaseCredentials {
     public String username;

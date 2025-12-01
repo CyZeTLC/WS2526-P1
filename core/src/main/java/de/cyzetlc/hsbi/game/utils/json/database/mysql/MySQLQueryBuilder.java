@@ -1,6 +1,6 @@
-package de.cyzetlc.hsbi.game.utils.database.mysql;
+package de.cyzetlc.hsbi.game.utils.json.database.mysql;
 
-import de.cyzetlc.hsbi.game.utils.database.IMySQLExtension;
+import de.cyzetlc.hsbi.game.utils.json.database.IMySQLExtension;
 import lombok.Getter;
 
 import javax.sql.rowset.CachedRowSet;

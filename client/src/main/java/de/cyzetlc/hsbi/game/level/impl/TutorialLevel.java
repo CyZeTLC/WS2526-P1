@@ -28,9 +28,6 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(2000, height - 400, 500, 600, root));
         platforms.add(new Platform(780, height - 450, 100, 50, root));
 
-        // Lava pools for every gap between ground platforms
-        this.addLavaBetweenPlatforms(height);
-
         // USB-Stick auf der ersten Plattform platziert
         this.blocks.add(new USBStickBlock(new Location(200, height - 360)));
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
@@ -46,6 +43,8 @@ public class TutorialLevel extends Level {
                 120,
                 0 // 0 = altes MovingPlatform-Artwork
         ));
+
+        this.placeLavaBetweenPlatforms(height);
 
         // draw blocks
         for (Block block : this.blocks) {
@@ -63,43 +62,13 @@ public class TutorialLevel extends Level {
         Game.getInstance().getConfig().getObject().put("tutorialFinished", true);
         Game.getInstance().getConfig().save();
     }
-
-    private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
-        LavaBlock lava = new LavaBlock(new Location(x, y));
-        lava.setWidth(width);
-        lava.setHeight(height);
-        return lava;
-    }
-
-    private void addLavaBetweenPlatforms(double sceneHeight) {
-        double lavaTop = sceneHeight - 70;
-        double lavaHeight = 250;
-
-        List<Platform> ordered = new ArrayList<>();
-        for (Platform platform : this.platforms) {
-            boolean nearGround = platform.getY() >= sceneHeight - 400;
-            boolean tallEnough = platform.getHeight() >= 400;
-            if (nearGround || tallEnough) {
-                ordered.add(platform);
-            }
-        }
-        ordered.sort(Comparator.comparingDouble(Platform::getX));
-
-        for (int i = 0; i < ordered.size() - 1; i++) {
-            Platform current = ordered.get(i);
-            Platform next = ordered.get(i + 1);
-
-            double gapStart = current.getX() + current.getWidth();
-            double gapWidth = next.getX() - gapStart;
-
-            if (gapWidth > 1) {
-                this.blocks.add(createLavaColumn(gapStart, lavaTop, gapWidth, lavaHeight));
-            }
-        }
-    }
-
     @Override
     public void update() {
 
+    }
+
+    @Override
+    public Level getNextLevel() {
+        return new SecondLevel();
     }
 }

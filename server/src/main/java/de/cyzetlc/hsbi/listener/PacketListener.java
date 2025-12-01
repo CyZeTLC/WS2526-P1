@@ -20,7 +20,7 @@ public class PacketListener {
 
             if (packet instanceof ClientSubmitScorePacket scorePacket) {
                 // ... Daten speichern ...
-                Server.getLogger().info("Got: " + scorePacket.getFinalScore());
+                Server.getLogger().info("Got: " + scorePacket.getFinalTime());
 
                 Server.MultiClientHandler handler = Server.findHandlerBySocket(e.getSocket());
 

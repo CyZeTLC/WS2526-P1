@@ -1,4 +1,4 @@
-package de.cyzetlc.hsbi.game.utils.database;
+package de.cyzetlc.hsbi.game.utils.json.database;
 
 public interface IDatabaseCredentials {
     String getUsername();

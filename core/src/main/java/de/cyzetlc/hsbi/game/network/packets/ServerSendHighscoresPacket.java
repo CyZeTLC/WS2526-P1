@@ -10,7 +10,7 @@ public class ServerSendHighscoresPacket extends Packet {
     // Eine innere, serialisierbare Klasse, um die Daten zu speichern
     public static class HighscoreEntry implements java.io.Serializable {
         public String playerName;
-        public long score;
+        public long time;
     }
 
     private final List<HighscoreEntry> topScores;
