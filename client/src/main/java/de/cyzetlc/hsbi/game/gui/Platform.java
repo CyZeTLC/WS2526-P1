@@ -14,19 +14,73 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code Platform} class represents a solid, rectangular block of level geometry
+ * that the player can interact with (stand on or collide with).
+ * <p>
+ * This class is responsible for visually rendering the platform by dividing its total
+ * area into smaller, texture-mapped tiles based on a tileset. It dynamically updates
+ * the position and visibility of these tiles based on the camera's location for optimized rendering.
+ *
+ * @author Tom Coombs
+ * @author leonardo (aka. Phantomic)
+ *
+ * @see GameScreen
+ * @see Material
+ * @see Location
+ */
 @Getter
 public class Platform {
+    /**
+     * The X-coordinate (world space) of the platform's top-left corner.
+     * <p>
+     * The Y-coordinate (world space) of the platform's top-left corner.
+     * <p>
+     * The total width of the platform.
+     * <p>
+     * The total height of the platform.
+     */
     private double x, y, width, height;
+
+    /**
+     * The JavaFX {@code Pane} where the tiles are drawn as children.
+     */
     private Pane pane;
 
+    /**
+     * The resource path for the tileset texture used to draw the platform.
+     */
     private static final String TILESET_PATH = Material.FLOOR.texturePath;
+
+    /**
+     * The pre-loaded image containing all texture tiles.
+     */
     private static final Image TILESET_IMAGE = ImageAssets.get(TILESET_PATH);
+
+    /**
+     * The standard width and height of a single tile in the tileset (in pixels).
+     */
     private static final int TILE_SIZE = 32;
 
+    /**
+     * List of {@code ImageView} objects representing the individual tiles that make up the platform.
+     */
     private List<ImageView> tiles = new ArrayList<>();
 
+    /**
+     * The world location of the platform's top-left corner, encapsulated as a {@code Location} object.
+     */
     private Location location;
 
+    /**
+     * Constructs a new Platform instance.
+     *
+     * @param x The world X-coordinate of the platform.
+     * @param y The world Y-coordinate of the platform.
+     * @param width The total width of the platform.
+     * @param height The total height of the platform.
+     * @param pane The root pane where the platform tiles will be drawn.
+     */
     public Platform(double x, double y, double width, double height, Pane pane) {
         this.x = x;
         this.y = y;
@@ -37,6 +91,14 @@ public class Platform {
         this.location = new Location(x, y);
     }
 
+    /**
+     * Draws the platform by calculating and creating individual tiles based on the platform's
+     * dimensions, using the tileset texture.
+     * <p>
+     * This method handles the tiling logic, ensuring correct textures are used for the
+     * top layer and body, and managing partial tiles if the dimensions are not multiples of {@code TILE_SIZE}.
+     * It also performs an initial camera offset to position the tiles correctly.
+     */
     public void drawPlatform() {
         if (pane != null && !tiles.isEmpty()) {
             pane.getChildren().removeAll(tiles);
@@ -108,6 +170,20 @@ public class Platform {
         }
     }
 
+    /**
+     * Updates the position and visibility of the platform's tiles based on the current camera position.
+     * <p>
+     * This method iterates through all individual tiles and:
+     * <ul>
+     * <li>Checks if the tile is within the visible screen area (culling).</li>
+     * <li>Sets the tile's visibility accordingly.</li>
+     * <li>Adjusts the tile's screen coordinates by subtracting the camera's X and Y offset
+     * (parallax effect/screen scrolling).</li>
+     * </ul>
+     * If the tile count is inconsistent (e.g., after loading), it triggers a rebuild.
+     *
+     * @param gameScreen The current active {@code GameScreen} instance, used to retrieve camera and screen dimensions.
+     */
     public void update(GameScreen gameScreen) {
         double camX = gameScreen.getCameraX();
         double camY = gameScreen.getCameraY();
@@ -172,6 +248,12 @@ public class Platform {
         }
     }
 
+    /**
+     * Rebuilds the list of tiles and redraws the entire platform.
+     * <p>
+     * This is typically called when the current tile array size is inconsistent with the
+     * expected size, often indicating a rendering glitch or a setup issue.
+     */
     private void rebuildTiles() {
         if (pane != null && !tiles.isEmpty()) {
             pane.getChildren().removeAll(tiles);
@@ -180,6 +262,11 @@ public class Platform {
         drawPlatform();
     }
 
+    /**
+     * Returns the rectangular bounds of the platform in world coordinates.
+     *
+     * @return A {@code Rectangle2D} object defining the collision area (X, Y, Width, Height).
+     */
     public Rectangle2D getBounds() {
         return new Rectangle2D(this.getLocation().getX(), this.getLocation().getY(), width, height);
     }
