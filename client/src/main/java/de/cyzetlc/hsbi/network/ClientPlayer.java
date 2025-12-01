@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.network;
 
+import de.cyzetlc.hsbi.game.entity.Player;
 import lombok.Getter;
 
 import java.io.Serial;
@@ -13,7 +14,10 @@ public class ClientPlayer implements Serializable {
 
     private final UUID uuid;
 
-    public ClientPlayer() {
-        this.uuid = UUID.randomUUID();
+    private final Player player;
+
+    public ClientPlayer(Player player) {
+        this.uuid = player.getUuid();
+        this.player = player;
     }
 }

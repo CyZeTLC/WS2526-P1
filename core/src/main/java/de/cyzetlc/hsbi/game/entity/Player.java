@@ -3,9 +3,14 @@ package de.cyzetlc.hsbi.game.entity;
 import de.cyzetlc.hsbi.game.event.impl.damage.DamageCause;
 import de.cyzetlc.hsbi.game.event.impl.damage.PlayerDamageEvent;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
-public class Player extends Entity {
+public class Player extends Entity implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1234567L;
+
     private boolean flipperCollected = false;
     // Debug/Utility Flags
     private boolean noClip = false;   // true = Kollisionen ignorieren / frei bewegen

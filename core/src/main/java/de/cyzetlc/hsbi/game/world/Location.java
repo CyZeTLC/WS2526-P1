@@ -3,8 +3,14 @@ package de.cyzetlc.hsbi.game.world;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter @Setter
-public class Location {
+public class Location implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1234567L;
+
     private double x;
     private double y;
 

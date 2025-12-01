@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.network;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.event.EventCancelable;
 import de.cyzetlc.hsbi.game.event.impl.ReceivePacketEvent;
 import de.cyzetlc.hsbi.game.network.packets.*;
@@ -30,7 +31,7 @@ public class Client {
     private final ExecutorService networkExecutor;
 
     public Client() {
-        thePlayer = new ClientPlayer();
+        thePlayer = new ClientPlayer(Game.thePlayer);
         // Verwende einen dedizierten Thread Pool für Netzwerk-Aufgaben
         this.networkExecutor = Executors.newCachedThreadPool();
     }
@@ -111,7 +112,7 @@ public class Client {
             while (socket != null && !socket.isClosed()) {
                 try {
                     // Sende alle 50ms (20 Ticks/Sekunde) ein Status-Update
-                    sendPacket(new ClientDataPacket(thePlayer.getUuid()));
+                    sendPacket(new ClientDataPacket(thePlayer.getPlayer().getLocation()));
 
                     Thread.sleep(50);
                 } catch (InterruptedException e) {

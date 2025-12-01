@@ -14,7 +14,6 @@ public class PacketListener {
     @EventHandler
     public void handleReceivePacket(ReceivePacketEvent e) {
         Packet packet = e.getPacket();
-
         try {
             DataOutputStream dos = new DataOutputStream(e.getSocket().getOutputStream());
 
@@ -41,7 +40,11 @@ public class PacketListener {
             } else if (packet instanceof ClientLoginPacket clientLoginPacket) {
                 Server.MultiClientHandler.getClientLogger().info(clientLoginPacket.getClient().toString());
             } else if (packet instanceof ClientDataPacket clientDataPacket) {
-                // send all players current Player data
+                if (clientDataPacket.getLocation() != null) {
+                    Server.getLogger().info("X: " + clientDataPacket.getLocation().getX());
+                } else {
+                    Server.getLogger().info("No location");
+                }
             } else {
                 dos.write(SerializationUtils.serialize(new UserMessagePacket("Unable to resolve packet")));
                 Server.MultiClientHandler.getClientLogger().error("Unvalidated packet");
