@@ -8,8 +8,6 @@ import java.io.DataOutputStream;
 
 public class UserMessageListener {
     @EventHandler
-    // The `handleReceiveMessage` method is a listener method that is triggered when a `ReceiveMessageEvent` is fired. It
-    // takes an instance of `ReceiveMessageEvent` as a parameter, which contains information about the event.
     public void handleReceiveMessage(ReceiveMessageEvent e) {
         UserMessagePacket packet = (UserMessagePacket) e.getPacket();
 
@@ -24,7 +22,7 @@ public class UserMessageListener {
                 dos.writeUTF("Connected clients: " + 0);
                // Server.MultiClientHandler.getClientLogger().info(e.getSocket().getRemoteSocketAddress() + ": /" + packet.getMessage());
             } else {
-                dos.writeUTF(packet.getMessage());
+                //dos.writeUTF(packet.getMessage());
                // Server.MultiClientHandler.getClientLogger().info(e.getSocket().getRemoteSocketAddress() + ": " + packet.getMessage());
             }
         } catch (Exception ex) {

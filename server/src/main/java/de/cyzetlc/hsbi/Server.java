@@ -60,12 +60,28 @@ public class Server {
         }
     }
 
+    /**
+     * Finds the MultiClientHandler instance associated with the given Socket.
+     * @param socket The socket of the client.
+     * @return The corresponding MultiClientHandler, or null if not found.
+     */
+    public static MultiClientHandler findHandlerBySocket(Socket socket) {
+        for (MultiClientHandler handler : multiClientHandlerList) {
+            if (handler.getSocket().equals(socket)) {
+                return handler;
+            }
+        }
+        return null; // Handler nicht gefunden
+    }
+
     public static class MultiClientHandler extends Thread {
         @Getter
         public static Logger clientLogger = LoggerFactory.getLogger(MultiClientHandler.class.getName());
 
         final DataInputStream dis;
         final DataOutputStream dos;
+
+        @Getter
         final Socket socket;
 
         public MultiClientHandler(Socket s, DataInputStream dis, DataOutputStream dos) {
@@ -112,6 +128,19 @@ public class Server {
                 getClientLogger().error(e.getMessage());
             }
             multiClientHandlerList.remove(this);
+        }
+
+        /**
+         * Serializes and sends a Packet object to the connected client.
+         * @param packet The Packet to be sent.
+         * @throws IOException If an error occurs during serialization or writing to the stream.
+         */
+        public void sendPacket(Packet packet) throws IOException {
+            byte[] bytes = SerializationUtils.serialize(packet);
+            this.dos.write(bytes);
+            this.dos.flush();
+
+            clientLogger.debug("Sent packet type: " + packet.getClass().getSimpleName() + " to " + this.socket);
         }
     }
 }

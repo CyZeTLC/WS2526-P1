@@ -17,6 +17,7 @@ import de.cyzetlc.hsbi.game.listener.UserMessageListener;
 import de.cyzetlc.hsbi.game.utils.database.mysql.MySQLCredentials;
 import de.cyzetlc.hsbi.game.utils.database.mysql.QueryHandler;
 import de.cyzetlc.hsbi.game.utils.json.JsonConfig;
+import de.cyzetlc.hsbi.network.Client;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -51,6 +52,9 @@ public class Game extends Application {
     @Getter
     private SettingsScreen settingsScreen;
 
+    @Getter
+    private Client client;
+
     public static double gravity = 15;       // Stärke der Schwerkraft
     public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
     public static double jumpPower = 800;    // Sprungkraft
@@ -63,6 +67,9 @@ public class Game extends Application {
         logger = LoggerFactory.getLogger(Game.class.getName());
         instance = this;
         thePlayer = new EntityPlayer();
+
+        client = new Client();
+        client.connectAndRun();
 
         getLogger().info("Starting Steal The Files v0.1 BETA..");
         getLogger().info("Loading configuration..");
