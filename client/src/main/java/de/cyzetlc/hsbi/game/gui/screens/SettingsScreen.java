@@ -12,18 +12,58 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * The {@code SettingsScreen} provides an interface for the user to configure game options,
+ * primarily focusing on audio controls like volume and muting.
+ * <p>
+ * This screen features an animated background and persistent navigation options
+ * to return to the main game flow.
+ *
+ * @author Tom Coombs
+ * @author Leonardo (aka. Phantomic)
+ *
+ * @see GuiScreen
+ * @see ScreenManager
+ */
 public class SettingsScreen implements GuiScreen {
+    /**
+     * The root container for all visual elements displayed on this screen.
+     */
     private final Pane root = new Pane();
+
+    /**
+     * Reference to the ScreenManager, used for handling screen transitions.
+     */
     private final ScreenManager screenManager;
 
+    /**
+     * Text label displaying the current volume level in percentage, including a mute suffix.
+     */
     private Text volumeLbl;
+
+    /**
+     * Button used to toggle the sound system's mute state.
+     */
     private Button muteBtn;
+
+    /**
+     * Slider control used to adjust the master volume level (0.0 to 1.0).
+     */
     private Slider volumeSlider;
 
+    /**
+     * Constructs a new SettingsScreen.
+     *
+     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     */
     public SettingsScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
+    /**
+     * Initializes the Settings screen by drawing the background, title, navigation,
+     * and setting up the sound control panel.
+     */
     @Override
     public void initialize() {
         double width = screenManager.getStage().getWidth();
@@ -45,6 +85,15 @@ public class SettingsScreen implements GuiScreen {
         this.setupSoundControls(width);
     }
 
+    /**
+     * Sets up and displays the sound control panel in the top-right corner of the screen.
+     * <p>
+     * This method draws the panel background, title, volume label, volume slider, and mute button.
+     * It also attaches listeners to the slider and button to update the {@code SoundManager}
+     * and the corresponding UI elements.
+     *
+     * @param width The current width of the screen, used for right-side alignment.
+     */
     private void setupSoundControls(double width) {
         double panelWidth = 220;
         double panelHeight = 90;
@@ -85,26 +134,39 @@ public class SettingsScreen implements GuiScreen {
         this.updateMuteButton();
     }
 
+    /**
+     * Updates the text content of the volume label ({@code volumeLbl}) to reflect the
+     * current sound volume percentage and the muted status.
+     */
     private void updateVolumeLabel() {
         int percent = (int) Math.round(SoundManager.getVolume() * 100);
         String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
         this.volumeLbl.setText("Lautstaerke: " + percent + "%" + muteSuffix);
     }
 
+    /**
+     * Updates the text displayed on the mute button ({@code muteBtn}) to reflect the
+     * current sound state (e.g., "Sound an" if muted, "Stummschalten" if active).
+     */
     private void updateMuteButton() {
         this.muteBtn.setText(SoundManager.isMuted() ? "Sound an" : "Stummschalten");
     }
 
-    @Override
-    public void update(double delta) {
-
-    }
-
+    /**
+     * Retrieves the root pane of the SettingsScreen.
+     *
+     * @return The JavaFX {@code Pane} used as the root container.
+     */
     @Override
     public Pane getRoot() {
         return root;
     }
 
+    /**
+     * Returns the identifying name of this screen.
+     *
+     * @return The constant screen name "Settings".
+     */
     @Override
     public String getName() {
         return "Settings";
