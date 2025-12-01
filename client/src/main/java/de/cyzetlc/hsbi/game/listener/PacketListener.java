@@ -13,9 +13,6 @@ import java.io.DataOutputStream;
 
 public class PacketListener {
     @EventHandler
-    // The `handleReceivePacket` method is a listener method that is called when a `ReceivePacketEvent` is fired. It takes
-    // an instance of `ReceivePacketEvent` as a parameter, which contains information about the received packet and the
-    // socket it was received from.
     public void handleReceivePacket(ReceivePacketEvent e) {
         Packet packet = e.getPacket();
 
