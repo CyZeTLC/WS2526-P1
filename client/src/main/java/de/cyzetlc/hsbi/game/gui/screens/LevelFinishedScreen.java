@@ -13,14 +13,47 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * The {@code LevelFinishedScreen} displays a summary screen when the player successfully
+ * completes a game level.
+ * <p>
+ * This screen shows the player's performance statistics (time taken, score, enemies defeated,
+ * health lost) and provides options to proceed to the next level or return to the main menu.
+ *
+ * @author Tom Coombs
+ * @author Leonardo (aka. Phantomic)
+ *
+ * @see GuiScreen
+ * @see ScreenManager
+ */
 public class LevelFinishedScreen implements GuiScreen {
+    /**
+     * The root container for all visual elements displayed on this screen.
+     */
     private final Pane root = new Pane();
+
+    /**
+     * Reference to the ScreenManager, used for handling screen transitions.
+     */
     private final ScreenManager screenManager;
 
+    /**
+     * Constructs a new LevelFinishedScreen.
+     *
+     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     */
     public LevelFinishedScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
+    /**
+     * Initializes the Level Finished screen, sets up the background, title, statistics,
+     * and navigation buttons.
+     * <p>
+     * This method calculates the required time taken (minutes and seconds) by comparing
+     * the current time against the level's start time, and displays statistics
+     * for points, enemies killed, and health lost.
+     */
     @Override
     public void initialize() {
         double width = screenManager.getStage().getWidth();
@@ -60,16 +93,21 @@ public class LevelFinishedScreen implements GuiScreen {
 
     }
 
-    @Override
-    public void update(double delta) {
-
-    }
-
+    /**
+     * Retrieves the root pane of the LevelFinishedScreen.
+     *
+     * @return The JavaFX {@code Pane} used as the root container.
+     */
     @Override
     public Pane getRoot() {
         return root;
     }
 
+    /**
+     * Returns the identifying name of this screen.
+     *
+     * @return The constant screen name "LevelFinished".
+     */
     @Override
     public String getName() {
         return "LevelFinished";
