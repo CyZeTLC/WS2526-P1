@@ -22,14 +22,46 @@ import oshi.software.os.OperatingSystem;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The {@code MainMenuScreen} represents the primary navigation screen for the game.
+ * <p>
+ * It provides options to start the game, access multiplayer, configure settings, and exit.
+ * The screen features an animated, continuously scrolling background.
+ *
+ * @author Tom Coombs
+ * @author Leonardo (aka. Phantomic)
+ *
+ * @see GuiScreen
+ * @see ScreenManager
+ * @see Game
+ */
 public class MainMenuScreen implements GuiScreen {
+    /**
+     * The root container for all visual elements displayed on this screen.
+     */
     private final Pane root = new Pane();
+
+    /**
+     * Reference to the ScreenManager, used for handling screen transitions.
+     */
     private final ScreenManager screenManager;
 
+    /**
+     * Constructs a new MainMenuScreen.
+     *
+     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     */
     public MainMenuScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
+    /**
+     * Initializes the Main Menu screen by setting up the animated background,
+     * drawing the main title, creating navigation buttons, and initializing the achievement panel.
+     * <p>
+     * The method establishes a {@code Timeline} for the background animation, which continuously
+     * shifts two background {@code ImageView}s horizontally to simulate endless scrolling.
+     */
     @Override
     public void initialize() {
         double width = screenManager.getStage().getWidth();
@@ -87,6 +119,14 @@ public class MainMenuScreen implements GuiScreen {
         this.drawAchievementProgress(height / 2 - 130);
     }
 
+    /**
+     * Draws a placeholder panel showing the progress bars for a set number of achievements.
+     * <p>
+     * This method uses random values to simulate the progress percentage for each achievement
+     * and visualizes it using overlaid green and black {@code Rectangle}s.
+     *
+     * @param y The starting Y-coordinate for the first achievement line.
+     */
     public void drawAchievementProgress(double y) {
         for (int i = 0; i < 5; i++) {
             double progress = new Random().nextDouble(1);
@@ -99,30 +139,21 @@ public class MainMenuScreen implements GuiScreen {
         }
     }
 
-    public void displaySystemInfo() {
-        SystemInfo si = new SystemInfo();
-        OperatingSystem os = si.getOperatingSystem();
-        CentralProcessor cpu = si.getHardware().getProcessor();
-        GlobalMemory memory = si.getHardware().getMemory();
-
-        UIUtils.drawText(root, String.valueOf(os), 75, 145);
-        UIUtils.drawText(root, "CPU: " + cpu.getProcessorIdentifier().getName(), 75, 165);
-        UIUtils.drawText(root, "Kerne (physisch): " + cpu.getPhysicalProcessorCount(), 75, 185);
-        UIUtils.drawText(root, "Kerne (logisch): " + cpu.getLogicalProcessorCount(), 75, 205);
-        UIUtils.drawText(root, "RAM (gesamt): " + (memory.getTotal() / (1024 * 1024 * 1024)) + "GB", 75, 225);
-        UIUtils.drawText(root, "RAM (verfuegbar): " + (memory.getAvailable() / (1024 * 1024 * 1024)) + "GB", 75, 245);
-    }
-
-    @Override
-    public void update(double delta) {
-        //this.fpsLbl.setText("FPS: " + (int) screenManager.getCurrentFps());
-    }
-
+    /**
+     * Retrieves the root pane of the MainMenuScreen.
+     *
+     * @return The JavaFX {@code Pane} used as the root container.
+     */
     @Override
     public Pane getRoot() {
         return root;
     }
 
+    /**
+     * Returns the identifying name of this screen.
+     *
+     * @return The constant screen name "MainMenu".
+     */
     @Override
     public String getName() {
         return "MainMenu";
