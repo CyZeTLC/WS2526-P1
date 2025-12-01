@@ -63,12 +63,12 @@ public class GameScreen implements GuiScreen {
     /**
      * The root container for all visual elements displayed on the screen.
      */
-    private final Pane root = new Pane();
+    protected final Pane root = new Pane();
 
     /**
      * Reference to the ScreenManager, used for handling screen transitions (e.g., Pause, Game Over).
      */
-    private final ScreenManager screenManager;
+    protected final ScreenManager screenManager;
 
     /**
      * The main player entity.

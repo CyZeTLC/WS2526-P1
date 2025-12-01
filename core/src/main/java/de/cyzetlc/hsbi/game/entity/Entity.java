@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Getter @Setter
 public abstract class Entity {
-    private final UUID uuid;
+    private UUID uuid;
 
     private Location location;
     private String displayName;

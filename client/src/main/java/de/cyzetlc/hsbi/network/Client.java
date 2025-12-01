@@ -112,7 +112,7 @@ public class Client {
             while (socket != null && !socket.isClosed()) {
                 try {
                     // Sende alle 50ms (20 Ticks/Sekunde) ein Status-Update
-                    sendPacket(new ClientDataPacket(thePlayer.getPlayer().getLocation()));
+                    sendPacket(new ClientDataPacket(thePlayer.getUuid(), thePlayer.getPlayer().getDisplayName(), thePlayer.getPlayer().getLocation()));
 
                     Thread.sleep(50);
                 } catch (InterruptedException e) {

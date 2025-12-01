@@ -9,8 +9,15 @@ import de.cyzetlc.hsbi.game.network.packets.*;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class PacketListener {
+    private HashMap<Socket, UUID> insideCommunity = new HashMap<>();
+
     @EventHandler
     public void handleReceivePacket(ReceivePacketEvent e) {
         Packet packet = e.getPacket();
@@ -35,6 +42,10 @@ public class PacketListener {
                         Server.getLogger().error("Failed to send response to client: " + ex.getMessage());
                     }
                 }
+            } else if (packet instanceof JoinCommunityPacket communityPacket) {
+                if (!this.insideCommunity.containsValue(communityPacket.getUuid())) {
+                    this.insideCommunity.put(e.getSocket(), communityPacket.getUuid());
+                }
             } else if (packet instanceof UserMessagePacket messagePacket) {
                 e.setCancelled(((EventCancelable)new ReceiveMessageEvent(messagePacket, e.getSocket()).call()).isCancelled());
             } else if (packet instanceof ClientLoginPacket clientLoginPacket) {
@@ -45,8 +56,18 @@ public class PacketListener {
                 } else {
                     Server.getLogger().info("No location");
                 }
+
+                for (Socket socket : this.insideCommunity.keySet()) {
+                    if (this.insideCommunity.get(socket) != clientDataPacket.getUuid()) {
+                        Server.MultiClientHandler handler = Server.findHandlerBySocket(socket);
+
+                        if (handler != null) {
+                            handler.sendPacket(clientDataPacket);
+                        }
+                    }
+                }
             } else {
-                dos.write(SerializationUtils.serialize(new UserMessagePacket("Unable to resolve packet")));
+                //dos.write(SerializationUtils.serialize(new UserMessagePacket("Unable to resolve packet")));
                 Server.MultiClientHandler.getClientLogger().error("Unvalidated packet");
             }
         } catch (Exception ex) {
