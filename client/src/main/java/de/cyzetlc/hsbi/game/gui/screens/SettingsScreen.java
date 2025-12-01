@@ -1,7 +1,6 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
-import de.cyzetlc.hsbi.game.audio.Music;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
@@ -12,12 +11,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.GlobalMemory;
-import oshi.software.os.OperatingSystem;
-
-import java.util.Random;
 
 public class SettingsScreen implements GuiScreen {
     private final Pane root = new Pane();
@@ -25,6 +18,7 @@ public class SettingsScreen implements GuiScreen {
 
     private Text volumeLbl;
     private Button muteBtn;
+    private Slider volumeSlider;
 
     public SettingsScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
@@ -39,14 +33,14 @@ public class SettingsScreen implements GuiScreen {
                 "/assets/hud/BackgroundZustand1.png",
                 "/assets/hud/BackgroundZustand2.png");
         UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
-        UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
-            // wenn ingame zurück
+        UIUtils.drawCenteredButton(root, "Zurueck", 0, 360, false, "mainmenu-button", () -> {
+            // wenn ingame zurueck
 
             // sonst
             screenManager.showScreen(Game.getInstance().getMainMenuScreen());
         });
-        UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
-        UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
+        UIUtils.drawText(root, "(c) Copyright CyZeTLC.DE & Phantomic", 10, height - 20);
+        UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width - 210, height - 20);
 
         this.setupSoundControls(width);
     }
@@ -64,14 +58,13 @@ public class SettingsScreen implements GuiScreen {
         this.volumeLbl = UIUtils.drawText(root, "", x + 10, y + 45);
         this.volumeLbl.setFill(Color.WHITE);
 
-
-        Slider volumeSlider = UIUtils.drawCenteredSlider(root, 0, 1,
+        this.volumeSlider = UIUtils.drawCenteredSlider(root, 0, 1,
                 SoundManager.getVolume(),
                 120,
                 false
         );
-        volumeSlider.getStyleClass().add("custom-slider");
-        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+        this.volumeSlider.getStyleClass().add("custom-slider");
+        this.volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             double vol = newVal.doubleValue();
             SoundManager.setVolume(vol);
             this.updateVolumeLabel();
@@ -79,15 +72,15 @@ public class SettingsScreen implements GuiScreen {
 
         this.muteBtn = UIUtils.drawCenteredButton(root, "", 0, 200, false, () -> {
             SoundManager.setMuted(!SoundManager.isMuted());
-            if (SoundManager.isMuted()) {
-                volumeSlider.setDisable(true);
-            } else {
-                volumeSlider.setDisable(false);
-                volumeSlider.setValue(SoundManager.getVolume());
+            this.volumeSlider.setDisable(SoundManager.isMuted());
+            if (!SoundManager.isMuted()) {
+                this.volumeSlider.setValue(SoundManager.getVolume());
             }
             this.updateMuteButton();
+            this.updateVolumeLabel();
         });
 
+        this.volumeSlider.setDisable(SoundManager.isMuted());
         this.updateVolumeLabel();
         this.updateMuteButton();
     }
@@ -99,7 +92,7 @@ public class SettingsScreen implements GuiScreen {
     }
 
     private void updateMuteButton() {
-        this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+        this.muteBtn.setText(SoundManager.isMuted() ? "Sound an" : "Stummschalten");
     }
 
     @Override

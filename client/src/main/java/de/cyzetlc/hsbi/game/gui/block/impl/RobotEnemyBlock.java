@@ -90,7 +90,7 @@ public class RobotEnemyBlock extends Block {
     public LaserBlock tryFire(EntityPlayer player) {
         if (dead || player == null) return null;
 
-        // Spieler muss deutlich oberhalb sein (Sprung �ber den Boss)
+        // Spieler muss deutlich oberhalb sein (Sprung ueber den Boss)
         //boolean playerAbove = player.getLocation().getY() + player.getHeight() < this.getLocation().getY();
         boolean closeHorizontally = Math.abs(player.getLocation().getX() - this.getLocation().getX()) < 440;
         if (!closeHorizontally) {
