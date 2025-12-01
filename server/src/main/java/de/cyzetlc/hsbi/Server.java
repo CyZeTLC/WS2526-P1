@@ -32,7 +32,7 @@ public class Server {
     private static final List<MultiClientHandler> multiClientHandlerList = new LinkedList<>();
 
     @Getter
-    private static final Server instance;
+    private static Server instance;
 
     @Getter
     private QueryHandler queryHandler;
