@@ -60,48 +60,133 @@ import java.util.List;
  * @see ScreenManager
  */
 public class GameScreen implements GuiScreen {
+    /**
+     * The root container for all visual elements displayed on the screen.
+     */
     private final Pane root = new Pane();
+
+    /**
+     * Reference to the ScreenManager, used for handling screen transitions (e.g., Pause, Game Over).
+     */
     private final ScreenManager screenManager;
 
+    /**
+     * The main player entity.
+     */
     private EntityPlayer player;
-    private double dx = 1; // movement in X direction
-    private double dy = 0.5; // movement in Y direction
 
+    /**
+     * Current velocity component in the X-direction (horizontal movement).
+     */
+    private double dx = 1;
+
+    /**
+     * Current velocity component in the Y-direction (vertical movement/gravity).
+     */
+    private double dy = 0.5;
+
+    /**
+     * Text label used to display debug information (e.g., FPS, coordinates).
+     */
     private Text debugLbl;
-    private Text healthLbl;
-    private int volumeStep = 5; // 0-5 => 0-100%
 
+    /**
+     * Text label used to display the player's health percentage.
+     */
+    private Text healthLbl;
+
+    /**
+     * Flag indicating whether the game is currently paused.
+     */
     private boolean paused = false;
+
+    /**
+     * The translucent overlay Pane displayed when the game is paused.
+     */
     private Pane pauseOverlay;
 
+    /**
+     * Flag ensuring the Game Over sequence is triggered only once to prevent
+     * multiple screen transitions.
+     */
     private boolean gameOverTriggered = false;
 
+    /**
+     * The current X-coordinate of the camera/viewport in the game world.
+     * This value determines the horizontal offset for rendering game elements.
+     */
     @Getter
     private double cameraX = 0;
 
+    /**
+     * The current Y-coordinate of the camera/viewport in the game world.
+     * This value determines the vertical offset for rendering game elements.
+     */
     @Getter
     private double cameraY = 0;
 
+    /**
+     * Smoothing factor (interpolation value) used to gradually move the camera
+     * towards the target position, creating a smooth follow effect. (0.0 to 1.0)
+     */
     private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
 
+    /**
+     * Horizontal margin (dead zone) distance in pixels. The camera only starts
+     * following the player when they move outside this margin.
+     */
     private final double marginX = 400;
+
+    /**
+     * Vertical margin (dead zone) distance in pixels. The camera only starts
+     * following the player when they move outside this margin.
+     */
     private final double marginY = 150;
 
+    /**
+     * Text label used to display hints related to the Flipper item and interaction (KeyCode.E).
+     */
     private Text flipperHint;
+
+    /**
+     * Flag to track if the Flipper interaction hint has already been displayed to the player.
+     */
     private boolean flipperHintShown = false;
 
+    /**
+     * Text label displaying the current main quest objective.
+     */
     private Text questLbl;
+
+    /**
+     * Text label showing the player's progress in collecting files (e.g., "Files: 3/5").
+     */
     private Text filesProgressLbl;
+
+    /**
+     * The total number of collectible FolderBlock items present in the current level.
+     */
     private int totalFolderCount = 0;
 
-    // HUD/Debug toggles
+    /**
+     * Toggle state for displaying user-facing tooltips and quest information (controlled by F1).
+     */
     private boolean showTooltips = true; // F1
-    private boolean showDebugBar = false; // F2
-    private Text tipsLbl;
-    private boolean lastF1 = false;
-    private boolean lastF2 = false;
-    private boolean lastF3 = false;
 
+    /**
+     * Toggle state for displaying the detailed technical debug bar (controlled by F2).
+     */
+    private boolean showDebugBar = false; // F2
+
+    /**
+     * Text label displaying general control hints (e.g., F1/F2/F3 instructions).
+     */
+    private Text tipsLbl;
+
+    /**
+     * A list of ImageView objects representing the heart icons (full, half, empty)
+     * used to visually display the player's health in the HUD.
+     */
     private List<ImageView> heartImageViews;
 
     /**
