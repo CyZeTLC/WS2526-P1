@@ -261,7 +261,7 @@ public class GameScreen implements GuiScreen {
      * <ul>
      * <li>Processing frame-rate independent physics (gravity, velocity calculation).</li>
      * <li>Handling standard player input for movement, jumping, and interaction (E).</li>
-     * <li>Managing debug input toggles (F1, F2, F3) for tooltips, debug bar, and NoClip/God Mode.</li>
+     * <li>Managing debug input toggles (F1) for tooltips.</li>
      * <li>Comprehensive collision detection against {@code Platforms} and various types of {@code Blocks}.</li>
      * <li>Processing specific interactions, such as collecting items (Flipper), activating barriers (GasBarrier), and enemy combat (RobotEnemyBlock).</li>
      * <li>Updating the camera position based on player location for smooth scrolling.</li>
