@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Steal The Files - Docs</title>
+  <link rel="stylesheet" href="vendor/highlightjs/custom-syntax.css" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-weak: #e0e7ff;
+    }
+    body {
+      margin: 0;
+      padding: 32px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: min(960px, 100%);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 28px 32px 36px;
+      box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e7eb;
+    }
+    header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    header h1 { margin: 0; font-size: 26px; }
+    header p { margin: 0; color: var(--muted); font-size: 15px; }
+    .lang-switch { display: flex; gap: 8px; }
+    .lang-switch button {
+      border: 1px solid #d1d5db;
+      background: #f8fafc;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .lang-switch button:hover { border-color: #cbd5e1; background: #eef2ff; }
+    .lang-switch button.active {
+      background: var(--accent-weak);
+      color: #1d4ed8;
+      border-color: #c7d2fe;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+    .doc { margin-top: 18px; line-height: 1.65; font-size: 16px; }
+    .doc code { background: #f1f5f9; padding: 2px 6px; border-radius: 6px; font-size: 14px; }
+    .doc pre { padding: 0; background: transparent; overflow: auto; }
+    .doc h2, .doc h3 { margin-top: 28px; margin-bottom: 10px; }
+    .doc h2 { border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+    .doc ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Steal The Files - Documentation</h1>
+        <p>JavaFX Platformer ? Code + Erkl?rungen</p>
+      </div>
+      <div class="lang-switch">
+        <button data-lang="de" class="active">Deutsch</button>
+        <button data-lang="en">English</button>
+      </div>
+    </header>
+    <article id="doc-content" class="doc"></article>
+  </div>
+
+  <script id="doc-data" type="application/json">{"de": "# Steal The Files - Dokumentation (DE)\nJavaFX 2D-Plattformer (Client/Server/Core)\n\n**Inhalt**\n1. \u00dcberblick & Architektur\n2. Setup & Start\n3. Spiellogik (Code + Erkl\u00e4rung)\n4. GUI/Navi (Code + Erkl\u00e4rung + Prompt)\n5. Levelaufbau (Code + Erkl\u00e4rung)\n6. Audio & Einstellungen (Code + Erkl\u00e4rung + Prompt)\n7. Netzwerk & Daten (Code + Erkl\u00e4rung)\n8. Debugging & offene Punkte (Code + Erkl\u00e4rung)\n9. Roadmap\n\n## 1. \u00dcberblick & Architektur\n- Einstiegspunkt: `Game` startet JavaFX, l\u00e4dt `config.json`, setzt Sound, verbindet Client (TCP) und legt Spieler (`EntityPlayer`) + Level an.\n- `ScreenManager`: verwaltet Szenen, eigener Logik-Thread (~200 Hz) + Render \u00fcber JavaFX-Thread, Fullscreen ohne Window-Chrome.\n- Event-Layer (`EventManager`): verteilt Netzwerk-/Input-Events an Listener (Key/Packet/UserMessage/Player).\n- Level-Auswahl nur hier gekoppelt an `config.currentLevel`.\n```java\nswitch (config.getString(\"currentLevel\")) {\n    case \"Tutorial\" -> setCurrentLevel(new TutorialLevel());\n    case \"Second\"   -> setCurrentLevel(new SecondLevel());\n    case \"Boss\"     -> setCurrentLevel(new BossLevel());\n}\n```\n- Globale Gameplay-Parameter: `gravity=15`, `moveSpeed=450 px/s`, `jumpPower=800` (werden dynamisch in der Physik benutzt).\n\n## 2. Setup & Start\n- Build: `mvn clean install` (Client/Server/Core), Java 17 + JavaFX ben\u00f6tigt.\n- Start: Server und Client aus der IDE oder per `java -jar target/...` (Assets liegen unter `client/src/main/resources`).\n- Config (`config.json`): `currentLevel`, `soundVolume`/`soundMuted`, `messages.game.prefix`, `mysql.*`, `tutorialFinished`.\n- Client-Boot: l\u00e4dt Sound-Settings, baut `ScreenManager`, zeigt `LoadingScreen`, wechselt ins `MainMenu` und startet Hintergrundmusik.\n```java\nSoundManager.setMuted(config.getBoolean(\"soundMuted\"));\nSoundManager.setVolume(config.getDouble(\"soundVolume\"));\nscreenManager = new ScreenManager(primaryStage);\nscreenManager.showScreen(new LoadingScreen(screenManager));\n```\n\n## 3. Spiellogik (Code + Erkl\u00e4rung)\n- Input-Debounce: `InputManager.pollJustPressed` sorgt f\u00fcr einmalige Toggles (F1/F2/F3) im Frame.\n```java\nboolean f1 = input.pollJustPressed(KeyCode.F1);\nboolean f2 = input.pollJustPressed(KeyCode.F2);\nboolean f3 = input.pollJustPressed(KeyCode.F3);\nif (f1) showTooltips = !showTooltips;\nif (f2) showDebugBar = !showDebugBar;\nif (f3) { player.setNoClip(!player.isNoClipEnabled()); player.setGodMode(player.isNoClipEnabled()); }\n```\n- Bewegung/Physik (frame-unabh\u00e4ngig): Velocity aus `delta`, Gravitation, Jump, A/D f\u00fcr Lauf; NoClip umgeht Gravitation + Kollision.\n```java\ndy += Game.gravity * delta;\ndouble nextX = x + dx;\ndouble nextY = y + dy;\nRectangle2D next = new Rectangle2D(nextX, nextY, player.getWidth(), player.getHeight());\n```\n- Plattform-Kollision: trennt Landung, Decke, Seiten; \u00fcbernimmt Delta von Moving Blocks.\n```java\nif (next.intersects(pBounds)) {\n    if (y + player.getHeight() <= platform.getY()) { nextY = platform.getY() - player.getHeight(); dy = 0; onGround = true; }\n    else if (x + player.getWidth() <= platform.getX()) { nextX = platform.getX() - player.getWidth(); dx = 0; }\n}\n```\n- Blocks & Gegner: `GasBarrier` t\u00f6tet ohne Flipper+E, `RobotEnemy` feuert `LaserBlock` mit 4s Lifetime, Stomp-Kill von oben, `FolderBlock` sammelt Files (erst nach USB).\n```java\nif (block instanceof GasBarrierBlock barrier && interactPressed && player.hasFlipper()) {\n    barrier.deactivate();\n    continue;\n}\nif (block instanceof RobotEnemyBlock enemy) {\n    LaserBlock laser = enemy.tryFire(player);\n    if (laser != null) pendingBlocks.add(laser);\n}\n```\n- Kamera-Smoothing: Dead-Zone mit Lerp, getrennt f\u00fcr X/Y; in NoClip keine Clamps.\n```java\ndouble targetX = cameraX + (playerScreenX > width - marginX ? playerScreenX - (width - marginX) :\n                           playerScreenX < marginX ? -(marginX - playerScreenX) : 0);\ncameraX += (targetX - cameraX) * cameraSmooth;\n```\n- HUD: Herzen oben rechts, Quest/File-Progress, Tooltip-Bar; `GameScreen.togglePause()` blendet Overlay ein.\n\n## 4. GUI/Navi (Code + Erkl\u00e4rung + Prompt)\n- Screens: `LoadingScreen` (preload Assets), `MainMenu` (Scrolling-Background, Systeminfo/Progress-Anzeige), `Settings`, `Multiplayer`, `GameScreen`, `LevelFinished`.\n- ScreenManager: Fullscreen, eigenes CSS (`assets/style.css`), Input-Registration und Game-Loop im Worker-Thread, Render per `Platform.runLater`.\n- MainMenu-Animation: zwei Hintergr\u00fcnde werden endlos verschoben.\n```java\nTimeline timeline = new Timeline(new KeyFrame(Duration.millis(16), e -> {\n    bg1.setTranslateX(bg1.getTranslateX() + 1);\n    bg2.setTranslateX(bg2.getTranslateX() + 1);\n    if (bg1.getTranslateX() >= width) bg1.setTranslateX(bg2.getTranslateX() - width);\n    if (bg2.getTranslateX() >= width) bg2.setTranslateX(bg1.getTranslateX() - width);\n}));\ntimeline.setCycleCount(Animation.INDEFINITE);\ntimeline.play();\n```\n- Buttons: `UIUtils.drawCenteredButton` f\u00fcr MainMenu-CTAs; in GameScreen oben links `Zur\u00fcck` + `Pause`.\n- Prompt/Tooltips: F1 blendet Hilfetext gr\u00fcn ein, F2 Debug-Bar, F3 NoClip+God.\n\n## 5. Levelaufbau (Code + Erkl\u00e4rung)\n- Basisklasse `Level`: h\u00e4lt `platforms` + `blocks`, misst `levelStarted`, optional `nextLevel`.\n- Lava-Autofill: `placeLavaBetweenPlatforms(sceneHeight)` sortiert Plattformen nach X und f\u00fcllt horizontale L\u00fccken mit `LavaBlock`-S\u00e4ulen.\n```java\nordered.sort(Comparator.comparingDouble(Platform::getX));\nif (gapWidth > 1.0) blocks.add(createLavaColumn(gapStart, lavaY, gapWidth, lavaH));\n```\n- Tutorial: grundlegend, USB-Stick gated Files; Jump- und Speed-Buffs, FloatingPlatform, Finish rechts.\n- Second: mehr vertikale Spr\u00fcng\u00fc, Flipper-Item vor Gas-Schranke, RobotEnemy-Boss am Ende, mehrere Folder-Collectibles.\n- Boss: langer Boden, vier RobotEnemies, Finish kurz dahinter (reiner Kampf-Fokus).\n\n## 6. Audio & Einstellungen (Code + Erkl\u00e4rung + Prompt)\n- `SoundManager`: cached Media, spielt Effekte parallel, `playWithDuck` duckt Musik tempor\u00e4r, Hintergrundmusik via `playBackground` (loop optional).\n- Lautst\u00e4rke: `setVolume`/`setMuted` clampen 0..1, speichern sofort in `config.json`, wenden Boost-Faktor (`+10dB`) an.\n```java\npublic static void setVolume(double volume) {\n    globalVolume = Math.max(0, Math.min(1, volume));\n    Game.getInstance().getConfig().getObject().put(\"soundVolume\", volume);\n    Game.getInstance().getConfig().save();\n    applyVolume(backgroundPlayer);\n}\n```\n- Assets: `assets/audio/...` (Effekte) + `Music.MENU` als Loop im MainMenu. `preloadAll()` l\u00e4dt alles async.\n- Prompt-Idee: Soundslider 0-100%, Mute-Checkbox, Test-Sound-Button, Speichern direkt gegen Config.\n\n## 7. Netzwerk & Daten (Code + Erkl\u00e4rung)\n- Client baut TCP auf `localhost:25570`, schickt Login-Paket, startet Receiver/Sender Threads.\n```java\nsocket = new Socket(InetAddress.getByName(\"localhost\"), 25570);\nsendPacket(new ClientLoginPacket(thePlayer.getUuid()));\nnetworkExecutor.execute(new ReceiverTask());\nnetworkExecutor.execute(new SenderTask());\n```\n- Heartbeats: alle 50ms `ClientDataPacket` (20 Ticks/s) => Position/Status; Receiver deserialisiert Pakete (max 0.5 MB) und feuert `ReceivePacketEvent` \u00fcber Event-System.\n- Score: `sendFinalScore(long score)` verpackt Highscore in `ClientSubmitScorePacket`.\n- Config enth\u00e4lt MySQL-Block f\u00fcr Server-Hooks; Client speichert Settings lokal in `config.json`.\n- Sicherheit: Socket-/Stream-Closes im Fehlerfall, Executor wird beendet.\n\n## 8. Debugging & offene Punkte (Code + Erkl\u00e4rung)\n- Laufzeit-Toggles: F1 Tooltips/Quest-Bar, F2 Debug-Bar (FPS, onGround, Camera, NoClip/God), F3 NoClip+GodMode.\n- Game Over: bei 0 HP oder aus Welt fallen -> zur\u00fcck ins MainMenu (Guard gegen Mehrfach-Trigger).\n- Pause: Overlay mit Weiter/Zum Men\u00fc, toggled per Button oben links.\n- Offene Punkte: echtes Pausen-Flag blockt Physik nur teilweise; Camera-Bounds rechts/unten fehlen; Debug-Bar zeigt nur erste Zeile; kein echter Level-Fortschritts-Save au\u00dfer `tutorialFinished`.\n- Tests: keine automatisierten Tests vorhanden (Input/Physik/Netzwerk manuell pr\u00fcfen).\n\n## 9. Roadmap\n- Kurzfristig: Kamera rechts/unten clampen, Pause-Flag in Update fr\u00fch abbrechen, Debug-Bar auf 2-3 Zeilen, Laser/GasBarrier im Layout feinjustieren.\n- Mittelfristig: Level-Editor + JSON-Load, echte Stats im LevelFinish (Zeit/Deaths/Files), Achievements an echte Kriterien koppeln, Multiplayer-Men\u00fc mit Serverliste.\n- Langfristig: persistente Highscores/Achievements \u00fcber Backend, Koop/Versus-Mode, bessere Assets/Animationen (Player/Enemy/Laser), Savegames pro Slot.\n", "en": "# Steal The Files - Documentation (EN)\nJavaFX 2D platformer (Client/Server/Core)\n\n**Contents**\n1. Overview & Architecture\n2. Setup & Start\n3. Game Logic (code + notes)\n4. UI/Navigation (code + notes + prompt)\n5. Level Build (code + notes)\n6. Audio & Settings (code + notes + prompt)\n7. Networking & Data (code + notes)\n8. Debugging & Open Points (code + notes)\n9. Roadmap\n\n## 1. Overview & Architecture\n- Entry: `Game` boots JavaFX, loads `config.json`, applies sound, connects TCP client, instantiates `EntityPlayer` + current `Level`.\n- `ScreenManager`: scene controller with its own logic thread (~200 Hz) + JavaFX render thread; fullscreen window, custom CSS.\n- Event layer (`EventManager`): routes network/input events to listeners (Key/Packet/UserMessage/Player).\n- Level choice is only wired here via `config.currentLevel`.\n```java\nswitch (config.getString(\"currentLevel\")) {\n    case \"Tutorial\" -> setCurrentLevel(new TutorialLevel());\n    case \"Second\"   -> setCurrentLevel(new SecondLevel());\n    case \"Boss\"     -> setCurrentLevel(new BossLevel());\n}\n```\n- Global gameplay params: `gravity=15`, `moveSpeed=450 px/s`, `jumpPower=800` (consumed by physics).\n\n## 2. Setup & Start\n- Build: `mvn clean install` (Client/Server/Core), requires Java 17 + JavaFX.\n- Run: start Server and Client from IDE or `java -jar target/...` (assets live in `client/src/main/resources`).\n- Config (`config.json`): `currentLevel`, `soundVolume`/`soundMuted`, `messages.game.prefix`, `mysql.*`, `tutorialFinished`.\n- Client boot: reads sound settings, builds `ScreenManager`, shows `LoadingScreen`, jumps into `MainMenu`, starts background music.\n```java\nSoundManager.setMuted(config.getBoolean(\"soundMuted\"));\nSoundManager.setVolume(config.getDouble(\"soundVolume\"));\nscreenManager = new ScreenManager(primaryStage);\nscreenManager.showScreen(new LoadingScreen(screenManager));\n```\n\n## 3. Game Logic (code + notes)\n- Input debounce: `InputManager.pollJustPressed` keeps F1/F2/F3 toggles single-fire per frame.\n```java\nboolean f1 = input.pollJustPressed(KeyCode.F1);\nboolean f2 = input.pollJustPressed(KeyCode.F2);\nboolean f3 = input.pollJustPressed(KeyCode.F3);\nif (f1) showTooltips = !showTooltips;\nif (f2) showDebugBar = !showDebugBar;\nif (f3) { player.setNoClip(!player.isNoClipEnabled()); player.setGodMode(player.isNoClipEnabled()); }\n```\n- Movement/physics (frame-independent): velocity from `delta`, gravity, jump, A/D for walking; NoClip skips gravity + collisions.\n```java\ndy += Game.gravity * delta;\ndouble nextX = x + dx;\ndouble nextY = y + dy;\nRectangle2D next = new Rectangle2D(nextX, nextY, player.getWidth(), player.getHeight());\n```\n- Platform collision: separates landing vs side/ceiling, also applies moving block delta.\n```java\nif (next.intersects(pBounds)) {\n    if (y + player.getHeight() <= platform.getY()) { nextY = platform.getY() - player.getHeight(); dy = 0; onGround = true; }\n    else if (x + player.getWidth() <= platform.getX()) { nextX = platform.getX() - player.getWidth(); dx = 0; }\n}\n```\n- Blocks & enemies: `GasBarrier` kills without Flipper+E, `RobotEnemy` fires `LaserBlock` (4s lifetime), stomp-kill from above, `FolderBlock` counts files (only after USB).\n```java\nif (block instanceof GasBarrierBlock barrier && interactPressed && player.hasFlipper()) { barrier.deactivate(); continue; }\nif (block instanceof RobotEnemyBlock enemy) { LaserBlock laser = enemy.tryFire(player); if (laser != null) pendingBlocks.add(laser); }\n```\n- Camera smoothing: dead zone + Lerp per axis; clamps disabled while NoClip is on.\n```java\ndouble targetX = cameraX + (playerScreenX > width - marginX ? playerScreenX - (width - marginX) :\n                           playerScreenX < marginX ? -(marginX - playerScreenX) : 0);\ncameraX += (targetX - cameraX) * cameraSmooth;\n```\n- HUD: hearts (top right), quest/file progress, tooltip bar; `togglePause()` shows overlay with Continue/Menu.\n\n## 4. UI/Navigation (code + notes + prompt)\n- Screens: `LoadingScreen` (prewarm assets), `MainMenu` (scrolling background, system/achievement mock), `Settings`, `Multiplayer`, `GameScreen`, `LevelFinished`.\n- ScreenManager: fullscreen, `assets/style.css`, input registration + worker-thread game loop, render via `Platform.runLater`.\n- MainMenu animation: two background layers scroll endlessly.\n```java\nTimeline timeline = new Timeline(new KeyFrame(Duration.millis(16), e -> {\n    bg1.setTranslateX(bg1.getTranslateX() + 1);\n    bg2.setTranslateX(bg2.getTranslateX() + 1);\n    if (bg1.getTranslateX() >= width) bg1.setTranslateX(bg2.getTranslateX() - width);\n    if (bg2.getTranslateX() >= width) bg2.setTranslateX(bg1.getTranslateX() - width);\n}));\ntimeline.setCycleCount(Animation.INDEFINITE);\ntimeline.play();\n```\n- Buttons: `UIUtils.drawCenteredButton` for main CTAs; GameScreen shows Back/Pause in the top-left.\n- Prompt/tooltips: F1 shows green help text, F2 Debug Bar, F3 NoClip+God.\n\n## 5. Level Build (code + notes)\n- Base `Level`: owns `platforms` + `blocks`, tracks `levelStarted`, optional `nextLevel`.\n- Lava autofill: `placeLavaBetweenPlatforms(sceneHeight)` sorts by X and fills gaps with `LavaBlock` columns.\n```java\nordered.sort(Comparator.comparingDouble(Platform::getX));\nif (gapWidth > 1.0) blocks.add(createLavaColumn(gapStart, lavaY, gapWidth, lavaH));\n```\n- Tutorial: intro layout, USB stick gates file collection; jump + speed buffs, floating platform, finish on the right.\n- Second: higher jumps, Flipper item before gas barrier, RobotEnemy boss at the end, multiple folder collectibles.\n- Boss: long floor, four RobotEnemies, finish shortly after (combat focused).\n\n## 6. Audio & Settings (code + notes + prompt)\n- `SoundManager`: caches media, plays SFX concurrently, `playWithDuck` temporarily ducks music, background music via `playBackground` (loop optional).\n- Volume: `setVolume`/`setMuted` clamp 0..1, persist immediately to `config.json`, applies a +10dB boost factor.\n```java\npublic static void setVolume(double volume) {\n    globalVolume = Math.max(0, Math.min(1, volume));\n    Game.getInstance().getConfig().getObject().put(\"soundVolume\", volume);\n    Game.getInstance().getConfig().save();\n    applyVolume(backgroundPlayer);\n}\n```\n- Assets: `assets/audio/...` (effects) + `Music.MENU` loop in MainMenu; `preloadAll()` warms everything async.\n- Prompt idea: slider 0-100%, mute checkbox, \"play test sound\" button, save straight to config.\n\n## 7. Networking & Data (code + notes)\n- Client opens TCP to `localhost:25570`, sends login packet, starts receiver/sender threads.\n```java\nsocket = new Socket(InetAddress.getByName(\"localhost\"), 25570);\nsendPacket(new ClientLoginPacket(thePlayer.getUuid()));\nnetworkExecutor.execute(new ReceiverTask());\nnetworkExecutor.execute(new SenderTask());\n```\n- Heartbeats: every 50ms a `ClientDataPacket` (20 ticks/s); receiver deserializes up to 0.5 MB and fires `ReceivePacketEvent` through the event system.\n- Score submit: `sendFinalScore(long score)` wraps a `ClientSubmitScorePacket`.\n- Config carries a MySQL block for backend hooks; client stores settings locally in `config.json`.\n- Safety: closes socket/streams on failure, shuts down executor.\n\n## 8. Debugging & Open Points (code + notes)\n- Runtime toggles: F1 tooltips/quest bar, F2 debug bar (FPS, onGround, camera, NoClip/God), F3 NoClip+GodMode.\n- Game over: 0 HP or falling out of the world -> back to MainMenu (guard against double trigger).\n- Pause: overlay with Continue/Menu, toggled via top-left button.\n- Gaps: pause flag only partially stops logic; camera clamp missing on right/bottom; debug bar only shows first line; no real level progress save except `tutorialFinished`.\n- Tests: no automated coverage (input/physics/network are manual).\n\n## 9. Roadmap\n- Short term: clamp camera on right/bottom, enforce pause flag early in update, multi-line debug bar, fine-tune laser/gas barrier placements.\n- Mid term: level editor + JSON load, real stats in LevelFinish (time/deaths/files), achievements with real criteria, multiplayer menu with server list.\n- Long term: persistent highscores/achievements via backend, co-op/versus mode, better assets/animations (player/enemy/laser), savegames per slot.\n"}</script>
+  <script src="vendor/marked/marked.min.js"></script>
+  <script src="vendor/highlightjs/highlight.min.js"></script>
+  <script src="vendor/highlightjs/java.min.js"></script>
+  <script src="vendor/highlightjs/bash.min.js"></script>
+  <script>
+    hljs.configure({ ignoreUnescapedHTML: true });
+    const data = JSON.parse(document.getElementById('doc-data').textContent);
+    const article = document.getElementById('doc-content');
+    const buttons = Array.from(document.querySelectorAll('[data-lang]'));
+
+    function render(lang) {
+      const md = data[lang] || '';
+      article.innerHTML = marked.parse(md);
+      document.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
+      buttons.forEach((btn) => btn.classList.toggle('active', btn.dataset.lang === lang));
+      if (location.hash !== '#' + lang) location.hash = lang;
+    }
+
+    const initial = (location.hash || '#de').replace('#', '');
+    render(initial === 'en' ? 'en' : 'de');
+
+    buttons.forEach((btn) => btn.addEventListener('click', () => render(btn.dataset.lang)));
+  </script>
+</body>
+</html>

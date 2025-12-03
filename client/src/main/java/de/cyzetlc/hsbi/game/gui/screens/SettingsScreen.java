@@ -1,6 +1,6 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
-import de.cyzetlc.hsbi.game.audio.Music;
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
@@ -10,43 +10,90 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.GlobalMemory;
-import oshi.software.os.OperatingSystem;
+import javafx.util.Duration;
 
-import java.util.Random;
-
+/**
+ * The {@code SettingsScreen} provides an interface for the user to configure game options,
+ * primarily focusing on audio controls like volume and muting.
+ * <p>
+ * This screen features an animated background and persistent navigation options
+ * to return to the main game flow.
+ *
+ * @author Tom Coombs
+ * @author Leonardo (aka. Phantomic)
+ *
+ * @see GuiScreen
+ * @see ScreenManager
+ */
 public class SettingsScreen implements GuiScreen {
+    /**
+     * The root container for all visual elements displayed on this screen.
+     */
     private final Pane root = new Pane();
+
+    /**
+     * Reference to the ScreenManager, used for handling screen transitions.
+     */
     private final ScreenManager screenManager;
 
+    /**
+     * Text label displaying the current volume level in percentage, including a mute suffix.
+     */
     private Text volumeLbl;
+
+    /**
+     * Button used to toggle the sound system's mute state.
+     */
     private Button muteBtn;
 
+    /**
+     * Slider control used to adjust the master volume level (0.0 to 1.0).
+     */
+    private Slider volumeSlider;
+
+    /**
+     * Constructs a new SettingsScreen.
+     *
+     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     */
     public SettingsScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
+    /**
+     * Initializes the Settings screen by drawing the background, title, navigation,
+     * and setting up the sound control panel.
+     */
     @Override
     public void initialize() {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
+        UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
+                "/assets/hud/BackgroundZustand1.png",
+                "/assets/hud/BackgroundZustand2.png");
         UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
-        UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
-            // wenn ingame zurück
+        UIUtils.drawCenteredButton(root, "Zurueck", 0, 360, false, "mainmenu-button", () -> {
+            // wenn ingame zurueck
 
             // sonst
-            screenManager.showScreen(new MainMenuScreen(screenManager));
+            screenManager.showScreen(Game.getInstance().getMainMenuScreen());
         });
-        UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
-        UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
+        UIUtils.drawText(root, "(c) Copyright CyZeTLC.DE & Phantomic", 10, height - 20);
+        UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width - 210, height - 20);
 
         this.setupSoundControls(width);
     }
 
+    /**
+     * Sets up and displays the sound control panel in the top-right corner of the screen.
+     * <p>
+     * This method draws the panel background, title, volume label, volume slider, and mute button.
+     * It also attaches listeners to the slider and button to update the {@code SoundManager}
+     * and the corresponding UI elements.
+     *
+     * @param width The current width of the screen, used for right-side alignment.
+     */
     private void setupSoundControls(double width) {
         double panelWidth = 220;
         double panelHeight = 90;
@@ -60,14 +107,13 @@ public class SettingsScreen implements GuiScreen {
         this.volumeLbl = UIUtils.drawText(root, "", x + 10, y + 45);
         this.volumeLbl.setFill(Color.WHITE);
 
-
-        Slider volumeSlider = UIUtils.drawCenteredSlider(root, 0, 1,
+        this.volumeSlider = UIUtils.drawCenteredSlider(root, 0, 1,
                 SoundManager.getVolume(),
                 120,
                 false
         );
-        volumeSlider.getStyleClass().add("custom-slider");
-        volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+        this.volumeSlider.getStyleClass().add("custom-slider");
+        this.volumeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             double vol = newVal.doubleValue();
             SoundManager.setVolume(vol);
             this.updateVolumeLabel();
@@ -75,39 +121,52 @@ public class SettingsScreen implements GuiScreen {
 
         this.muteBtn = UIUtils.drawCenteredButton(root, "", 0, 200, false, () -> {
             SoundManager.setMuted(!SoundManager.isMuted());
-            if (SoundManager.isMuted()) {
-                volumeSlider.setDisable(true);
-            } else {
-                volumeSlider.setDisable(false);
-                volumeSlider.setValue(SoundManager.getVolume());
+            this.volumeSlider.setDisable(SoundManager.isMuted());
+            if (!SoundManager.isMuted()) {
+                this.volumeSlider.setValue(SoundManager.getVolume());
             }
             this.updateMuteButton();
+            this.updateVolumeLabel();
         });
 
+        this.volumeSlider.setDisable(SoundManager.isMuted());
         this.updateVolumeLabel();
         this.updateMuteButton();
     }
 
+    /**
+     * Updates the text content of the volume label ({@code volumeLbl}) to reflect the
+     * current sound volume percentage and the muted status.
+     */
     private void updateVolumeLabel() {
         int percent = (int) Math.round(SoundManager.getVolume() * 100);
         String muteSuffix = SoundManager.isMuted() ? " (stumm)" : "";
         this.volumeLbl.setText("Lautstaerke: " + percent + "%" + muteSuffix);
     }
 
+    /**
+     * Updates the text displayed on the mute button ({@code muteBtn}) to reflect the
+     * current sound state (e.g., "Sound an" if muted, "Stummschalten" if active).
+     */
     private void updateMuteButton() {
-        this.muteBtn.setText(SoundManager.isMuted() ? "Sound AN" : "Mute");
+        this.muteBtn.setText(SoundManager.isMuted() ? "Sound an" : "Stummschalten");
     }
 
-    @Override
-    public void update(double delta) {
-
-    }
-
+    /**
+     * Retrieves the root pane of the SettingsScreen.
+     *
+     * @return The JavaFX {@code Pane} used as the root container.
+     */
     @Override
     public Pane getRoot() {
         return root;
     }
 
+    /**
+     * Returns the identifying name of this screen.
+     *
+     * @return The constant screen name "Settings".
+     */
     @Override
     public String getName() {
         return "Settings";

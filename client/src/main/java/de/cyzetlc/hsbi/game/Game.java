@@ -5,16 +5,19 @@ import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.event.EventManager;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
+import de.cyzetlc.hsbi.game.gui.screens.LoadingScreen;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
+import de.cyzetlc.hsbi.game.gui.screens.SettingsScreen;
 import de.cyzetlc.hsbi.game.level.Level;
+import de.cyzetlc.hsbi.game.level.impl.BossLevel;
+import de.cyzetlc.hsbi.game.level.impl.SecondLevel;
 import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.listener.KeyListener;
 import de.cyzetlc.hsbi.game.listener.PacketListener;
 import de.cyzetlc.hsbi.game.listener.PlayerListener;
 import de.cyzetlc.hsbi.game.listener.UserMessageListener;
-import de.cyzetlc.hsbi.game.utils.database.mysql.MySQLCredentials;
-import de.cyzetlc.hsbi.game.utils.database.mysql.QueryHandler;
 import de.cyzetlc.hsbi.game.utils.json.JsonConfig;
+import de.cyzetlc.hsbi.network.Client;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -32,9 +35,6 @@ public class Game extends Application {
     private JsonConfig config;
 
     @Getter
-    private QueryHandler queryHandler;
-
-    @Getter
     private static Game instance;
 
     @Getter
@@ -42,6 +42,15 @@ public class Game extends Application {
 
     @Getter @Setter
     private Level currentLevel;
+
+    @Getter
+    private MainMenuScreen mainMenuScreen;
+
+    @Getter
+    private SettingsScreen settingsScreen;
+
+    @Getter
+    private Client client;
 
     public static double gravity = 15;       // Stärke der Schwerkraft
     public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
@@ -55,6 +64,9 @@ public class Game extends Application {
         logger = LoggerFactory.getLogger(Game.class.getName());
         instance = this;
         thePlayer = new EntityPlayer();
+
+        client = new Client();
+        client.connectAndRun();
 
         getLogger().info("Starting Steal The Files v0.1 BETA..");
         getLogger().info("Loading configuration..");
@@ -77,17 +89,21 @@ public class Game extends Application {
 
         getLogger().info("EventListener registered successfully!");
 
-        this.buildMySQLConnection();
-
         getLogger().info("Loading ScreenManger..");
 
         screenManager = new ScreenManager(primaryStage);
-        screenManager.showScreen(new MainMenuScreen(screenManager));
+        mainMenuScreen = new MainMenuScreen(screenManager);
+        settingsScreen = new SettingsScreen(screenManager);
+        screenManager.showScreen(new LoadingScreen(screenManager));
 
         getLogger().info("ScreenManager loaded & displayed MainMenu successfully!");
         getLogger().info("Client started successfully!");
 
-        this.setCurrentLevel(new TutorialLevel());
+        switch (this.config.getObject().getString("currentLevel")) {
+            case "Tutorial" -> this.setCurrentLevel(new TutorialLevel());
+            case "Second" -> this.setCurrentLevel(new SecondLevel());
+            case "Boss" -> this.setCurrentLevel(new BossLevel());
+        }
 
         SoundManager.playBackground(Music.MENU, true);
     }
@@ -95,22 +111,6 @@ public class Game extends Application {
     @Override
     public void stop()  {
         getLogger().info("Shutting down..");
-
-        this.getQueryHandler().stop();
-    }
-
-    /**
-     * It creates a new QueryHandler object with the credentials from the config file, and then creates a table if it
-     * doesn't exist
-     */
-    private void buildMySQLConnection() {
-        getLogger().info("Building MySQL-Connection..");
-
-        this.queryHandler = new QueryHandler(new JsonConfig(this.config.getObject().getJSONObject("mysql")).load(MySQLCredentials.class));
-        //this.queryHandler.createBuilder("CREATE TABLE IF NOT EXISTS logs(numeric_id INT UNIQUE AUTO_INCREMENT, timestamp BIGINT, thread VARCHAR(64), guild_id BIGINT, text TEXT);").executeUpdateSync();
-        //this.queryHandler.createBuilder("CREATE TABLE IF NOT EXISTS settings(numeric_id INT UNIQUE AUTO_INCREMENT, guild_id BIGINT, language VARCHAR(3), log_channel BIGINT, apply_channel BIGINT, verify_channel BIGINT, verify_webhook BIGINT, verify_webhook_url TEXT, verify_role BIGINT);").executeUpdateSync();
-
-        getLogger().info("MySQL-Connection finished!");
     }
 
     public static void main(String[] args) {

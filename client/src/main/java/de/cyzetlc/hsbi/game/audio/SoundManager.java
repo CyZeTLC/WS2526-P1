@@ -15,6 +15,10 @@ public class SoundManager {
 
     private static final Map<String, Media> mediaCache = new HashMap<>();
     private static double globalVolume = 1.0;
+    private static final double DB_BOOST = 10.0;
+    private static final double DB_FACTOR = Math.pow(10.0, DB_BOOST / 20.0); // ~3.162
+    private static final Object duckLock = new Object();
+    private static int duckDepth = 0;
 
     @Getter
     private static boolean muted = false;
@@ -35,6 +39,58 @@ public class SoundManager {
         } catch (Exception e) {
             System.err.println("Fehler beim Abspielen von Sound: " + sound.path);
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Spielt einen kurzen Soundeffekt mit expliziter Lautstaerke (0.0 - 1.0).
+     * Respektiert mute und begrenzt auf die aktuell gesetzte globale Lautstaerke.
+     */
+    public static void play(Sound sound, double volumeOverride) {
+        try {
+            Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
+
+            MediaPlayer player = new MediaPlayer(media);
+            double base = clamp01(volumeOverride);
+            double limited = Math.min(base, globalVolume);
+            double effectiveVolume = muted ? 0.0 : boostedVolume(limited);
+            player.setVolume(effectiveVolume);
+            player.setOnEndOfMedia(player::dispose); // Ressourcen freigeben
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Fehler beim Abspielen von Sound: " + sound.path);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Spielt einen Soundeffekt und duckt gleichzeitig die Hintergrundmusik auf einen Zielwert.
+     *
+     * @param sound          zu spielender Effekt
+     * @param volumeOverride Lautstaerke des Effekts (0.0 - 1.0)
+     * @param duckVolume     Lautstaerke fuer die Hintergrundmusik waehrend des Effekts (0.0 - 1.0)
+     */
+    public static void playWithDuck(Sound sound, double volumeOverride, double duckVolume) {
+        try {
+            Media media = mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
+            MediaPlayer player = new MediaPlayer(media);
+
+            double base = clamp01(volumeOverride);
+            double effectiveVolume = muted ? 0.0 : boostedVolume(base);
+            player.setVolume(effectiveVolume);
+
+            duckBackground(duckVolume);
+
+            player.setOnEndOfMedia(() -> {
+                player.dispose();
+                unduckBackground();
+            });
+            player.setOnError(SoundManager::unduckBackground);
+            player.play();
+        } catch (Exception e) {
+            System.err.println("Fehler beim Abspielen von Sound: " + sound.path);
+            e.printStackTrace();
+            unduckBackground();
         }
     }
 
@@ -78,6 +134,18 @@ public class SoundManager {
         }
     }
 
+    /** Laedt alle Sounds und Musiktitel einmalig in den Cache (async). */
+    public static void preloadAll() {
+        CompletableFuture.runAsync(() -> {
+            for (Sound sound : Sound.values()) {
+                mediaCache.computeIfAbsent(sound.path, SoundManager::loadMedia);
+            }
+            for (Music music : Music.values()) {
+                mediaCache.computeIfAbsent(music.path(), SoundManager::loadMedia);
+            }
+        });
+    }
+
     /** Setzt die globale Lautstaerke (0.0 - 1.0) */
     public static void setVolume(double volume) {
         globalVolume = Math.max(0, Math.min(1, volume));
@@ -101,7 +169,28 @@ public class SoundManager {
 
     private static void applyVolume(MediaPlayer player) {
         if (player != null) {
-            player.setVolume(muted ? 0.0 : globalVolume);
+            player.setVolume(muted ? 0.0 : boostedVolume(globalVolume));
+        }
+    }
+
+    private static void duckBackground(double duckVolume) {
+        synchronized (duckLock) {
+            duckDepth++;
+            if (backgroundPlayer != null) {
+                double targetBase = Math.max(duckVolume, globalVolume);
+                backgroundPlayer.setVolume(muted ? 0.0 : boostedVolume(targetBase));
+            }
+        }
+    }
+
+    private static void unduckBackground() {
+        synchronized (duckLock) {
+            if (duckDepth > 0) {
+                duckDepth--;
+            }
+            if (duckDepth == 0) {
+                applyVolume(backgroundPlayer);
+            }
         }
     }
 
@@ -131,5 +220,16 @@ public class SoundManager {
     /** Entfernt alle gecachten Media-Objekte */
     public static void clearCache() {
         mediaCache.clear();
+    }
+
+    private static double boostedVolume(double baseVolume) {
+        double boosted = clamp01(baseVolume) * DB_FACTOR;
+        return clamp01(boosted);
+    }
+
+    private static double clamp01(double value) {
+        if (value < 0.0) return 0.0;
+        if (value > 1.0) return 1.0;
+        return value;
     }
 }

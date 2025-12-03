@@ -1,5 +1,8 @@
 package de.cyzetlc.hsbi;
 
+import de.cyzetlc.hsbi.game.utils.json.JsonConfig;
+import de.cyzetlc.hsbi.game.utils.json.database.mysql.MySQLCredentials;
+import de.cyzetlc.hsbi.game.utils.json.database.mysql.QueryHandler;
 import de.cyzetlc.hsbi.game.event.EventCancelable;
 import de.cyzetlc.hsbi.game.event.EventManager;
 import de.cyzetlc.hsbi.game.event.impl.ReceivePacketEvent;
@@ -27,11 +30,24 @@ public class Server {
     @Getter
     private static final List<MultiClientHandler> multiClientHandlerList = new LinkedList<>();
 
-    /**
-     * This function creates a server socket, registers event listeners, and accepts incoming client connections, assigning
-     * each connection to a separate thread for handling.
-     */
-    public static void main(String[] args) throws IOException {
+    @Getter
+    private static Server instance;
+
+    @Getter
+    private QueryHandler queryHandler;
+
+    @Getter
+    private static JsonConfig config;
+
+    public Server() throws IOException {
+        instance = this;
+
+        getLogger().info("Loading configuration..");
+
+        config = new JsonConfig("./config.json");
+
+        getLogger().info("Configuration loaded successfully!");
+
         ServerSocket serverSocket = new ServerSocket(25570);
         getLogger().info("ServerSocket connected: " + serverSocket);
 
@@ -60,12 +76,36 @@ public class Server {
         }
     }
 
+    /**
+     * This function creates a server socket, registers event listeners, and accepts incoming client connections, assigning
+     * each connection to a separate thread for handling.
+     */
+    public static void main(String[] args) throws IOException {
+        new Server();
+    }
+
+    /**
+     * Finds the MultiClientHandler instance associated with the given Socket.
+     * @param socket The socket of the client.
+     * @return The corresponding MultiClientHandler, or null if not found.
+     */
+    public static MultiClientHandler findHandlerBySocket(Socket socket) {
+        for (MultiClientHandler handler : multiClientHandlerList) {
+            if (handler.getSocket().equals(socket)) {
+                return handler;
+            }
+        }
+        return null; // Handler nicht gefunden
+    }
+
     public static class MultiClientHandler extends Thread {
         @Getter
         public static Logger clientLogger = LoggerFactory.getLogger(MultiClientHandler.class.getName());
 
         final DataInputStream dis;
         final DataOutputStream dos;
+
+        @Getter
         final Socket socket;
 
         public MultiClientHandler(Socket s, DataInputStream dis, DataOutputStream dos) {
@@ -113,6 +153,33 @@ public class Server {
             }
             multiClientHandlerList.remove(this);
         }
+
+        /**
+         * Serializes and sends a Packet object to the connected client.
+         * @param packet The Packet to be sent.
+         * @throws IOException If an error occurs during serialization or writing to the stream.
+         */
+        public void sendPacket(Packet packet) throws IOException {
+            byte[] bytes = SerializationUtils.serialize(packet);
+            this.dos.write(bytes);
+            this.dos.flush();
+
+            clientLogger.debug("Sent packet type: " + packet.getClass().getSimpleName() + " to " + this.socket);
+        }
+    }
+
+    /**
+     * It creates a new QueryHandler object with the credentials from the config file, and then creates a table if it
+     * doesn't exist
+     */
+    private void buildMySQLConnection() {
+        getLogger().info("Building MySQL-Connection..");
+
+        this.queryHandler = new QueryHandler(new JsonConfig(this.config.getObject().getJSONObject("mysql")).load(MySQLCredentials.class));
+        //this.queryHandler.createBuilder("CREATE TABLE IF NOT EXISTS logs(numeric_id INT UNIQUE AUTO_INCREMENT, timestamp BIGINT, thread VARCHAR(64), guild_id BIGINT, text TEXT);").executeUpdateSync();
+        //this.queryHandler.createBuilder("CREATE TABLE IF NOT EXISTS settings(numeric_id INT UNIQUE AUTO_INCREMENT, guild_id BIGINT, language VARCHAR(3), log_channel BIGINT, apply_channel BIGINT, verify_channel BIGINT, verify_webhook BIGINT, verify_webhook_url TEXT, verify_role BIGINT);").executeUpdateSync();
+
+        getLogger().info("MySQL-Connection finished!");
     }
 }
 

@@ -1,11 +1,16 @@
 package de.cyzetlc.hsbi.game.level.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.*;
 import de.cyzetlc.hsbi.game.level.Level;
 import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class TutorialLevel extends Level {
     public TutorialLevel() {
@@ -23,11 +28,12 @@ public class TutorialLevel extends Level {
         platforms.add(new Platform(2000, height - 400, 500, 600, root));
         platforms.add(new Platform(780, height - 450, 100, 50, root));
 
+        // USB-Stick auf der ersten Plattform platziert
+        this.blocks.add(new USBStickBlock(new Location(200, height - 360)));
         this.blocks.add(new JumpBoostBlock(new Location(1400, height - 332)));
         this.blocks.add(new ServerBlock(new Location( 1500, height - 428)));
         this.blocks.add(new SpeedBoostBlock(new Location(1600, height - 332)));
         this.blocks.add(new FinishBlock(new Location(2400, height - 490)));
-        this.blocks.add(createLavaColumn(930, height - 80, 388, 300));
         this.blocks.add(new FolderBlock(new Location(800, height - 482)));
 
         // floating platform connects upper islands
@@ -37,6 +43,8 @@ public class TutorialLevel extends Level {
                 120,
                 0 // 0 = altes MovingPlatform-Artwork
         ));
+
+        this.placeLavaBetweenPlatforms(height);
 
         // draw blocks
         for (Block block : this.blocks) {
@@ -48,15 +56,19 @@ public class TutorialLevel extends Level {
         }
     }
 
-    private static LavaBlock createLavaColumn(double x, double y, double width, double height) {
-        LavaBlock lava = new LavaBlock(new Location(x, y));
-        lava.setWidth(width);
-        lava.setHeight(height);
-        return lava;
+    @Override
+    public void onFinish() {
+        super.onFinish();
+        Game.getInstance().getConfig().getObject().put("tutorialFinished", true);
+        Game.getInstance().getConfig().save();
     }
-
     @Override
     public void update() {
 
+    }
+
+    @Override
+    public Level getNextLevel() {
+        return new SecondLevel();
     }
 }

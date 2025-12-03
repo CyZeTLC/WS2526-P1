@@ -1,0 +1,52 @@
+/* Light syntax highlighting tuned to match the reference screenshot */
+.hljs {
+  display: block;
+  background: #ffffff;
+  color: #073642;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  line-height: 1.5;
+  font-family: "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+.hljs-keyword,
+.hljs-literal,
+.hljs-selector-tag,
+.hljs-meta .hljs-keyword {
+  color: #859900;
+  font-weight: 600;
+}
+
+.hljs-title,
+.hljs-name,
+.hljs-type,
+.hljs-built_in {
+  color: #268bd2;
+  font-weight: 600;
+}
+
+.hljs-number,
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable {
+  color: #6c71c4;
+}
+
+.hljs-string,
+.hljs-meta,
+.hljs-symbol {
+  color: #2aa198;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #93a1a1;
+  font-style: italic;
+}
+
+.hljs-subst,
+.hljs-params {
+  color: #073642;
+}

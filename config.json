@@ -1,1 +1,1 @@
-{"soundVolume":0.1428571428571428,"soundMuted":false,"messages":{"game.prefix":"HSBI-GAME"},"mysql":{"hostname":"81.30.146.119","database":"cyze_game_hsbi","password":"EzQNG9KGZVKkd","port":3306,"poolSize":3,"username":"admindb"}}
+{"currentLevel":"Boss","soundVolume":0.1428571428571428,"soundMuted":true,"messages":{"game.prefix":"HSBI-GAME"},"mysql":{"hostname":"81.30.146.119","database":"cyze_game_hsbi","password":"EzQNG9KGZVKkd","port":3306,"poolSize":3,"username":"admindb"},"tutorialFinished":true}

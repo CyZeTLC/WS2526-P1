@@ -16,7 +16,7 @@ public class KeyListener {
                 if (Game.getInstance().getScreenManager().isRunning() &&
                         !Game.getInstance().getScreenManager().getCurrentScreen().getName().equals("Settings") &&
                         !Game.getInstance().getScreenManager().getCurrentScreen().getName().equals("MainMenu")) {
-                    Game.getInstance().getScreenManager().showScreen(new SettingsScreen(Game.getInstance().getScreenManager()));
+                    Game.getInstance().getScreenManager().showScreen(Game.getInstance().getSettingsScreen());
                 }
             }
         }
