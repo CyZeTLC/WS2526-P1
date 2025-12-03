@@ -45,20 +45,25 @@ public class PacketListener {
             } else if (packet instanceof JoinCommunityPacket communityPacket) {
                 if (!this.insideCommunity.containsValue(communityPacket.getUuid())) {
                     this.insideCommunity.put(e.getSocket(), communityPacket.getUuid());
+                    Server.getLogger().info(e.getSocket().getInetAddress().getHostName() + " connected to community");
+                }
+
+                for (Socket socket : this.insideCommunity.keySet()) {
+                    if (socket != e.getSocket()) {
+                        Server.MultiClientHandler handler = Server.findHandlerBySocket(socket);
+
+                        if (handler != null) {
+                            //handler.sendPacket(communityPacket);
+                        }
+                    }
                 }
             } else if (packet instanceof UserMessagePacket messagePacket) {
                 e.setCancelled(((EventCancelable)new ReceiveMessageEvent(messagePacket, e.getSocket()).call()).isCancelled());
             } else if (packet instanceof ClientLoginPacket clientLoginPacket) {
                 Server.MultiClientHandler.getClientLogger().info(clientLoginPacket.getClient().toString());
             } else if (packet instanceof ClientDataPacket clientDataPacket) {
-                if (clientDataPacket.getLocation() != null) {
-                    Server.getLogger().info("X: " + clientDataPacket.getLocation().getX());
-                } else {
-                    Server.getLogger().info("No location");
-                }
-
                 for (Socket socket : this.insideCommunity.keySet()) {
-                    if (this.insideCommunity.get(socket) != clientDataPacket.getUuid()) {
+                    if (socket != e.getSocket()) {
                         Server.MultiClientHandler handler = Server.findHandlerBySocket(socket);
 
                         if (handler != null) {

@@ -1,8 +1,6 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
-import de.cyzetlc.hsbi.game.audio.Music;
-import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.Platform;
@@ -11,10 +9,8 @@ import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.LaserBlock;
 import de.cyzetlc.hsbi.game.gui.block.impl.GasBarrierBlock;
 import de.cyzetlc.hsbi.game.gui.block.impl.RobotEnemyBlock;
-import de.cyzetlc.hsbi.game.level.impl.TutorialLevel;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
-import javafx.scene.control.Button;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,13 +18,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.util.Duration;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,11 +82,6 @@ public class GameScreen implements GuiScreen {
      * Text label used to display debug information (e.g., FPS, coordinates).
      */
     private Text debugLbl;
-
-    /**
-     * Text label used to display the player's health percentage.
-     */
-    private Text healthLbl;
 
     /**
      * Flag indicating whether the game is currently paused.
@@ -171,12 +159,8 @@ public class GameScreen implements GuiScreen {
     /**
      * Toggle state for displaying user-facing tooltips and quest information (controlled by F1).
      */
+    @Getter @Setter
     private boolean showTooltips = true; // F1
-
-    /**
-     * Toggle state for displaying the detailed technical debug bar (controlled by F2).
-     */
-    private boolean showDebugBar = false; // F2
 
     /**
      * Text label displaying general control hints (e.g., F1/F2/F3 instructions).
@@ -248,10 +232,8 @@ public class GameScreen implements GuiScreen {
         UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
         UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
 
-        this.debugLbl = UIUtils.drawText(root, "FPS: " + (int) screenManager.getCurrentFps(), 10, 85);
-        this.healthLbl = UIUtils.drawText(root, "HP: 100%", 10, 105);
+        this.debugLbl = UIUtils.drawText(root, "NaN", 10, 85);
         this.debugLbl.setVisible(true); // alte Debug-Anzeige verstecken, ersetzen wir durch debugBarLbl
-        this.healthLbl.setVisible(false); // HP kommt in der neuen Debug-Bar/Quest-Anzeige vor
         this.flipperHint = UIUtils.drawText(root, "", 10, 135);
         this.flipperHint.setVisible(false);
 
@@ -260,14 +242,12 @@ public class GameScreen implements GuiScreen {
         this.filesProgressLbl = UIUtils.drawText(root, "", 10, 0);
         this.updateFolderProgress();
 
-        // HUD-Hinweise und Debug-Status (F1/F2/F3) in Giftgrün, Positionierung erfolgt zentral
-        this.tipsLbl = UIUtils.drawText(root, "[E] SchrankeGas deaktivieren (nur mit Flipper) | [F1] Tooltips | [F2] Debug-Leiste | [F3] NoClip+GodMode", 10, 0);
-        this.tipsLbl.setFill(Color.rgb(80, 255, 80));
+        // HUD-Hinweise
+        this.tipsLbl = UIUtils.drawText(root, "[F1] Tooltips", 10, 0);
         this.tipsLbl.setVisible(showTooltips);
 
         this.layoutHudPositions();
         this.setupPauseOverlay(width, height);
-        //this.drawHealth(width);
         this.createHealthBar(width);
     }
 
@@ -312,60 +292,14 @@ public class GameScreen implements GuiScreen {
         boolean hittingCeiling = false;
         boolean interactPressed = screenManager.getInputManager().isPressed(KeyCode.E);
         boolean f1 = screenManager.getInputManager().pollJustPressed(KeyCode.F1);
-        boolean f2 = screenManager.getInputManager().pollJustPressed(KeyCode.F2);
-        boolean f3 = screenManager.getInputManager().pollJustPressed(KeyCode.F3);
 
-        // Tooltips toggeln (F1)
-        if (f1) {
-            showTooltips = !showTooltips;
-            tipsLbl.setVisible(showTooltips);
-            //debugStatusLbl.setVisible(showTooltips);
-            questLbl.setVisible(showTooltips);
-            filesProgressLbl.setVisible(showTooltips);
-        }
-
-        // Debug-Leiste toggeln (F2)
-        if (f2) {
-            showDebugBar = !showDebugBar;
-        }
-
-        // NoClip + GodMode toggeln (F3)
-        if (f3) {
-            boolean enable = !player.isNoClipEnabled();
-            player.setNoClip(enable);
-            player.setGodMode(enable);
-        }
-
-        // Debug-Status-Text aktualisieren (anzeige nur wenn Tooltips an)
-        if (showTooltips) {
-            //debugStatusLbl.setText(player.isNoClipEnabled() ? "DEBUG: NoClip+GodMode AN" : "DEBUG: AUS");
-        }
+        // Tooltips toggeln
+        tipsLbl.setVisible(showTooltips);
+        questLbl.setVisible(showTooltips);
+        filesProgressLbl.setVisible(showTooltips);
 
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
-
-        // NoClip: freie Bewegung ohne Gravitation/Kollision
-        if (player.isNoClipEnabled()) {
-            double freeSpeed = moveSpeed * 1.8 * delta;
-            double nx = x;
-            double ny = y;
-            if (screenManager.getInputManager().isPressed(KeyCode.A)) nx -= freeSpeed;
-            if (screenManager.getInputManager().isPressed(KeyCode.D)) nx += freeSpeed;
-            if (screenManager.getInputManager().isPressed(KeyCode.W)) ny -= freeSpeed;
-            if (screenManager.getInputManager().isPressed(KeyCode.S)) ny += freeSpeed;
-            player.getLocation().setX(nx);
-            player.getLocation().setY(ny);
-            this.updateCamera(width, height);
-            this.updateDebugBar(onGround, moveSpeed, jumpPower);
-            this.updateFolderProgress();
-            if (player.hasFlipper()) {
-                flipperHint.setText("Flipper vorhanden: E zum Deaktivieren von Gas");
-                flipperHint.setVisible(true);
-            }
-            // Sprite/Nametag auch im NoClip aktualisieren, damit er sichtbar mitfliegt
-            player.update();
-            return; // Skip Kollisionen/Gravitation
-        }
 
         // input
         if (screenManager.getInputManager().isPressed(KeyCode.A)) {
@@ -425,6 +359,7 @@ public class GameScreen implements GuiScreen {
         List<Block> blocks = Game.getInstance().getCurrentLevel().getBlocks();
         for (Block block : blocks) {
             Rectangle2D pBounds = block.getBounds();
+
             // Flipper-Item-Logik: Einsammeln & HUD-Flag setzen
             if (block instanceof de.cyzetlc.hsbi.game.gui.block.impl.FlipperItem flipperItem) {
                 flipperItem.update(player);
@@ -487,7 +422,6 @@ public class GameScreen implements GuiScreen {
 
         // window bounds
         if (nextX < 0) nextX = 0;
-        //if (nextX + player.getWidth() > width) nextX = width - player.getWidth();
 
         // fell out of the world -> game over
         double screenNextY = nextY - this.cameraY;
@@ -510,20 +444,15 @@ public class GameScreen implements GuiScreen {
         player.getLocation().setY(nextY);
 
         this.updateCamera(width, height);
-
         this.updateDebugBar(onGround, moveSpeed, jumpPower);
-
-        int hpPercent = (int) Math.round(player.getHealth() / player.getMaxHealth() * 100.0);
-        this.healthLbl.setText("HP: " + hpPercent + "%");
+        this.updateFolderProgress();
+        this.updateHealth();
 
         if (player.hasFlipper() && !flipperHintShown) {
             flipperHint.setText("Druecke E damit der Flipper mit Gegenstaenden interagiert");
             flipperHint.setVisible(true);
             flipperHintShown = true;
         }
-
-        this.updateFolderProgress();
-        this.updateHealth();
 
         player.update();
     }
@@ -620,9 +549,9 @@ public class GameScreen implements GuiScreen {
             return;
         }
         this.gameOverTriggered = true;
-        if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
+        /*if (!(screenManager.getCurrentScreen() instanceof MainMenuScreen)) {
             this.screenManager.showScreen(new MainMenuScreen(screenManager));
-        }
+        }*/
     }
 
     /**
@@ -686,7 +615,7 @@ public class GameScreen implements GuiScreen {
      * are neatly spaced below the primary control buttons (Back, Pause).
      */
     private void layoutHudPositions() {
-        int hudX = 10;
+        int hudX = 0;
         int hudStartY = 140;       // Start unter den Buttons
         int hudLineHeight = 18;    // Zeilenabstand innerhalb eines Blocks
         int hudBlockSpacing = 10;  // Abstand zwischen Blöcken
@@ -725,14 +654,11 @@ public class GameScreen implements GuiScreen {
      * @param jumpPower The current vertical jump power parameter.
      */
     private void updateDebugBar(boolean onGround, double moveSpeed, double jumpPower) {
-        if (!showDebugBar) {
-            return;
-        }
         String line1 = "FPS: " + (int) screenManager.getCurrentFps()
                 + " | onGround: " + onGround
                 + " | moveSpeed: " + moveSpeed
                 + " | jumpPower: " + jumpPower
-                + " | X: " + (int) player.getLocation().getX();
+                + " | Location: " + player.getLocation();
         String line2 = "cameraX: " + (int) cameraX
                 + " | cameraY: " + (int) cameraY
                 + " | Location: " + player.getLocation().toString();

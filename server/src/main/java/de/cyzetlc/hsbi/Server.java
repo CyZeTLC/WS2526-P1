@@ -164,7 +164,7 @@ public class Server {
             this.dos.write(bytes);
             this.dos.flush();
 
-            clientLogger.debug("Sent packet type: " + packet.getClass().getSimpleName() + " to " + this.socket);
+            clientLogger.info("Sent packet type: " + packet.getClass().getSimpleName() + " to " + this.socket);
         }
     }
 

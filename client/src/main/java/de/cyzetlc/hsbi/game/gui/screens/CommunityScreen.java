@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommunityScreen extends GameScreen {
+    public static ArrayList<EntityPlayer> players = new ArrayList<>();
+
     /**
      * Constructs a new CommunityScreen.
      *
@@ -55,13 +57,20 @@ public class CommunityScreen extends GameScreen {
                 player.drawPlayer(root, player.getLocation().getX() - getCameraX(), player.getLocation().getY() - getCameraY());
             }
         }*/
+    }
 
-        for (EntityPlayer all : CommunityHandler.players) {
-            all.drawPlayer(root, all.getLocation().getX() - getCameraX(), all.getLocation().getY() - getCameraY());
+    @Override
+    public void update(double delta) {
+        super.update(delta);
+        for (EntityPlayer player : players) {
+            if (player.getSprite() != null && player.getLocation() != null) {
+                player.update();
+            }
         }
     }
 
     public void addPlayer(EntityPlayer player) {
+        players.add(player);
         player.drawPlayer(root, player.getLocation().getX() - getCameraX(), player.getLocation().getY() - getCameraY());
     }
 
