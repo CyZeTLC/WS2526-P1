@@ -4,6 +4,7 @@ import de.cyzetlc.hsbi.game.audio.Music;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.entity.EntityPlayer;
 import de.cyzetlc.hsbi.game.event.EventManager;
+import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.screens.LoadingScreen;
 import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
@@ -48,6 +49,9 @@ public class Game extends Application {
 
     @Getter
     private SettingsScreen settingsScreen;
+
+    @Getter @Setter
+    private GuiScreen backScreen;
 
     @Getter
     private Client client;

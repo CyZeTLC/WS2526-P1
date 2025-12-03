@@ -182,7 +182,9 @@ public class UIUtils {
         button.setId(id);
         button.setOnAction(e -> {
             SoundManager.play(Sound.CLICK);
-            onClick.run();
+            if (onClick != null) {
+                onClick.run();
+            }
         });
         parent.getChildren().add(button);
         return button;

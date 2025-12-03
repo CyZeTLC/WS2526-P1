@@ -4,6 +4,7 @@ import de.cyzetlc.hsbi.game.events.input.InputType;
 import de.cyzetlc.hsbi.game.events.input.KeyInputEvent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +12,11 @@ import java.util.Set;
 public class InputManager {
     private final Set<KeyCode> pressedKeys = new HashSet<>();
     private final Set<KeyCode> justPressedKeys = new HashSet<>();
+    @Getter
+
     private double mouseX = 0;
+
+    @Getter
     private double mouseY = 0;
 
     public void register(Scene scene) {
@@ -57,13 +62,5 @@ public class InputManager {
         boolean hit = justPressedKeys.contains(key);
         justPressedKeys.remove(key);
         return hit;
-    }
-
-    public double getMouseX() {
-        return mouseX;
-    }
-
-    public double getMouseY() {
-        return mouseY;
     }
 }

@@ -40,7 +40,7 @@ public class SecondLevel extends Level {
         platforms.add(new Platform(4800, height - 300, 900, 550, root));
 
         // Flipper-Schlüssel vor der Schranke platzieren
-        this.blocks.add(new FlipperItem(new Location(220, height - 320)));
+        //this.blocks.add(new FlipperItem(new Location(220, height - 320)));
 
         // Boss robot on final platform (platform top = height - 300)
         this.blocks.add(new RobotEnemyBlock(new Location(5000, height - 300 - 96), 500, 180));
@@ -71,10 +71,8 @@ public class SecondLevel extends Level {
         blocks.add(new FolderBlock(new Location(1750, height - 432)));
         blocks.add(new FolderBlock(new Location(2350, height - 310)));
         blocks.add(new FolderBlock(new Location(3000, height - 362)));
-        blocks.add(new FolderBlock(new Location(3600, height - 530)));  // schwer erreichbare Coin
+        blocks.add(new FolderBlock(new Location(3600, height - 442)));  // schwer erreichbare Coin
         blocks.add(new FolderBlock(new Location(4850, height - 330)));
-
-        blocks.add(new JumpBoostBlock(new Location(2000, height - 350)));  // Mid-level
 
         // --- FINISH ---
         blocks.add(new FinishBlock(new Location(4800 + 900 - 150, height - 390)));

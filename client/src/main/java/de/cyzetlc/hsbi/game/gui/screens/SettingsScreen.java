@@ -73,11 +73,18 @@ public class SettingsScreen implements GuiScreen {
                 "/assets/hud/BackgroundZustand1.png",
                 "/assets/hud/BackgroundZustand2.png");
         UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
-        UIUtils.drawCenteredButton(root, "Zurueck", 0, 360, false, "mainmenu-button", () -> {
-            // wenn ingame zurueck
-
-            // sonst
+        UIUtils.drawCenteredButton(root, "Zum MainMenu", 0, 280, false, "mainmenu-button", () -> {
+            Game.getInstance().setBackScreen(null);
             screenManager.showScreen(Game.getInstance().getMainMenuScreen());
+        });
+        UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
+            GuiScreen backScreen = Game.getInstance().getBackScreen();
+
+            if (backScreen != null) {
+                screenManager.showScreen(backScreen);
+            } else {
+                screenManager.showScreen(Game.getInstance().getMainMenuScreen());
+            }
         });
         UIUtils.drawText(root, "(c) Copyright CyZeTLC.DE & Phantomic", 10, height - 20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width - 210, height - 20);
