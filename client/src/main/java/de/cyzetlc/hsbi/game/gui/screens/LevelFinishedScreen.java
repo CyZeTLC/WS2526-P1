@@ -4,6 +4,7 @@ import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -51,6 +52,7 @@ public class LevelFinishedScreen implements GuiScreen {
      */
     @Override
     public void initialize() {
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -59,16 +61,16 @@ public class LevelFinishedScreen implements GuiScreen {
                 "/assets/hud/BackgroundZustand2.png");
 
         UIUtils.drawRect(root, width/2 - 300, height/2 - 300, 600, 600, Color.BLACK).setOpacity(0.4);
-        UIUtils.drawCenteredText(root, "Level geschafft!", 0, 50, false).setId("menu-title");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.title"), 0, 50, false).setId("menu-title");
 
         if (Game.getInstance().getCurrentLevel().getNextLevel() != null) {
-            UIUtils.drawCenteredButton(root, "Nächstes Level", 0, height / 2 + 150, false, "mainmenu-button", () -> {
+            UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.finished.btn.next"), 0, height / 2 + 150, false, "mainmenu-button", () -> {
                 Game.getInstance().setCurrentLevel(Game.getInstance().getCurrentLevel().getNextLevel());
                 Game.getInstance().getScreenManager().showScreen(new GameScreen(Game.getInstance().getScreenManager()));
                 Game.getLogger().info(Game.getInstance().getCurrentLevel().getName() + " successfully loaded & saved!");
             });
         }
-        UIUtils.drawCenteredButton(root, "Zum Hauptmenü", 0, height / 2 + 230, false, "mainmenu-button", () -> {
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.finished.btn.mainmenu"), 0, height / 2 + 230, false, "mainmenu-button", () -> {
             Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen());
         });
 
@@ -79,10 +81,10 @@ public class LevelFinishedScreen implements GuiScreen {
 
         int collected = Math.max(0, countFolderBlocks() - countActiveFolders());
 
-        UIUtils.drawCenteredText(root, Game.getInstance().getCurrentLevel().getName() + " abgeschlossen", 0, 300, false, "stats-line-title");
-        UIUtils.drawCenteredText(root, "Benötigte Zeit: " + mins + ":" + restsecs, 0, 380, false, "stats-line");
-        UIUtils.drawCenteredText(root, "Ordner gesammelt: " + collected, 0, 420, false, "stats-line");
-        UIUtils.drawCenteredText(root, "Leben verloren: " + (Game.thePlayer.getMaxHealth() - Game.thePlayer.getHealth()), 0, 460, false, "stats-line");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.title", Game.getInstance().getCurrentLevel().getName()), 0, 300, false, "stats-line-title");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.time", mins + ":" + restsecs), 0, 380, false, "stats-line");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.folder", String.valueOf(collected)), 0, 420, false, "stats-line");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.health", String.valueOf((Game.thePlayer.getMaxHealth() - Game.thePlayer.getHealth()))), 0, 460, false, "stats-line");
 
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);

@@ -7,6 +7,7 @@ import de.cyzetlc.hsbi.game.gui.block.Material;
 import de.cyzetlc.hsbi.game.level.impl.SecondLevel;
 import de.cyzetlc.hsbi.game.utils.ui.ImageAssets;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -59,6 +60,7 @@ public class LoadingScreen implements GuiScreen {
      */
     @Override
     public void initialize() {
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -66,7 +68,7 @@ public class LoadingScreen implements GuiScreen {
                 "/assets/hud/BackgroundZustand1.png",
                 "/assets/hud/BackgroundZustand2.png");
 
-        UIUtils.drawCenteredText(root, "Lade..", 0, height/2 - 100, false).setId("menu-title");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.loading.title"), 0, height/2 - 100, false).setId("menu-title");
 
         double barWidth = width/2;   // Endbreite des Balkens
         double barHeight = 60;

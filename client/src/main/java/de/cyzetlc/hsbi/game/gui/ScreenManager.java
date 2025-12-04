@@ -1,5 +1,7 @@
 package de.cyzetlc.hsbi.game.gui;
 
+import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.gui.screens.MainMenuScreen;
 import de.cyzetlc.hsbi.game.input.InputManager;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -152,6 +154,10 @@ public class ScreenManager {
         this.currentScreen = screen;
         if (!this.screenList.contains(screen)) {
             screen.initialize();
+        }
+
+        if (screen instanceof MainMenuScreen) {
+            Game.getInstance().setBackScreen(null);
         }
 
         this.screenList.add(screen);

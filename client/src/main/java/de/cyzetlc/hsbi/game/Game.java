@@ -18,6 +18,7 @@ import de.cyzetlc.hsbi.game.listener.PacketListener;
 import de.cyzetlc.hsbi.game.listener.PlayerListener;
 import de.cyzetlc.hsbi.game.listener.UserMessageListener;
 import de.cyzetlc.hsbi.game.utils.json.JsonConfig;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import de.cyzetlc.hsbi.network.Client;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -44,10 +45,10 @@ public class Game extends Application {
     @Getter @Setter
     private Level currentLevel;
 
-    @Getter
+    @Getter @Setter
     private MainMenuScreen mainMenuScreen;
 
-    @Getter
+    @Getter @Setter
     private SettingsScreen settingsScreen;
 
     @Getter @Setter
@@ -55,6 +56,9 @@ public class Game extends Application {
 
     @Getter
     private Client client;
+
+    @Getter
+    private MessageHandler messageHandler;
 
     public static double gravity = 15;       // Stärke der Schwerkraft
     public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
@@ -76,6 +80,8 @@ public class Game extends Application {
         getLogger().info("Loading configuration..");
 
         config = new JsonConfig("./config.json");
+        messageHandler = new MessageHandler();
+        messageHandler.loadFromJson(config.getObject().getJSONObject("messages"));
 
         getLogger().info("Configuration loaded successfully!");
         getLogger().info("Applying sound-settings from config..");

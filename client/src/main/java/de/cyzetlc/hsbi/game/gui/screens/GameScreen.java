@@ -11,6 +11,7 @@ import de.cyzetlc.hsbi.game.gui.block.impl.GasBarrierBlock;
 import de.cyzetlc.hsbi.game.gui.block.impl.RobotEnemyBlock;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.game.world.Direction;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -206,6 +207,7 @@ public class GameScreen implements GuiScreen {
     public void initialize() {
         root.getChildren().clear();
 
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
         this.player = Game.thePlayer;
@@ -229,8 +231,8 @@ public class GameScreen implements GuiScreen {
         Game.getInstance().getCurrentLevel().draw(width, height, root);
 
         // Draws the two buttons displayed on the top left
-        UIUtils.drawButton(root, "Zurück", 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
-        UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
+        UIUtils.drawButton(root, messageHandler.getMessageForLanguage("gui.game.btn.back"), 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
+        //UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
 
         this.debugLbl = UIUtils.drawText(root, "NaN", 10, 85);
         this.debugLbl.setVisible(true); // alte Debug-Anzeige verstecken, ersetzen wir durch debugBarLbl
@@ -238,12 +240,12 @@ public class GameScreen implements GuiScreen {
         this.flipperHint.setVisible(false);
 
         this.totalFolderCount = this.countFolderBlocks();
-        this.questLbl = UIUtils.drawText(root, "Quest: Sammel alle Files mit deinem USB Stick", 10, 0);
+        this.questLbl = UIUtils.drawText(root, messageHandler.getMessageForLanguage("gui.game.lbl.quest"), 10, 0);
         this.filesProgressLbl = UIUtils.drawText(root, "", 10, 0);
         this.updateFolderProgress();
 
         // HUD-Hinweise
-        this.tipsLbl = UIUtils.drawText(root, "[F1] Tooltips", 10, 0);
+        this.tipsLbl = UIUtils.drawText(root, messageHandler.getMessageForLanguage("gui.game.lbl.tips"), 10, 0);
         this.tipsLbl.setVisible(showTooltips);
 
         this.layoutHudPositions();

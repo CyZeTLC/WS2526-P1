@@ -5,6 +5,7 @@ import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
@@ -66,18 +67,39 @@ public class SettingsScreen implements GuiScreen {
      */
     @Override
     public void initialize() {
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
         UIUtils.drawAnimatedBackground(root, width, height, Duration.millis(900),
                 "/assets/hud/BackgroundZustand1.png",
                 "/assets/hud/BackgroundZustand2.png");
-        UIUtils.drawCenteredText(root, "Einstellungen", 0, 50, false).setId("menu-title");
-        UIUtils.drawCenteredButton(root, "Zum MainMenu", 0, 280, false, "mainmenu-button", () -> {
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.settings.title"), 0, 50, false).setId("menu-title");
+
+
+        // Button DE (Deutsch)
+        UIUtils.drawCenteredButton(root, "Deutsch", width / 2 + 200, 260, false,"mainmenu-button", () -> {
+            messageHandler.applyLanguage("de");
+            screenManager.showScreen(Game.getInstance().getSettingsScreen());
+        });
+
+        // Button EN (Englisch)
+        UIUtils.drawCenteredButton(root, "English", width / 2 + 200, 260+80,false,"mainmenu-button", () -> {
+            messageHandler.applyLanguage("en");
+            screenManager.showScreen(Game.getInstance().getSettingsScreen());
+        });
+
+        // Button RU (Russisch)
+        UIUtils.drawCenteredButton(root, "Русский", width / 2 + 200, 260+160, false,"mainmenu-button", () -> {
+            messageHandler.applyLanguage("ru");
+            screenManager.showScreen(Game.getInstance().getSettingsScreen());
+        });
+
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.settings.btn.mainmenu"), width / 2 - 600, 360+240, false,"mainmenu-button", () -> {
             Game.getInstance().setBackScreen(null);
             screenManager.showScreen(Game.getInstance().getMainMenuScreen());
         });
-        UIUtils.drawCenteredButton(root, "Zurück", 0, 360, false, "mainmenu-button", () -> {
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.settings.btn.back"), width / 2 - 600, 360+320, false, "mainmenu-button", () -> {
             GuiScreen backScreen = Game.getInstance().getBackScreen();
 
             if (backScreen != null) {
@@ -156,7 +178,8 @@ public class SettingsScreen implements GuiScreen {
      * current sound state (e.g., "Sound an" if muted, "Stummschalten" if active).
      */
     private void updateMuteButton() {
-        this.muteBtn.setText(SoundManager.isMuted() ? "Sound an" : "Stummschalten");
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
+        this.muteBtn.setText(SoundManager.isMuted() ? messageHandler.getMessageForLanguage("gui.settings.btn.sound_on") : messageHandler.getMessageForLanguage("gui.settings.btn.sound_mute"));
     }
 
     /**
