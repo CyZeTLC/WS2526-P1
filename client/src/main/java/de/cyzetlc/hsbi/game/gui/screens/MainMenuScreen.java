@@ -4,6 +4,7 @@ import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -64,6 +65,7 @@ public class MainMenuScreen implements GuiScreen {
      */
     @Override
     public void initialize() {
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -103,12 +105,12 @@ public class MainMenuScreen implements GuiScreen {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
-        UIUtils.drawCenteredText(root, "STEAL THE FILES", 0, height / 2 - 230, false).setId("menu-title");
+        UIUtils.drawCenteredText(root, messageHandler.getStaticMessage("gui.mainmenu.title"), 0, height / 2 - 230, false).setId("menu-title");
 
-        UIUtils.drawCenteredButton(root, "Spiel starten", 0, height / 2 - 150, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
-        UIUtils.drawCenteredButton(root, "Mehrspieler", 0, height / 2 - 70, false, "mainmenu-button", () -> screenManager.showScreen(new CommunityScreen(screenManager)));
-        UIUtils.drawCenteredButton(root, "Einstellungen", 0, height / 2 + 10, false, "mainmenu-button", () -> screenManager.showScreen(Game.getInstance().getSettingsScreen()));
-        UIUtils.drawCenteredButton(root, "Beenden", 0, height / 2 + 90, false, "mainmenu-button", screenManager::closeScreen);
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.start"), 0, height / 2 - 150, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.multiplayer"), 0, height / 2 - 70, false, "mainmenu-button", () -> screenManager.showScreen(new CommunityScreen(screenManager))).setDisable(true);
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.settings"), 0, height / 2 + 10, false, "mainmenu-button", () -> screenManager.showScreen(Game.getInstance().getSettingsScreen()));
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.exit"), 0, height / 2 + 90, false, "mainmenu-button", screenManager::closeScreen);
         UIUtils.drawText(root, "(c) Copyright CyZeTLC.DE & Phantomic", 10, height - 20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width - 210, height - 20);
 

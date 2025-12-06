@@ -1,16 +1,12 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
-import de.cyzetlc.hsbi.game.audio.Music;
-import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
-import de.cyzetlc.hsbi.game.level.impl.SecondLevel;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
+import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -56,6 +52,7 @@ public class LevelFinishedScreen implements GuiScreen {
      */
     @Override
     public void initialize() {
+        MessageHandler messageHandler = Game.getInstance().getMessageHandler();
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
@@ -64,16 +61,16 @@ public class LevelFinishedScreen implements GuiScreen {
                 "/assets/hud/BackgroundZustand2.png");
 
         UIUtils.drawRect(root, width/2 - 300, height/2 - 300, 600, 600, Color.BLACK).setOpacity(0.4);
-        UIUtils.drawCenteredText(root, "Level geschafft!", 0, 50, false).setId("menu-title");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.title"), 0, 50, false).setId("menu-title");
 
         if (Game.getInstance().getCurrentLevel().getNextLevel() != null) {
-            UIUtils.drawCenteredButton(root, "Nächstes Level", 0, height / 2 + 150, false, "mainmenu-button", () -> {
+            UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.finished.btn.next"), 0, height / 2 + 150, false, "mainmenu-button", () -> {
                 Game.getInstance().setCurrentLevel(Game.getInstance().getCurrentLevel().getNextLevel());
                 Game.getInstance().getScreenManager().showScreen(new GameScreen(Game.getInstance().getScreenManager()));
                 Game.getLogger().info(Game.getInstance().getCurrentLevel().getName() + " successfully loaded & saved!");
             });
         }
-        UIUtils.drawCenteredButton(root, "Zum Hauptmenü", 0, height / 2 + 230, false, "mainmenu-button", () -> {
+        UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.finished.btn.mainmenu"), 0, height / 2 + 230, false, "mainmenu-button", () -> {
             Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen());
         });
 
@@ -82,15 +79,39 @@ public class LevelFinishedScreen implements GuiScreen {
         long mins = secs / 60;
         long restsecs = secs % 60;
 
-        UIUtils.drawCenteredText(root, Game.getInstance().getCurrentLevel().getName() + " abgeschlossen", 0, 300, false, "stats-line-title");
-        UIUtils.drawCenteredText(root, "Benötigte Zeit: " + mins + ":" + restsecs, 0, 380, false, "stats-line");
-        UIUtils.drawCenteredText(root, "Punkte: " + 345, 0, 420, false, "stats-line");
-        UIUtils.drawCenteredText(root, "Gegner getötet: " + 2, 0, 460, false, "stats-line");
-        UIUtils.drawCenteredText(root, "Leben verloren: " + 0, 0, 500, false, "stats-line");
+        int collected = Math.max(0, countFolderBlocks() - countActiveFolders());
+
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.title", Game.getInstance().getCurrentLevel().getName()), 0, 300, false, "stats-line-title");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.time", mins + ":" + restsecs), 0, 380, false, "stats-line");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.folder", String.valueOf(collected)), 0, 420, false, "stats-line");
+        UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.health", String.valueOf((Game.thePlayer.getMaxHealth() - Game.thePlayer.getHealth()))), 0, 460, false, "stats-line");
 
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
 
+    }
+
+    /**
+     * Counts the total number of folder blocks (collectible files) present in the current level.
+     *
+     * @return The total count of {@code FolderBlock} instances in the level's block list.
+     */
+    private int countFolderBlocks() {
+        return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
+                .filter(block -> block instanceof de.cyzetlc.hsbi.game.gui.block.impl.FolderBlock)
+                .count();
+    }
+
+    /**
+     * Counts the number of active (uncollected) folder blocks remaining in the current level.
+     *
+     * @return The count of {@code FolderBlock} instances that are currently active.
+     */
+    private int countActiveFolders() {
+        return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
+                .filter(block -> block instanceof de.cyzetlc.hsbi.game.gui.block.impl.FolderBlock)
+                .filter(de.cyzetlc.hsbi.game.gui.block.Block::isActive)
+                .count();
     }
 
     /**
