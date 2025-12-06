@@ -1,0 +1,1 @@
+"C:\Program Files\Java\jdk-21\bin\jlink.exe" --module-path "C:\Users\Tom\Documents\javafx-sdk-17.0.17\lib" --add-modules java.base,javafx.base,javafx.controls,javafx.graphics,javafx.media --no-header-files --no-man-pages --strip-debug --compress=2 --output j-runtime
