@@ -78,7 +78,7 @@ Der `GameScreen` orchestriert das Laden des aktuellen Levels und der Benutzerobe
 * **Verwendeter Prompt (Konzept):** *Erweitere den `GameScreen`, sodass er in seiner `initialize()`-Methode das `Level#draw(width, height, root)` aufruft und anschließend die `HUD` als Overlay über das Spiel-Rendering lädt.*
 
 ```java
-public class GameScreen extends GuiScreen {
+public class GameScreen implements GuiScreen {
     // ...
     @Override
     public void initialize() {
