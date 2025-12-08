@@ -37,7 +37,8 @@ Der Wechsel zwischen den `GuiScreen`s wird über einen zentralen **`ScreenManage
 
 ```java
 public class ScreenManager {
-    private static GuiScreen currentScreen;
+    @Getter
+    private GuiScreen currentScreen;
     // ..
 
     public void showScreen(GuiScreen screen) {
