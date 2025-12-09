@@ -2,7 +2,7 @@
 
 ## Projekt-Basis
 - **Projektname:** WS2526-P1 („Steal The Files“)
-- **Kurzbeschreibung:** 2D-JavaFX-Plattformer mit Client/Server-Kommunikation; Spielerbewegung, Interaktionen (Items, Gegner, Gasbarrieren), Score-Übertragung an Server; HUD mit Quest-/Fortschrittsanzeige.
+- **Kurzbeschreibung:** 2D-JavaFX-Plattformer mit Client/Server-Kommunikation; Bewegung, Items/Gegner/Gasbarrieren, Score-Transfer; HUD mit Quest-/Fortschrittsanzeige.
 - **Zielgruppe:** Studierende/Lehrende im Kurs „Programmieren 1“ (Lehr-/Übungsprojekt).
 - **Verantwortliche:** @CyZeTLC, @Phantomic813 (weitere nicht dokumentiert).
 
@@ -29,12 +29,12 @@
 - **Netzwerk-Client (`client/.../network/Client.java`):** Verbindet zu `localhost:25570`, sendet Login, startet `ReceiverTask` (Packets→Events) und `SenderTask` (20 Ticks/s `ClientDataPacket`), `sendFinalScore()` für Highscores.
 - **Server (`server/.../Server.java`, Listener):** ServerSocket 25570; pro Client ein `MultiClientHandler`-Thread (periodisch `UserMessagePacket`, liest/dispatcht Packets); `PacketListener` behandelt Score/Community/UserMessage/Login/Data; `UserMessageListener` verarbeitet Textkommandos (Exit/clients/Echo).
 - **DB/Stats (`server/.../utils/GlobalStatsHandler.java`):** `saveBestScore(...)` INSERT in `stats` (async); benötigt aktiven `QueryHandler` aus Config.
-- **Levels & Blöcke:** Level-Implementierungen `TutorialLevel`, `SecondLevel`, `BossLevel`, `CommunityLevel` definieren Plattformen/Blocks; Block-Typen u.a. `RobotEnemyBlock` (schießt `LaserBlock`), `GasBarrierBlock`, `JumpBoostBlock`, `SpeedBoostBlock`, `USBStickBlock`, `FinishBlock`, `FolderBlock`, `FloatingPlatformBlock`, `LavaBlock`.
+- **Levels & Blöcke:** Level-Implementierungen `TutorialLevel`, `SecondLevel`, `BossLevel`, `CommunityLevel`; Block-Typen u.a. `RobotEnemyBlock` (schießt `LaserBlock`), `GasBarrierBlock`, `JumpBoostBlock`, `SpeedBoostBlock`, `USBStickBlock`, `FinishBlock`, `FolderBlock`, `FloatingPlatformBlock`, `LavaBlock`.
 
 ## Datenfluss & Speicher
 - **Eingabe:** Tastatur-Events via `InputManager`; eingehende Netzwerk-Pakete vom Server.
 - **Verarbeitung:** GameLoop (Physik, Kollision, Kamera, HUD), PacketListener → Event-System, optionale DB-Speicherung von Scores (derzeit nicht aktiv, da MySQL-Init fehlt).
-- **Ausgabe:** JavaFX-UI (Screens, HUD, Animations), Netzwerk-Pakete an Server/Clients, Logs unter `logs/*.log`.
+- **Ausgabe:** JavaFX-UI (Screens, HUD, Animation), Netzwerk-Pakete an Server/Clients, Logs unter `logs/*.log`.
 
 ## Setup für Entwickler
 - Repo klonen.
