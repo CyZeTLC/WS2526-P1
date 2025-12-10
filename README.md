@@ -29,10 +29,6 @@ git clone https://github.com/CyZeTLC/WS2526-P1.git
 cd WS2526-P1
 ```
 
-### 2. JavaFX Setup
-
-Da das Projekt **JavaFX SDK-17.0.17** nutzt, stelle sicher, dass deine IDE (IntelliJ, Eclipse, VS Code) das SDK korrekt erkennt oder es als Bibliothek eingebunden ist.
-
 ---
 
 ## Bauen des Projekts
@@ -64,7 +60,7 @@ java --module-path /pfad/zu/javafx-sdk-17.0.17/lib \
      -jar target/client.jar
 ```
 
-Bei beiden Optionen kann ``/pfad/zu/javafx-sdk-17.0.17/lib`` mit ``PROJECT_DIR/lib/javafx-sdk-17.0.17/lib`` ersetzt werden, wenn man die JavaFX Version mit welcher das Projekt getestet wurde nutzen möchte.
+Bei beiden Optionen können die Startargumente weggelassen werden, wenn man die Klasse ``de.cyzetcl.hsbi.Main`` startet anstelle der Klasse ``de.cyzetlc.hsbi.game.Game``!
 
 ---
 
@@ -75,14 +71,16 @@ Bei beiden Optionen kann ``/pfad/zu/javafx-sdk-17.0.17/lib`` mit ``PROJECT_DIR/l
 | **Log4j** | [mvnrepository](https://mvnrepository.com/artifact/log4j/log4j) | Logging-Framework für Fehler- und Statusmeldungen. |
 | **Lombok** | [mvnrepository](https://mvnrepository.com/artifact/org.projectlombok/lombok) | Reduziert Boilerplate-Code (Getter, Setter, Konstruktoren) durch Annotationen. |
 | **MySQL Connector** | [mvnrepository](https://mvnrepository.com/artifact/mysql/mysql-connector-java) | JDBC-Treiber für die Verbindung zur MySQL-Datenbank. |
-| **HikariCP** | [mvnrepository](https://mvnrepository.com/artifact/com.zaxxer/HikariCP) | Performanter JDBC Connection Pool. |
-| **Gson** | [mvnrepository](https://mvnrepository.com/artifact/com.google.code.gson/gson) | Bibliothek zur Serialisierung und Deserialisierung von JSON. |
-| **Oshi** | [mvnrepository](https://mvnrepository.com/artifact/com.github.oshi/oshi-core) | Native Operating System and Hardware Information (Systeminfos auslesen). |
-| **JLine** | [mvnrepository](https://mvnrepository.com/artifact/jline/jline) | Bibliothek für das Handling von Konsoleneingaben. |
+| **HikariCP** | [mvnrepository](https://mvnrepository.com/artifact/com.zaxxer/HikariCP) | Performanter JDBC Connection Pool für effiziente Datenbankverbindungen. |
+| **Gson** | [mvnrepository](https://mvnrepository.com/artifact/com.google.code.gson/gson) | Bibliothek zur Serialisierung und Deserialisierung von JSON-Daten. |
+| **JavaFX Controls** | [mvnrepository](https://mvnrepository.com/artifact/org.openjfx/javafx-controls) | **Das Hauptmodul für die GUI-Elemente** (Buttons, Labels, Checkboxen, etc.). |
+| **JavaFX FXML** | [mvnrepository](https://mvnrepository.com/artifact/org.openjfx/javafx-fxml) | Ermöglicht das **Deklarieren der Benutzeroberfläche** in XML-Dateien, getrennt von der Java-Logik. |
+| **JavaFX Graphics** | [mvnrepository](https://mvnrepository.com/artifact/org.openjfx/javafx-graphics) | Stellt die Kern-API für das Rendern von Grafiken bereit (wird von Controls/FXML benötigt). |
+| **JavaFX Media** | [mvnrepository](https://mvnrepository.com/artifact/org.openjfx/javafx-media) | Modul zur Integration von Audio und Video (z.B. Player-Funktionalität). |
 
 ---
 
 ## Runtime Info
 
 - **Java Version:** Amazon Corretto SDK 19.0.2
-- **JavaFX Version:** SDK-17.0.17
+- **JavaFX Version:** SDK-17.0.6
