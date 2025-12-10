@@ -27,43 +27,122 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The {@code Game} class serves as the main application entry point and the central
+ * singleton container for all core components of the game, including the JavaFX application
+ * lifecycle, configuration, screen management, event system, and global physics constants.
+ * <p>
+ * It extends {@code Application} to manage the primary {@code Stage} and executes all
+ * initial setup routines upon startup, such as loading configuration, initializing the
+ * network client, and setting up screens and event listeners.
+ *
+ * @see ScreenManager
+ * @see SoundManager
+ * @see EventManager
+ * @see Client
+ *
+ * @author Tom Coombs
+ */
 public class Game extends Application {
+    /**
+     * The SLF4J logger instance used for all application logging.
+     * Initialized in the {@code start} method.
+     */
     @Getter
     private static Logger logger;
 
+    /**
+     * The static reference to the main player entity in the game world.
+     */
     public static EntityPlayer thePlayer;
 
+    /**
+     * Configuration object loaded from {@code config.json}, storing persistent settings
+     */
     @Getter
     private JsonConfig config;
 
+    /**
+     * The static singleton instance of the {@code Game} class, providing global access
+     * to all managed components.
+     */
     @Getter
     private static Game instance;
 
+    /**
+     * The manager responsible for handling the main window, the game loop, and screen transitions.
+     */
     @Getter
     private ScreenManager screenManager;
 
+    /**
+     * The currently active game level being played.
+     */
     @Getter @Setter
     private Level currentLevel;
 
+    /**
+     * The initialized instance of the main menu screen.
+     */
     @Getter @Setter
     private MainMenuScreen mainMenuScreen;
 
+    /**
+     * The initialized instance of the settings configuration screen.
+     */
     @Getter @Setter
     private SettingsScreen settingsScreen;
 
+    /**
+     * A temporary reference to the screen the user should return to after an action (e.g., exiting settings).
+     */
     @Getter @Setter
     private GuiScreen backScreen;
 
+    /**
+     * The network client responsible for connecting to and communicating with the game server.
+     */
     @Getter
     private Client client;
 
+    /**
+     * Handler responsible for loading, storing, and retrieving game messages and translations from the configuration.
+     */
     @Getter
     private MessageHandler messageHandler;
 
-    public static double gravity = 15;       // Stärke der Schwerkraft
-    public static double moveSpeed = 450;    // horizontale Bewegungsgeschwindigkeit (Pixel/Sek)
-    public static double jumpPower = 800;    // Sprungkraft
+    /**
+     * Global constant defining the strength of gravity applied to entities (pixels per second squared).
+     */
+    public static double gravity = 15;
 
+    /**
+     * Global constant defining the default horizontal movement speed for entities (pixels per second).
+     */
+    public static double moveSpeed = 450;
+
+    /**
+     * Global constant defining the default vertical upward velocity applied during a jump (pixels per second).
+     */
+    public static double jumpPower = 800;
+
+    /**
+     * The entry point for the JavaFX application lifecycle. This method is called after {@code main()}
+     * and performs the complete initialization of the game system.
+     * <p>
+     * Initialization steps include:
+     * <ul>
+     * <li>Setting up logging and the singleton instance.</li>
+     * <li>Initializing the network client and connecting.</li>
+     * <li>Loading {@code config.json} and applying sound settings.</li>
+     * <li>Registering all game event listeners (Packet, Key, Player, UserMessage).</li>
+     * <li>Initializing and showing the {@code LoadingScreen}.</li>
+     * <li>Setting the last known level from the config (Tutorial, Second, or Boss).</li>
+     * <li>Starting the background menu music.</li>
+     * </ul>
+     *
+     * @param primaryStage The primary stage provided by the JavaFX runtime.
+     */
     @Override
     public void start(Stage primaryStage) {
         System.setProperty("startTime",
@@ -118,13 +197,13 @@ public class Game extends Application {
         SoundManager.playBackground(Music.MENU, true);
     }
 
+    /**
+     * The method called by the JavaFX runtime when the application is requested to shut down.
+     */
     @Override
     public void stop()  {
         getLogger().info("Shutting down..");
-    }
-
-    public static void main(String[] args) {
-        launch(args);
+        client.closeConnection();
     }
 }
 
