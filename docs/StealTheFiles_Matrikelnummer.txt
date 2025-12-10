@@ -1,0 +1,15 @@
++==========================+
+|StealTheFilesTeam|WS2526P1|
++==========================+
+|Tom Coombs                |
+|Matrikelnummer: 502 128 15|
++--------------------------+
+|Leonardo Rosario Parrino  |
+|Matrikelnummer: 501 970 39|
++--------------------------+
+|Lennart Lieber            |
+|Matrikelnummer: 502 541 18|
++--------------------------+
+|Bastian Meyer             |
+|Matrikelnummer: 502 241 64|
++--------------------------+
