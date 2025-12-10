@@ -1,10 +1,24 @@
+<div align="center">
+
 # WS 25/26 Programmieren-1 Projekt (STF)
 
-Projekt von [@CyZeTLC](https://github.com/CyZeTLC), [@Phanotmic](https://github.com/Phantomic813), ...
+Projekt von [@CyZeTLC](https://github.com/CyZeTLC), [@Phanotmic](https://github.com/Phantomic813)
+
+<a href="https://github.com/CyZeTLC/WS2526-P1/graphs/contributors">
+  <img src="https://img.shields.io/github/contributors/CyZeTLC/WS2526-P1" alt="GitHub contributors">
+</a>
+<a href="https://opensource.org/licenses/Apache-2.0">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License">
+</a>
+<a href="https://github.com/CyZeTLC/WS2526-P1/actions">
+  <img src="https://img.shields.io/github/actions/workflow/status/CyZeTLC/WS2526-P1/main.yml" alt="GitHub Workflow Status">
+</a>
+
+</div>
 
 ## Überblick
 
-Dieses Projekt wurde im Rahmen des Moduls "Programmieren-1" im Wintersemester 25/26 erstellt. Es handelt sich um ein 2D-Platformer Spiel bei welchem das Ziel ist, alle level zu schaffen und dabei Ordner-Items einzusammeln.
+Dieses Projekt wurde im Rahmen des Moduls "Programmieren-1" im Wintersemester 25/26 erstellt. Es handelt sich um ein 2D-Platformer Spiel, bei welchem das Ziel ist, alle level zu schaffen und dabei Ordner-Items einzusammeln.
 
 ---
 
