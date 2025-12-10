@@ -163,7 +163,7 @@ public class Client {
     /**
      * Schließt alle Ressourcen.
      */
-    private void closeConnection() {
+    public void closeConnection() {
         try {
             if (socket != null) socket.close();
             if (dis != null) dis.close();
