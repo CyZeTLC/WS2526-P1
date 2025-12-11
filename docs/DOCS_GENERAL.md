@@ -48,7 +48,7 @@ Trotzdem wurden für Teillösungen LLMs genutzt, da es zum einen Aufgabe war und
 <br>
 Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfreich sind. Vor allem bei Probleme welche normaler weiße etwas komplexer sind, wie z.B. die Implementierung der Kamera, konnten die LLMs Teile unserer Probleme bei der Implementation einer solchen beheben. 
 
-**Verwendetes Modell: Gemini Pro 3 Thinking-Modus**
+**Verwendetes Modell: Gemini 2.0 Flash Thinking**
 
 <details>
 <summary><strong>Hier klicken, um die verwendeten Prompts anzuzeigen</strong></summary>
