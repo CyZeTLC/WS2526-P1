@@ -33,8 +33,6 @@ Die Entscheidung für dieses konzeptionelle Framework ermöglicht eine klare **T
 
 Der Wechsel zwischen den `GuiScreen`s wird über einen zentralen **`ScreenManager`** gesteuert.
 
-* **Verwendeter Prompt (Konzept):** *Implementiere eine statische Klasse `ScreenManager` mit der Methode `showScreen(GuiScreen screen)`, die den aktuellen Bildschirminhalt durch den neuen Screen ersetzt und dessen `initialize()`-Methode aufruft.*
-
 ```java
 public class ScreenManager {
     @Getter
@@ -74,8 +72,6 @@ Anstatt viele Level-spezifische Screens zu erstellen (z. B. `Level1Screen`, `Lev
 ### 💻 Implementierung des Level-Ladens
 
 Der `GameScreen` orchestriert das Laden des aktuellen Levels und der Benutzeroberfläche (HUD).
-
-* **Verwendeter Prompt (Konzept):** *Erweitere den `GameScreen`, sodass er in seiner `initialize()`-Methode das `Level#draw(width, height, root)` aufruft und anschließend die `HUD` als Overlay über das Spiel-Rendering lädt.*
 
 ```java
 public class GameScreen implements GuiScreen {
