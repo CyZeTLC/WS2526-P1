@@ -103,6 +103,28 @@ Der `ScreenManager` trennt die Programmlogik vom JavaFX-Rendering-Thread.
 ### 4.4. Entity-System & Serialisierung
 Die Spielobjekte sind netzwerkfähig konzipiert. Jede `Entity` besitzt eine `UUID` und ist `Serializable`. Dadurch können komplette Spielerobjekte direkt über den TCP-Stream gesendet werden, was die Multiplayer-Synchronisation massiv vereinfacht.
 
+## 5. Datenhaltung, Audio & Networking
+
+### 5.1. Audio-Engine (Ducking & Caching)
+Der `SoundManager` fungiert als professionelle Audio-Engine.
+
+
+
+* **Caching:** Audiodateien werden beim ersten Zugriff in einer `HashMap` gecacht (`mediaCache`), um Nachladeruckler zu vermeiden.
+* **Ducking:** Wenn wichtige Sounds (z.B. Achievements oder Buffs) spielen, wird die Hintergrundmusik temporär und thread-safe (`synchronized`) leiser geregelt, damit das akustische Feedback klar hörbar bleibt.
+
+### 5.2. Multithreaded Networking
+Der Netzwerk-Client nutzt einen `ExecutorService` (`CachedThreadPool`), um Blockaden im Hauptthread zu vermeiden.
+
+
+
+* **ReceiverTask:** Wartet blockierend auf eingehende Pakete (`dis.read`) und verarbeitet diese im Hintergrund.
+* **SenderTask:** Sendet asynchron in festen Intervallen (alle 50ms) Positionsupdates.
+Dies entkoppelt die Netzwerklatenz vollständig von der Framerate des Spiels.
+
+### 5.3. Internationalisierung (I18n)
+Texte sind nicht hard-coded. Der `MessageHandler` lädt Übersetzungen (DE, EN, RU) aus einer JSON-Datei und unterstützt Platzhalter (z.B. `{0}`), um Nachrichten dynamisch zur Laufzeit zu generieren.
+
 
 
 
