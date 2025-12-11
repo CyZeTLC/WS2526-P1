@@ -71,6 +71,9 @@ Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfr
 **Prompt 2: Die Technik (Mathematik & Code-Logik)**
 > "Mein JavaFX-Kameracode (hartes setTranslateX) wirkt steif und ruckelig. Ich möchte das flüssige Verhalten moderner Platformer (Hollow Knight) erreichen. Kannst du mir die Mathematik hinter 'Position Smoothing' (Lerp) erklären und wie ich das sauber in einen AnimationTimer einbaue? Wichtig ist mir auch das 'Clamping', damit die Kamera nicht über den Levelrand hinausfährt. Ich möchte die Logik verstehen, um sie selbst zu implementieren."
 
+**Prompt 3: Die Entscheidung (Pro/Contra Analyse)**
+> "Ich muss eine fundierte Design-Entscheidung für meine Kamera treffen. Bitte erstelle mir eine Vergleichsanalyse (Vor-/Nachteile) für: Locked, Deadzone, Smoothing und Look-Ahead. Bewerte sie bitte nach Implementierungsaufwand, Game Feel/UX und Genre-Eignung. Ich brauche diese Argumente, um meine Wahl im Projekt technisch begründen zu können."
+
 ---
 
 ## 4. Softwarearchitektur & Design-Patterns
@@ -94,14 +97,12 @@ Zur Fehleranalyse wird **Log4j** eingesetzt. Die Konfiguration (`log4j.propertie
 Der `ScreenManager` trennt die Programmlogik vom JavaFX-Rendering-Thread.
 
 
-
 * **Dedizierter Thread:** Ein eigener Thread (`gameLoop`) berechnet Physik und Spielzustände.
 * **Synchronisation:** Grafische Updates werden über `Platform.runLater()` sicher an die UI übergeben.
 
 ### 4.4. Entity-System & Serialisierung
 Die Spielobjekte sind netzwerkfähig konzipiert. Jede `Entity` besitzt eine `UUID` und ist `Serializable`. Dadurch können komplette Spielerobjekte direkt über den TCP-Stream gesendet werden, was die Multiplayer-Synchronisation massiv vereinfacht.
 
-**Prompt 3: Die Entscheidung (Pro/Contra Analyse)**
-> "Ich muss eine fundierte Design-Entscheidung für meine Kamera treffen. Bitte erstelle mir eine Vergleichsanalyse (Vor-/Nachteile) für: Locked, Deadzone, Smoothing und Look-Ahead. Bewerte sie bitte nach Implementierungsaufwand, Game Feel/UX und Genre-Eignung. Ich brauche diese Argumente, um meine Wahl im Projekt technisch begründen zu können."
+
 
 </details>
