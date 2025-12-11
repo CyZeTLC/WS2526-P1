@@ -22,6 +22,7 @@ Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autor
 - [6. Build & Deployment (Verteilung)](#6-build--deployment-verteilung)
   - [6.1. Custom Runtime Image (JLink)](#61-custom-runtime-image-jlink)
   - [6.2. Native Installer (JPackage)](#62-native-installer-jpackage)
+  - [7. Herausforderungen & Technische Lösungen](#7-herausforderungen--technische-lösungen)
 ---
 
 ## 1. Konzept & Projekteidee
@@ -149,6 +150,31 @@ Das Skript `start_app_bundler.bat` nutzt das JDK-Tool `jpackage`, um aus der JAR
 
 * **Vorteil:** Der Endnutzer muss kein Java installieren; alles Notwendige wird mitgeliefert ("Self-Contained Application").
 * **Obfuscation:** Das Build-Skript verweist auf eine `client_obfuscated.jar`, was zeigt, dass der Code vor Decompilierung geschützt wurde.
+
+## 7. Herausforderungen & Technische Lösungen
+
+Während der Entwicklung stießen wir auf technische Herausforderungen, die durch spezifische Algorithmen und mathematische Ansätze gelöst wurden:
+
+* **Problem: Performance bei großen Leveln (Rendering)**
+    * *Lösung: View Frustum Culling.*
+        In der Klasse `Platform` wird geprüft, ob eine Kachel (Tile) im sichtbaren Kamerabereich liegt. Ist sie außerhalb, wird sie unsichtbar geschaltet oder gar nicht erst berechnet. Das hält die FPS auch in riesigen Leveln stabil.
+
+* **Problem: Frame-Rate-Unabhängige Animationen**
+    * *Lösung: Delta-Time Accumulator.*
+        Damit Animationen (z.B. Lava oder drehende USB-Sticks) auf allen PCs gleich schnell laufen, wird `System.nanoTime()` genutzt. Die vergangene Zeit wird akkumuliert und Frames werden erst gewechselt, wenn ein definierter Schwellenwert überschritten ist.
+
+* **Problem: Statische Bewegungsmuster**
+    * *Lösung: Mathematische Bewegungsmodelle.*
+        * **Hovering:** `EntityMovingPlatform` nutzt eine Sinus-Funktion (`Math.sin`), um ein sanftes Schweben zu simulieren.
+        * **Interpolation:** `FloatingPlatformBlock` nutzt Vektormathematik, um sich flüssig zwischen zwei Punkten zu bewegen (Lerp).
+
+* **Problem: Gegner-KI und Kollision**
+    * *Lösung: Clamped Vector Movement.*
+        Der `RobotEnemyBlock` berechnet die Richtung zum Spieler, begrenzt die Bewegung aber strikt auf einen definierten Bereich (`minX`, `maxX`). Dies verhindert, dass Gegner blindlings von Plattformen laufen.
+
+* **Problem: Audio-Konflikte (Race Conditions)**
+    * *Lösung: Synchronisation.*
+        Da Musik und Soundeffekte in unterschiedlichen Threads laufen können, werden kritische Audio-Operationen (wie das Ducking) durch ein Lock-Objekt (`duckLock`) synchronisiert. Dies verhindert inkonsistente Lautstärkepegel bei gleichzeitigen Events.
 
 
 
