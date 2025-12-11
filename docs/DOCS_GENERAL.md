@@ -48,13 +48,6 @@ Trotzdem wurden für Teillösungen LLMs genutzt, da es zum einen Aufgabe war und
 <br>
 Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfreich sind. Vor allem bei Probleme welche normaler weiße etwas komplexer sind, wie z.B. die Implementierung der Kamera, konnten die LLMs Teile unserer Probleme bei der Implementation einer solchen beheben. 
 
-
-
-### 3. LLMs
-Allgemein wurden in diesem Projekt so gut wie keine LLMs zur Generierung des Quelltextes verwendet. Der Hintergrund ist vor allem, dass ich (Tom) bereits fast eine Dekade an Programmiererfahrung und viele Jahre in IT-Unternehmen als Fullstack-Developer habe und somit bereits einiges an Kennwissen besitze.
-
-Trotzdem wurden für Teillösungen LLMs genutzt, da es zum einen Aufgabe war und zum anderen LLMs wie Copilot, Tabnine oder Codex genutzt. Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfreich sind. Vor allem bei Problemen, welche normalerweise etwas komplexer sind, wie z.B. die Implementierung der Kamera, konnten die LLMs Teile unserer Probleme bei der Implementation einer solchen beheben.
-
 **Verwendetes Modell: Gemini Pro 3 Thinking-Modus**
 
 <details>
