@@ -47,3 +47,26 @@ Allgemein wurden in diesem Projekt so gut wie keine LLMs zur Generierung des Que
 Trotzdem wurden für Teillösungen LLMs genutzt, da es zum einen Aufgabe war und zum anderen LLMs wie Copilot, Tabnine oder Codex genutzt.
 <br>
 Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfreich sind. Vor allem bei Probleme welche normaler weiße etwas komplexer sind, wie z.B. die Implementierung der Kamera, konnten die LLMs Teile unserer Probleme bei der Implementation einer solchen beheben. 
+
+
+
+### 3. LLMs
+Allgemein wurden in diesem Projekt so gut wie keine LLMs zur Generierung des Quelltextes verwendet. Der Hintergrund ist vor allem, dass ich (Tom) bereits fast eine Dekade an Programmiererfahrung und viele Jahre in IT-Unternehmen als Fullstack-Developer habe und somit bereits einiges an Kennwissen besitze.
+
+Trotzdem wurden für Teillösungen LLMs genutzt, da es zum einen Aufgabe war und zum anderen LLMs wie Copilot, Tabnine oder Codex genutzt. Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfreich sind. Vor allem bei Problemen, welche normalerweise etwas komplexer sind, wie z.B. die Implementierung der Kamera, konnten die LLMs Teile unserer Probleme bei der Implementation einer solchen beheben.
+
+<details>
+<summary><strong>Hier klicken, um die verwendeten Prompts anzuzeigen</strong></summary>
+
+<br>
+
+**Prompt 1: Der Überblick (Design-Fokus)**
+> "Ich entwickle einen 2D-Platformer in JavaFX und suche nach einer besseren Kamera-Lösung als der starren Spieler-Fixierung. Kannst du mir eine Übersicht der gängigen Systeme (z.B. Deadzones, Smoothing, Look-Ahead) geben? Mich interessieren besonders die Auswirkungen auf das 'Game Feel' und welches Genre typischerweise welche Methode nutzt, damit ich das richtige Konzept für mein Spiel wählen kann."
+
+**Prompt 2: Die Technik (Mathematik & Code-Logik)**
+> "Mein JavaFX-Kameracode (hartes setTranslateX) wirkt steif und ruckelig. Ich möchte das flüssige Verhalten moderner Platformer (Hollow Knight) erreichen. Kannst du mir die Mathematik hinter 'Position Smoothing' (Lerp) erklären und wie ich das sauber in einen AnimationTimer einbaue? Wichtig ist mir auch das 'Clamping', damit die Kamera nicht über den Levelrand hinausfährt. Ich möchte die Logik verstehen, um sie selbst zu implementieren."
+
+**Prompt 3: Die Entscheidung (Pro/Contra Analyse)**
+> "Ich muss eine fundierte Design-Entscheidung für meine Kamera treffen. Bitte erstelle mir eine Vergleichsanalyse (Vor-/Nachteile) für: Locked, Deadzone, Smoothing und Look-Ahead. Bewerte sie bitte nach Implementierungsaufwand, Game Feel/UX und Genre-Eignung. Ich brauche diese Argumente, um meine Wahl im Projekt technisch begründen zu können."
+
+</details>
