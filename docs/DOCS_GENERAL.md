@@ -125,6 +125,20 @@ Dies entkoppelt die Netzwerklatenz vollständig von der Framerate des Spiels.
 ### 5.3. Internationalisierung (I18n)
 Texte sind nicht hard-coded. Der `MessageHandler` lädt Übersetzungen (DE, EN, RU) aus einer JSON-Datei und unterstützt Platzhalter (z.B. `{0}`), um Nachrichten dynamisch zur Laufzeit zu generieren.
 
+## 6. Build & Deployment (Verteilung)
+
+Ein technisches Highlight ist der Build-Prozess, der das Spiel unabhängig von einer vorinstallierten Java-Version macht.
+
+### 6.1. Custom Runtime Image (JLink)
+Mittels `jlink` wird eine maßgeschneiderte Java-Runtime erstellt, die nur die wirklich benötigten Module (`javafx.controls`, `javafx.media`, etc.) enthält. Dies reduziert die Größe der Anwendung drastisch (`--strip-debug`, `--compress=2`).
+
+
+
+### 6.2. Native Installer (JPackage)
+Das Skript `start_app_bundler.bat` nutzt das JDK-Tool `jpackage`, um aus der JAR-Datei und der Custom-Runtime eine native Windows-Anwendung (`.exe` / Installer) zu generieren.
+
+* **Vorteil:** Der Endnutzer muss kein Java installieren; alles Notwendige wird mitgeliefert ("Self-Contained Application").
+* **Obfuscation:** Das Build-Skript verweist auf eine `client_obfuscated.jar`, was zeigt, dass der Code vor Decompilierung geschützt wurde.
 
 
 
