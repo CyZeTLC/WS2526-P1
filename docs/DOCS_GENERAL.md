@@ -71,6 +71,36 @@ Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfr
 **Prompt 2: Die Technik (Mathematik & Code-Logik)**
 > "Mein JavaFX-Kameracode (hartes setTranslateX) wirkt steif und ruckelig. Ich möchte das flüssige Verhalten moderner Platformer (Hollow Knight) erreichen. Kannst du mir die Mathematik hinter 'Position Smoothing' (Lerp) erklären und wie ich das sauber in einen AnimationTimer einbaue? Wichtig ist mir auch das 'Clamping', damit die Kamera nicht über den Levelrand hinausfährt. Ich möchte die Logik verstehen, um sie selbst zu implementieren."
 
+---
+
+## 4. Softwarearchitektur & Design-Patterns
+
+Das Projekt folgt einer strikten Trennung zwischen Logik, Daten und Darstellung (MVC-Ansatz). Neben dem Singleton-Pattern und dem State-Pattern sind folgende komplexe Systeme zentral:
+
+### 4.1. Custom Event-Bus (Reflection-Based)
+Anstatt auf Standard-JavaFX-Events beschränkt zu sein, wurde ein eigenes, hochflexibles Event-System implementiert.
+
+* **Funktionsweise:** Über die Annotation `@EventHandler` markierte Methoden werden zur Laufzeit mittels **Java Reflection** registriert und dynamisch aufgerufen.
+* **Loose Coupling:** Das System entkoppelt Komponenten vollständig. Beispiel: Das `PlayerDamageEvent` enthält alle Infos über Schaden (`DamageCause`, `newHealth`), ohne dass der Auslöser (z.B. ein Gegner) die Spieler-Klasse direkt manipulieren muss.
+* **Cancellable Events:** Events können abgebrochen werden (`setCancelled`), um Logik wie Schaden im "GodMode" zu unterbinden.
+
+### 4.2. Logging-Strategie
+Zur Fehleranalyse wird **Log4j** eingesetzt. Die Konfiguration (`log4j.properties`) definiert eine duale Strategie:
+
+* **Console:** Direkte Ausgabe in die IDE für Entwicklung.
+* **File-Rotation:** Es wird parallel in eine `latest.log` und eine timestamp-basierte Datei (`logs/log_${startTime}.log`) geschrieben. Dies ermöglicht eine nachträgliche Fehleranalyse bei Abstürzen, ohne alte Logs zu überschreiben.
+
+### 4.3. Game-Loop & Threading
+Der `ScreenManager` trennt die Programmlogik vom JavaFX-Rendering-Thread.
+
+
+
+* **Dedizierter Thread:** Ein eigener Thread (`gameLoop`) berechnet Physik und Spielzustände.
+* **Synchronisation:** Grafische Updates werden über `Platform.runLater()` sicher an die UI übergeben.
+
+### 4.4. Entity-System & Serialisierung
+Die Spielobjekte sind netzwerkfähig konzipiert. Jede `Entity` besitzt eine `UUID` und ist `Serializable`. Dadurch können komplette Spielerobjekte direkt über den TCP-Stream gesendet werden, was die Multiplayer-Synchronisation massiv vereinfacht.
+
 **Prompt 3: Die Entscheidung (Pro/Contra Analyse)**
 > "Ich muss eine fundierte Design-Entscheidung für meine Kamera treffen. Bitte erstelle mir eine Vergleichsanalyse (Vor-/Nachteile) für: Locked, Deadzone, Smoothing und Look-Ahead. Bewerte sie bitte nach Implementierungsaufwand, Game Feel/UX und Genre-Eignung. Ich brauche diese Argumente, um meine Wahl im Projekt technisch begründen zu können."
 
