@@ -1,6 +1,5 @@
 package de.cyzetlc.hsbi.game.utils.ui;
 
-import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.audio.Sound;
 import de.cyzetlc.hsbi.game.audio.SoundManager;
 import javafx.animation.Animation;
@@ -23,6 +22,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code UIUtils} class provides a collection of static utility methods for creating,
+ * drawing, positioning, and animating common JavaFX UI elements such as Text, Buttons,
+ * Rectangles, and ImageViews within a {@code Pane}.
+ * <p>
+ * It includes complex features like responsive centering and frame-based background animation.
+ *
+ * @author Tom Coombs
+ * @author Leonardo Parrino
+ */
 public class UIUtils {
 
     /**
@@ -303,6 +312,17 @@ public class UIUtils {
         return drawAnimatedBackground(parent, width, height, Duration.millis(800), framePaths);
     }
 
+    /**
+     * Draws a background {@code ImageView} that animates between multiple image frames
+     * using a specified frame duration. Includes fallback logic if the primary paths fail.
+     *
+     * @param parent The {@code Pane} where the background will be added.
+     * @param width The width of the viewport.
+     * @param height The height of the viewport.
+     * @param frameDuration The time duration for each frame in the animation.
+     * @param framePaths Variable list of resource paths for the animation frames.
+     * @return The created {@code ImageView} node holding the animation.
+     */
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, Duration frameDuration, String... framePaths) {
         List<Image> frameList = new ArrayList<>();
         for (String path : framePaths) {
@@ -362,6 +382,17 @@ public class UIUtils {
         return view;
     }
 
+    /**
+     * Draws a {@code Slider} and automatically centers it horizontally within the parent {@code Pane}.
+     *
+     * @param parent The {@code Pane} where the slider will be added.
+     * @param min The minimum value of the slider.
+     * @param max The maximum value of the slider.
+     * @param value The initial value of the slider.
+     * @param y The Y-position of the slider (if {@code verticalCenter} is false).
+     * @param verticalCenter {@code true} to center vertically as well; {@code false} to use the specified Y.
+     * @return The created and centered {@code Slider} node.
+     */
     public static Slider drawCenteredSlider(Pane parent, double min, double max, double value, double y, boolean verticalCenter) {
 
         Slider slider = new Slider(min, max, value);
@@ -395,7 +426,12 @@ public class UIUtils {
         return slider;
     }
 
-
+    /**
+     * Calculates and returns the rendered width of a {@code Text} node after applying CSS.
+     *
+     * @param text The {@code Text} node.
+     * @return The actual width of the text layout bounds.
+     */
     public static double getTextWidth(Text text) {
         text.applyCss();
         return text.getLayoutBounds().getWidth();

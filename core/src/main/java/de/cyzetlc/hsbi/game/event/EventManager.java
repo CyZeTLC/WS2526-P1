@@ -9,6 +9,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * The {@code EventManager} is a static utility class responsible for managing the registration,
+ * unregistration, and execution of event listeners within the game.
+ * <p>
+ * It uses Java Reflection and a centralized map to link specific event classes (e.g., {@code PlayerMoveEvent})
+ * to a list of registered handler methods, ensuring efficient and prioritized event dispatching.
+ *
+ * @see Event
+ * @see EventHandler
+ * @see EventPriority
+ *
+ * @author Tom Coombs
+ */
 public class EventManager {
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class.getName());
 

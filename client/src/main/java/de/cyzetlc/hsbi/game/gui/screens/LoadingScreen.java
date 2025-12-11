@@ -1,10 +1,10 @@
 package de.cyzetlc.hsbi.game.gui.screens;
 
 import de.cyzetlc.hsbi.game.Game;
+import de.cyzetlc.hsbi.game.audio.SoundManager;
 import de.cyzetlc.hsbi.game.gui.GuiScreen;
 import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.gui.block.Material;
-import de.cyzetlc.hsbi.game.level.impl.SecondLevel;
 import de.cyzetlc.hsbi.game.utils.ui.ImageAssets;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import de.cyzetlc.hsbi.message.MessageHandler;
@@ -102,8 +102,9 @@ public class LoadingScreen implements GuiScreen {
                             // skip missing asset to avoid crash
                         }
                     }
-                    ImageAssets.warm();
                 }
+                ImageAssets.warm();
+                SoundManager.preloadAll();
             }
         }.start();
 

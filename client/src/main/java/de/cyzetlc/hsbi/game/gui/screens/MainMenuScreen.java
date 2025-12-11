@@ -8,20 +8,13 @@ import de.cyzetlc.hsbi.message.MessageHandler;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.GlobalMemory;
-import oshi.software.os.OperatingSystem;
 
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The {@code MainMenuScreen} represents the primary navigation screen for the game.

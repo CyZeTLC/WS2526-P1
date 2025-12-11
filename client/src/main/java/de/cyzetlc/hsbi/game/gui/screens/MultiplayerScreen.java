@@ -5,11 +5,6 @@ import de.cyzetlc.hsbi.game.gui.ScreenManager;
 import de.cyzetlc.hsbi.game.utils.ui.UIUtils;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.GlobalMemory;
-import oshi.software.os.OperatingSystem;
 
 public class MultiplayerScreen implements GuiScreen {
     private final Pane root = new Pane();
