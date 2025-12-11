@@ -1,4 +1,4 @@
-# 🎮 Dokumentation: Aufbau von GUI und Level-Architektur
+# Dokumentation: Aufbau von GUI und Level-Architektur
 
 In diesem Abschnitt wird der schrittweise Aufbau der **Graphical User Interface (GUI)** sowie die architektonische Umsetzung der **Levels** dokumentiert. Wichtige Design- und technische Entscheidungen werden kommentiert.
 
@@ -8,7 +8,7 @@ In diesem Abschnitt wird der schrittweise Aufbau der **Graphical User Interface 
 
 Die gesamte grafische Oberfläche des Spiels wird mithilfe der **JavaFX-Bibliothek** gerendert.
 
-### 📝 Kurze Erklärung zu JavaFX
+### Kurze Erklärung zu JavaFX
 
 **JavaFX** ist eine Java-Bibliothek, die speziell für die Entwicklung von Desktop-Anwendungen und Rich Internet Applications (RIA) konzipiert wurde. Im Vergleich zu älteren Technologien wie Swing bietet JavaFX eine **modernere, hardwarebeschleunigte Oberfläche** und unterstützt **CSS** für einfaches Styling.
 
@@ -20,7 +20,7 @@ Die gesamte grafische Oberfläche des Spiels wird mithilfe der **JavaFX-Biblioth
 
 Um die **verschiedenen Zustände** und Ansichten des Fensters (z. B. Hauptmenü, Einstellungen, eigentliches Spiel) sauber voneinander trennen und effizient wechseln zu können, wurde das **`GuiScreen`-Konzept** implementiert.
 
-### 💡 Designentscheidung: `GuiScreen`
+### Designentscheidung: `GuiScreen`
 
 Die Entscheidung für dieses konzeptionelle Framework ermöglicht eine klare **Trennung der Zuständigkeiten (Single Responsibility Principle)**. Jede Ansicht (z. B. das Hauptmenü) wird zu einer **eigenständigen Klasse** (`MainMenuScreen`), die nur für ihre spezifische Logik und Darstellung verantwortlich ist.
 
@@ -29,7 +29,7 @@ Die Entscheidung für dieses konzeptionelle Framework ermöglicht eine klare **T
     * `draw()`: Zeichnet die erstellten Komponenten auf den Bildschirm.
     * `update()`: Wird **jeden Frame** ausgeführt, um Logik wie Animationen, Eingabeverarbeitung oder Zustandsprüfungen darzustellen.
 
-### 💻 Implementierung des Screen-Wechsels
+### Implementierung des Screen-Wechsels
 
 Der Wechsel zwischen den `GuiScreen`s wird über einen zentralen **`ScreenManager`** gesteuert.
 
@@ -63,13 +63,13 @@ public class ScreenManager {
 
 Für das eigentliche Spiel-Gameplay wurde die Architektur so gestaltet, dass nicht für jedes Level ein neuer `GuiScreen` erstellt wird, sondern ein **einheitlicher `GameScreen`** als Container dient.
 
-### 💡 Designentscheidung: Einheitlicher `GameScreen`
+### Designentscheidung: Einheitlicher `GameScreen`
 
 Anstatt viele Level-spezifische Screens zu erstellen (z. B. `Level1Screen`, `Level2Screen`), fungiert der **`GameScreen`** als **zentrale Spiel-Umgebung**. Dies vereinfacht das **Laden und Entladen von Level-Daten** und stellt sicher, dass Elemente wie das **HUD (Head-Up Display)** oder die **Pausenfunktion** konsistent über alle Level hinweg funktionieren.
 
 * **Workflow beim Levelstart:** Der `GameScreen` ist dafür verantwortlich, die **Level-Daten** zu laden, die **HUD-Elemente** zu instanziieren und die **Spiel-Loop** zu starten.
 
-### 💻 Implementierung des Level-Ladens
+### Implementierung des Level-Ladens
 
 Der `GameScreen` orchestriert das Laden des aktuellen Levels und der Benutzeroberfläche (HUD).
 
