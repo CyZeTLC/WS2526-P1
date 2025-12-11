@@ -55,6 +55,8 @@ Allgemein wurden in diesem Projekt so gut wie keine LLMs zur Generierung des Que
 
 Trotzdem wurden für Teillösungen LLMs genutzt, da es zum einen Aufgabe war und zum anderen LLMs wie Copilot, Tabnine oder Codex genutzt. Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfreich sind. Vor allem bei Problemen, welche normalerweise etwas komplexer sind, wie z.B. die Implementierung der Kamera, konnten die LLMs Teile unserer Probleme bei der Implementation einer solchen beheben.
 
+**Verwendetes Modell: Gemini Pro 3 Thinking-Modus**
+
 <details>
 <summary><strong>Hier klicken, um die verwendeten Prompts anzuzeigen</strong></summary>
 
