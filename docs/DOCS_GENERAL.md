@@ -3,6 +3,16 @@
 Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autoren: Tom Coombs, Leonardo Rosario Parrino 
 
 ---
+## Inhaltsverzeichnis
+
+- [1. Konzept & Projektidee](#1-konzept--projekteidee)
+- [2. Entwicklungsumgebung & genutzte Dependencies](#2-entwicklungsumgebung--genutzte-dependencies)
+  - [2.1 Entwicklungsumgebung & Java Versionen](#21-entwicklungsumgebung--java-versionen)
+  - [2.2 Maven Dependencies](#22-maven-dependencies)
+  - [Erklärung zur Wahl der Dependencies](#22-maven-dependencies)
+- [3. LLMs](#3-llms)
+  - [Verwendetes Modell & Prompts](#3-llms)
+---
 
 ## 1. Konzept & Projekteidee
 
