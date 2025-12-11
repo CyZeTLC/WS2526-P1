@@ -74,6 +74,7 @@ Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfr
 **Prompt 3: Die Entscheidung (Pro/Contra Analyse)**
 > "Ich muss eine fundierte Design-Entscheidung für meine Kamera treffen. Bitte erstelle mir eine Vergleichsanalyse (Vor-/Nachteile) für: Locked, Deadzone, Smoothing und Look-Ahead. Bewerte sie bitte nach Implementierungsaufwand, Game Feel/UX und Genre-Eignung. Ich brauche diese Argumente, um meine Wahl im Projekt technisch begründen zu können."
 
+</details>
 ---
 
 ## 4. Softwarearchitektur & Design-Patterns
@@ -105,4 +106,4 @@ Die Spielobjekte sind netzwerkfähig konzipiert. Jede `Entity` besitzt eine `UUI
 
 
 
-</details>
+
