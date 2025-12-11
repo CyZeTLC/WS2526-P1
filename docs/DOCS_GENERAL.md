@@ -22,9 +22,6 @@ Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autor
 - [6. Build & Deployment (Verteilung)](#6-build--deployment-verteilung)
   - [6.1. Custom Runtime Image (JLink)](#61-custom-runtime-image-jlink)
   - [6.2. Native Installer (JPackage)](#62-native-installer-jpackage)
-- [7. Herausforderungen & Technische Lösungen](#7-herausforderungen--technische-lösungen)
-- [8. Bedienungsanleitung & Debugging](#8-bedienungsanleitung--debugging)
-- [9. Fazit](#9-fazit)
 ---
 
 ## 1. Konzept & Projekteidee
