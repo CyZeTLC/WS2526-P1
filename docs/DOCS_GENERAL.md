@@ -1,4 +1,6 @@
-![StealTheFiles Banner](GitDocuBannerV3.png)
+<p align="center">
+  <img src="GitDocuBannerV3.png" alt="StealTheFiles Banner" width="50%">
+</p>
 
 # Dokumentation
 
