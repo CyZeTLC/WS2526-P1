@@ -9,6 +9,7 @@ public class PlayerListener {
     @EventHandler
     public void handleDamage(PlayerDamageEvent e) {
         if (e.getNewHealth() == 0) {
+            Game.getLogger().info("{} died", Game.thePlayer.getDisplayName());
             Game.getInstance().setBackScreen(null);
             Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
             Game.thePlayer.setCanCollectFiles(false);
