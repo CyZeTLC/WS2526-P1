@@ -1,4 +1,4 @@
-![StealTheFiles Banner](GitDocuBannerV2.png)
+![StealTheFiles Banner](GitDocuBannerV3.png)
 
 # StealTheFiles - Dokumentation
 
