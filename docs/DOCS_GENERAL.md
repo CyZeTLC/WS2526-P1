@@ -1,4 +1,8 @@
-# StealTheFiles - Dokumentation
+<p align="center">
+  <img src="GitDocuBannerV3.png" alt="StealTheFiles Banner" width="50%">
+</p>
+
+# Dokumentation
 
 Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autoren: Tom Coombs, Leonardo Rosario Parrino 
 
@@ -176,5 +180,27 @@ Während der Entwicklung stießen wir auf technische Herausforderungen, die durc
     * *Lösung: Synchronisation.*
         Da Musik und Soundeffekte in unterschiedlichen Threads laufen können, werden kritische Audio-Operationen (wie das Ducking) durch ein Lock-Objekt (`duckLock`) synchronisiert. Dies verhindert inkonsistente Lautstärkepegel bei gleichzeitigen Events.
 
+## 8. Game Assets & Design
 
+Die visuelle Gestaltung des Spiels basiert auf einem eigens erstellten Sprite-Sheet, das alle relevanten Spielobjekte in einer einzigen Textur bündelt. Dies reduziert "Draw Calls" und verbessert die Performance erheblich.
 
+<p align="center">
+  <img src="GameAssetsStealTheFile.png" alt="Game Assets Übersicht" width="40%">
+</p>
+
+Das Asset-Pack umfasst folgende Elemente:
+
+* **Charaktere:**
+    * **Player-Figur:** Der Protagonist des Spiels.
+    * **Robot Enemy:** Der Gegner wurde inspiriert durch das Design auf der [HSBI Informatik-Bachelor Seite](https://www.hsbi.de/studiengaenge/informatik-bachelor).
+
+* **Umgebung & Setting:**
+    * **Server-Schränke:** Um das Setting authentisch zu gestalten, wurden zwei Varianten erstellt, deren Texturen auf Fotos des [HSBI Labors für Angewandte Informatik](https://www.hsbi.de/ium/studium/labore/angewandte-informatik) basieren.
+    * **Plattformen:** Grafiken für statische Böden sowie **schwebende Plattformen**.
+    * **Gefahren:** Grüne Säure/Lava als Hindernis.
+    * **Level-Elemente:** Ein **Portal** für den Level-Abschluss.
+
+* **Items & UI:**
+    * **USB-Stick:** Das Sammelobjekt (Ziel des Spiels).
+    * **Power-Ups:** Speedboost und Jumpboost.
+    * **UI:** Eine integrierte Lebensanzeige (Health Bar).
