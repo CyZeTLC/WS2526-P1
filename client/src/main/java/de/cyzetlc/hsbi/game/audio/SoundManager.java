@@ -321,7 +321,8 @@ public class SoundManager {
                 return new Media(file.toURI().toString());
             }
 
-            throw new IllegalArgumentException("Media nicht gefunden: " + path);
+            Game.getLogger().error("Media nicht gefunden: {}", path);
+            return null;
         } catch (Exception e) {
             System.err.println("Fehler beim Laden von Media: " + path);
             e.printStackTrace();
