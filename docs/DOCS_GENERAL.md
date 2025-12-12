@@ -185,7 +185,7 @@ Während der Entwicklung stießen wir auf technische Herausforderungen, die durc
 Die visuelle Gestaltung des Spiels basiert auf einem eigens erstellten Sprite-Sheet, das alle relevanten Spielobjekte in einer einzigen Textur bündelt. Dies reduziert "Draw Calls" und verbessert die Performance erheblich.
 
 <p align="center">
-  <img src="GameAssetsStealTheFile.png" alt="Game Assets Übersicht" width="50%">
+  <img src="GameAssetsStealTheFile.png" alt="Game Assets Übersicht" width="40%">
 </p>
 
 Das Asset-Pack umfasst folgende Elemente:
