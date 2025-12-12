@@ -178,19 +178,23 @@ Während der Entwicklung stießen wir auf technische Herausforderungen, die durc
 
 ## 8. Game Assets & Design
 
-Die visuelle Gestaltung des Spiels basiert auf einem eigens erstellten Sprite-Sheet, das alle relevanten Spielobjekte in einer einzigen Textur bündelt. Dies reduziert "Draw Calls" und verbessert die Performance.
+Die visuelle Gestaltung des Spiels basiert auf einem eigens erstellten Sprite-Sheet, das alle relevanten Spielobjekte in einer einzigen Textur bündelt. Dies reduziert "Draw Calls" und verbessert die Performance erheblich.
 
 ![Game Assets Übersicht](GameAssetsStealTheFile.png)
 
-Das Asset-Pack umfasst folgende Kategorien:
+Das Asset-Pack umfasst folgende Elemente:
 
-* **Charaktere & Animation:**
-    * Frames für den Spieler und Gegner (z. B. der Roboter `RobotEnemyBlock`), inklusive Bewegungsphasen für Laufen und Springen.
+* **Charaktere:**
+    * **Player-Figur:** Der Protagonist des Spiels.
+    * **Robot Enemy:** Der Gegner wurde inspiriert durch das Design auf der [HSBI Informatik-Bachelor Seite](https://www.hsbi.de/studiengaenge/informatik-bachelor).
 
-* **Interaktive Objekte:**
-    * **USB-Sticks:** Das Hauptziel des Spiels (die zu stehlenden Daten).
-    * **Sprungfedern & Lüfter:** Mechaniken, die den Spieler physikalisch beeinflussen (Boost nach oben).
+* **Umgebung & Setting:**
+    * **Server-Schränke:** Um das Setting authentisch zu gestalten, wurden zwei Varianten erstellt, deren Texturen auf Fotos des [HSBI Labors für Angewandte Informatik](https://www.hsbi.de/ium/studium/labore/angewandte-informatik) basieren.
+    * **Plattformen:** Grafiken für statische Böden sowie **schwebende Plattformen**.
+    * **Gefahren:** Grüne Säure/Lava als Hindernis.
+    * **Level-Elemente:** Ein **Portal** für den Level-Abschluss.
 
-* **Umgebung (Tiles):**
-    * **Server-Racks & Tech-Wände:** Um das "Serverraum/Hacking"-Setting visuell darzustellen.
-    * **Hindernisse:** Rote Kristalle (Firewalls) und grüner Schleim/Wasser als Gefahrenzonen.
+* **Items & UI:**
+    * **USB-Stick:** Das Sammelobjekt (Ziel des Spiels).
+    * **Power-Ups:** Speedboost und Jumpboost.
+    * **UI:** Eine integrierte Lebensanzeige (Health Bar).
