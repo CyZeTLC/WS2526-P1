@@ -15,10 +15,27 @@ import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code LavaBlock} represents a deadly animated environmental hazard.
+ * When the player collides (overlaps) with this block, the player takes recurring damage.
+ * <p>
+ * This block extends {@code AnimatedBlock} to display a flowing lava texture.
+ * Collision logic is handled specifically to bypass damage if God Mode is active.
+ *
+ * @see AnimatedBlock
+ * @see Material#LAVA
+ *
+ * @author Tom Coombs
+ * @author Leonardo Parrino
+ */
 public class LavaBlock extends AnimatedBlock {
-    private final List<ImageView> tiles = new ArrayList<>();
-    private Image lastFrame;
-
+    /**
+     * Constructs a new {@code LavaBlock} at the specified location.
+     * <p>
+     * Initializes the block with the animation frames for lava and sets its material type.
+     *
+     * @param location The world location (top-left corner) where the block should be placed.
+     */
     public LavaBlock(Location location) {
         super(location, new String[] {
                 "/assets/lavaset/lava_1.png",
@@ -28,21 +45,21 @@ public class LavaBlock extends AnimatedBlock {
         this.setMaterial(Material.LAVA);
     }
 
-    @Override
-    public void draw(Pane pane) {
-        super.draw(pane);
-    }
-
+    /**
+     * Handles the collision logic when a player entity overlaps with this block,
+     * resulting in instantaneous death if God Mode is not active.
+     * <p>
+     * If the player is in God Mode, the collision is ignored. Otherwise, the player's
+     * health is immediately set to zero, triggering the death sequence (handled elsewhere).
+     *
+     * @param player The {@code Player} instance that collided with the block.
+     */
     @Override
     public void onCollide(Player player) {
         // Lava darf im GodMode keinen Schaden anrichten.
         if (player.isGodModeEnabled()) {
             return;
         }
-        float newHealth = Math.max(0, player.getHealth() - 0.25f); // 25% Schaden pro Tick
-        player.setHealth(newHealth);
-        if (newHealth <= 0 && Game.getInstance() != null) {
-            Game.getInstance().getScreenManager().showScreen(new MainMenuScreen(Game.getInstance().getScreenManager()));
-        }
+        player.setHealth(0.0F);
     }
 }
