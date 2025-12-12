@@ -1,3 +1,4 @@
+![StealTheFiles Banner](docs/GitDocuBannerV2.png)
 # StealTheFiles - Dokumentation
 
 Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autoren: Tom Coombs, Leonardo Rosario Parrino 
