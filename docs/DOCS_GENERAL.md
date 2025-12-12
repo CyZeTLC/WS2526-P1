@@ -176,5 +176,21 @@ Während der Entwicklung stießen wir auf technische Herausforderungen, die durc
     * *Lösung: Synchronisation.*
         Da Musik und Soundeffekte in unterschiedlichen Threads laufen können, werden kritische Audio-Operationen (wie das Ducking) durch ein Lock-Objekt (`duckLock`) synchronisiert. Dies verhindert inkonsistente Lautstärkepegel bei gleichzeitigen Events.
 
+## 8. Game Assets & Design
 
-![Game Assets](GameAssetsStealTheFile.png)
+Die visuelle Gestaltung des Spiels basiert auf einem eigens erstellten Sprite-Sheet, das alle relevanten Spielobjekte in einer einzigen Textur bündelt. Dies reduziert "Draw Calls" und verbessert die Performance.
+
+![Game Assets Übersicht](GameAssetsStealTheFile.png)
+
+Das Asset-Pack umfasst folgende Kategorien:
+
+* **Charaktere & Animation:**
+    * Frames für den Spieler und Gegner (z. B. der Roboter `RobotEnemyBlock`), inklusive Bewegungsphasen für Laufen und Springen.
+
+* **Interaktive Objekte:**
+    * **USB-Sticks:** Das Hauptziel des Spiels (die zu stehlenden Daten).
+    * **Sprungfedern & Lüfter:** Mechaniken, die den Spieler physikalisch beeinflussen (Boost nach oben).
+
+* **Umgebung (Tiles):**
+    * **Server-Racks & Tech-Wände:** Um das "Serverraum/Hacking"-Setting visuell darzustellen.
+    * **Hindernisse:** Rote Kristalle (Firewalls) und grüner Schleim/Wasser als Gefahrenzonen.
