@@ -177,4 +177,4 @@ Während der Entwicklung stießen wir auf technische Herausforderungen, die durc
         Da Musik und Soundeffekte in unterschiedlichen Threads laufen können, werden kritische Audio-Operationen (wie das Ducking) durch ein Lock-Objekt (`duckLock`) synchronisiert. Dies verhindert inkonsistente Lautstärkepegel bei gleichzeitigen Events.
 
 
-
+![Game Assets](GameAssetsStealTheFile.png)
