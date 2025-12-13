@@ -13,7 +13,30 @@ import de.cyzetlc.hsbi.game.world.Location;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
+/**
+ * The {@code FinishBlock} represents the end goal or exit point of a game level.
+ * When the player collides with this block, the current level is considered finished,
+ * triggering the display of the {@code LevelFinishedScreen} and handling the transition
+ * to the next level or resetting the game state if all levels are complete.
+ * <p>
+ * This block is visually animated and non-collidable (only triggers an effect upon overlap).
+ *
+ * @see AnimatedBlock
+ * @see LevelFinishedScreen
+ *
+ * @author Tom Coombs
+ * @author Leonardo Parrino
+ */
 public class FinishBlock extends AnimatedBlock {
+
+    /**
+     * Constructs a new {@code FinishBlock} at the specified location.
+     * <p>
+     * Initializes the block with a set of animation frames, sets its material,
+     * disables collision, and defines its size.
+     *
+     * @param location The world location where the block should be placed.
+     */
     public FinishBlock(Location location) {
         super(location, new String[] {
                 "/assets/USB-Stick/PortalTutorial/Portal1-removebg-preview.png",
@@ -28,6 +51,19 @@ public class FinishBlock extends AnimatedBlock {
         this.setHeight(90);
     }
 
+    /**
+     * Handles the logic executed when a player entity collides (overlaps) with the {@code FinishBlock}.
+     * <p>
+     * This method performs the following critical actions:
+     * <ul>
+     * <li>Calls {@code onFinish()} on the current level.</li>
+     * <li>Shows the {@code LevelFinishedScreen}.</li>
+     * <li>Determines the next level based on {@code getCurrentLevel().getNextLevel()}.</li>
+     * <li>Saves the name of the next level to the configuration or resets to "Tutorial" if the game is completed.</li>
+     * </ul>
+     *
+     * @param player The {@code Player} instance that collided with the block.
+     */
     @Override
     public void onCollide(Player player) {
         Game.getLogger().info(Game.getInstance().getCurrentLevel().getName() + " finished!");

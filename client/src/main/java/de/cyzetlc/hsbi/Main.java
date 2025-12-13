@@ -21,6 +21,6 @@ public class Main {
      * @param args Command line arguments passed to the application.
      */
     public static void main(String[] args) {
-        Game.launch(args);
+        Game.main(args);
     }
 }

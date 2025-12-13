@@ -205,5 +205,9 @@ public class Game extends Application {
         getLogger().info("Shutting down..");
         client.closeConnection();
     }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
 

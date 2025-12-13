@@ -13,21 +13,55 @@ import javafx.scene.text.Text;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The {@code EntityPlayer} class represents the main player character entity in the game world.
+ * It extends the base {@code Player} class and adds visual elements (sprite, name tag)
+ * and specific logic for rendering and updating the player's position relative to the camera.
+ *
+ * @see Player
+ * @see GameScreen
+ *
+ * @author Tom Coombs
+ * @author Leonardo Parrino
+ */
 @Getter
 public class EntityPlayer extends Player {
+    /**
+     * The JavaFX {@code ImageView} used to render the player's visual sprite.
+     */
     private ImageView sprite;
+    /**
+     * The JavaFX {@code Text} node used to display the player's name tag above the sprite.
+     */
     private Text nameTag;
 
+    /**
+     * The current horizontal direction of movement (e.g., WALK_LEFT or WALK_RIGHT), used
+     * to determine sprite mirroring.
+     */
     @Setter
     private Direction direction;
 
+    /**
+     * Flag indicating whether the player is currently able to collect game files or objectives.
+     */
     @Setter
     private boolean canCollectFiles = false;
 
+    /**
+     * Constructs a new {@code EntityPlayer} instance.
+     */
     public EntityPlayer() {
         super();
     }
 
+    /**
+     * Updates the player's visual components (sprite and name tag) based on the player's
+     * world location and the current camera offset.
+     * <p>
+     * This method ensures the player's screen position is correct for smooth scrolling and
+     * handles sprite mirroring based on the {@code direction} attribute.
+     */
     @Override
     public void update() {
         double camX = 0;
@@ -62,6 +96,16 @@ public class EntityPlayer extends Player {
         }
     }
 
+    /**
+     * Initializes and draws the player's visual sprite and name tag onto the game pane.
+     * <p>
+     * Sets the initial location, size, and collision bounding box for the entity.
+     *
+     * @param pane The {@code Pane} (the game root) where the player elements should be added.
+     * @param x The initial world X-coordinate.
+     * @param y The initial world Y-coordinate.
+     * @return The current {@code EntityPlayer} instance for chaining.
+     */
     public EntityPlayer drawPlayer(Pane pane, double x, double y) {
         // Nametag zeichnen
         this.nameTag = UIUtils.drawText(pane, this.getDisplayName(), x, y - 25);
