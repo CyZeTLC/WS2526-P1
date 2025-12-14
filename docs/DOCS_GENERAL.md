@@ -207,25 +207,13 @@ Das Asset-Pack umfasst folgende Elemente:
 
 
 ---
-Name: Leonardo Rosario Parrino
-Matrikelnummer: 50197039
-Projekt: StealTheFiles
-Reflexion und Fazit
-Das Projekt „StealTheFiles“ stellte für mich weit mehr dar als eine spielerische Aufgabe; es war der entscheidende Schritt, um die theoretischen Vorlesungsinhalte in ein funktionierendes Softwaresystem zu überführen. Besonders die hohe Komplexität der verschiedenen Subsysteme – von der Bewegungslogik über Kollisionsabfragen bis hin zum Event-Handling und UI – verdeutlichte mir die Notwendigkeit einer sauberen Softwarearchitektur. Ich habe gelernt, Interdependenzen zwischen Modulen frühzeitig zu erkennen und technisch sauber zu lösen, was mein Verständnis für das technische „Big Picture“ nachhaltig geschärft hat.
-Auf methodischer Ebene konnte ich meinen Umgang mit Versionsverwaltung professionalisieren. Die Nutzung von GitHub ging über bloßes Speichern hinaus: Strukturierte Commits und ein sauberer Workflow waren essenziell für die Nachvollziehbarkeit und die kollaborative Entwicklung. Auch die Teamarbeit war ein Schlüsselfaktor; wir haben gelernt, Aufgaben effizient zu parzellieren und uns bei Engpässen gegenseitig zu unterstützen, was den Entwicklungsprozess deutlich beschleunigte und professionalisierte.
-Ein besonderes Augenmerk legte ich auf den reflektierten Umgang mit modernen Tools wie LLMs. Ich nutzte KI als unterstützendes Werkzeug, erkannte jedoch schnell die Grenzen und die Gefahr einer "blinden Übernahme". Dies schärfte mein Verständnis dafür, dass die Problemlösungskompetenz und die Kontrolle über den Code stets beim Entwickler bleiben müssen.
-Rückblickend war das Projekt nicht nur kognitiv fordernd, sondern auch eine Quelle großer Motivation. Das „Flow-Erleben“ während der Programmierung und das erfolgreiche Zusammenfügen der Komponenten haben mir ein stabiles technisches Fundament verschafft und meine Begeisterung für die Softwareentwicklung bestätigt.
----
-muss nachher auf dem PC alles formatieren, bin am Handy und gleich noch auf dem Weihnachtsmarkt denke so bis ca. 18:30Uhr 
----
-<details>
-<summary><strong>Reflexion und Fazit (Hier klicken zum Ausklappen)</strong></summary>
-
-# Reflexion und Fazit
 
 **Name:** Leonardo Rosario Parrino  
 **Matrikelnummer:** 50197039  
+**Zum Projekt:** StealTheFiles
 
+<details>
+<summary><strong>Reflexion und Fazit anzeigen</strong></summary>
 
 Das Projekt **„StealTheFiles“** stellte für mich weit mehr dar als eine spielerische Aufgabe; es war der entscheidende Schritt, um die theoretischen Vorlesungsinhalte in ein funktionierendes Softwaresystem zu überführen. Besonders die hohe Komplexität der verschiedenen Subsysteme – von der Bewegungslogik über Kollisionsabfragen bis hin zum Event-Handling und UI – verdeutlichte mir die Notwendigkeit einer sauberen **Softwarearchitektur**. Ich habe gelernt, Interdependenzen zwischen Modulen frühzeitig zu erkennen und technisch sauber zu lösen, was mein Verständnis für das technische „Big Picture“ nachhaltig geschärft hat.
 
