@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.level.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.*;
@@ -32,6 +33,7 @@ public class BossLevel extends Level {
      */
     public BossLevel() {
         super("Boss");
+        Game.thePlayer.setCanCollectFiles(true);
     }
 
     /**

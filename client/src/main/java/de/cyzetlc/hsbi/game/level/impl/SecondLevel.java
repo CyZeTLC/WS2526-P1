@@ -1,5 +1,6 @@
 package de.cyzetlc.hsbi.game.level.impl;
 
+import de.cyzetlc.hsbi.game.Game;
 import de.cyzetlc.hsbi.game.gui.Platform;
 import de.cyzetlc.hsbi.game.gui.block.Block;
 import de.cyzetlc.hsbi.game.gui.block.impl.*;
@@ -38,6 +39,7 @@ public class SecondLevel extends Level {
      */
     public SecondLevel() {
         super("Second");
+        Game.thePlayer.setCanCollectFiles(true);
     }
 
     /**

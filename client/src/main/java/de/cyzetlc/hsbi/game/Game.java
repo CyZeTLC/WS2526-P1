@@ -221,7 +221,7 @@ public class Game extends Application {
     @Override
     public void stop()  {
         getLogger().info("Shutting down..");
-        client.closeConnection();
+        //client.closeConnection();
     }
 
     /**
