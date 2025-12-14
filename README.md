@@ -29,6 +29,7 @@ Um das Projekt zu bauen und auszuführen, benötigst du folgende Software:
 - **Java Development Kit (JDK):** Version **Amazon Corretto SDK 19.0.2** (oder kompatibles OpenJDK 19+).
 - **Apache Maven:** Zum Verwalten der Abhängigkeiten und Bauen des Projekts.
 - **IntelIJ IDEA**: Zum Starten/Bauen des Projektes (IDEs wie Eclipse könnten auch funktionieren)
+
 ---
 
 ## Lokales Setup und Installation
@@ -45,6 +46,8 @@ cd WS2526-P1
 ---
 
 ## Starten der Anwendung
+
+Die wichtigste Anforderung ist, dass die config.json Datei existiert. Diese muss im Ordner der Jar oder im Baseordner des Projekts liegen. Sollte das Projekt aus der Repo geladen worden, so ist diese Datei bereits vorhanden.
 
 ### Option 1: Über die IDE (Empfohlen)
 Importiere das Projekt als **Maven-Projekt**. Erstelle eine "Run Configuration" für die Main-Klasse und füge bei Bedarf die VM-Optionen für JavaFX hinzu (im Normalfall nicht benötigt):
