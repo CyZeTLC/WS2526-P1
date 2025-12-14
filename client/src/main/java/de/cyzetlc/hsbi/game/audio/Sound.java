@@ -1,8 +1,9 @@
 package de.cyzetlc.hsbi.game.audio;
 
 /**
- * The {@code Sound} enumeration defines all short sound effects (SFX) available in the game,
- * linking a logical name (e.g., CLICK) to the physical resource path of the audio file.
+ * Die {@code Sound} Enumeration definiert alle kurzen Soundeffekte (SFX), die im Spiel
+ * verfügbar sind, und verknüpft einen logischen Namen (z. B. CLICK) mit dem physischen
+ * Ressourcenpfad der Audiodatei.
  *
  * @see SoundManager
  *
@@ -20,14 +21,14 @@ public enum Sound {
     ZIEL_ERREICHT("/assets/audio/SoundEvents/Ziel-erreicht-Sound.wav");
 
     /**
-     * The resource path (classpath) to the corresponding audio file.
+     * Der Ressourcenpfad (Classpath) zur entsprechenden Audiodatei.
      */
     public final String path;
 
     /**
-     * Constructs a {@code Sound} enum constant with the specified resource path.
+     * Konstruiert eine {@code Sound} Enum-Konstante mit dem angegebenen Ressourcenpfad.
      *
-     * @param path The classpath resource path of the audio file.
+     * @param path Der Classpath-Ressourcenpfad der Audiodatei.
      */
     Sound(String path) {
         this.path = path;

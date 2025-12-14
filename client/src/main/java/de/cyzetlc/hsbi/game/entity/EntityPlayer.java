@@ -14,9 +14,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * The {@code EntityPlayer} class represents the main player character entity in the game world.
- * It extends the base {@code Player} class and adds visual elements (sprite, name tag)
- * and specific logic for rendering and updating the player's position relative to the camera.
+ * Die {@code EntityPlayer}-Klasse repräsentiert die Hauptspieler-Charakter-Entität in der Spielwelt.
+ * Sie erweitert die Basisklasse {@code Player} und fügt visuelle Elemente (Sprite, Namensschild)
+ * sowie spezifische Logik für das Rendering und die Aktualisierung der Position relativ zur Kamera hinzu.
+ *
  *
  * @see Player
  * @see GameScreen
@@ -27,40 +28,40 @@ import lombok.Setter;
 @Getter
 public class EntityPlayer extends Player {
     /**
-     * The JavaFX {@code ImageView} used to render the player's visual sprite.
+     * Das JavaFX {@code ImageView}-Objekt, das zur Darstellung des visuellen Sprites des Spielers verwendet wird.
      */
     private ImageView sprite;
     /**
-     * The JavaFX {@code Text} node used to display the player's name tag above the sprite.
+     * Der JavaFX {@code Text}-Knoten, der zur Anzeige des Namensschilds des Spielers über dem Sprite dient.
      */
     private Text nameTag;
 
     /**
-     * The current horizontal direction of movement (e.g., WALK_LEFT or WALK_RIGHT), used
-     * to determine sprite mirroring.
+     * Die aktuelle horizontale Bewegungsrichtung (z. B. WALK_LEFT oder WALK_RIGHT), die zur
+     * Bestimmung der Spiegelung des Sprites verwendet wird.
      */
     @Setter
     private Direction direction;
 
     /**
-     * Flag indicating whether the player is currently able to collect game files or objectives.
+     * Flag, das angibt, ob der Spieler derzeit in der Lage ist, Spieldateien oder Ziele einzusammeln.
      */
     @Setter
     private boolean canCollectFiles = false;
 
     /**
-     * Constructs a new {@code EntityPlayer} instance.
+     * Konstruiert eine neue {@code EntityPlayer}-Instanz.
      */
     public EntityPlayer() {
         super();
     }
 
     /**
-     * Updates the player's visual components (sprite and name tag) based on the player's
-     * world location and the current camera offset.
+     * Aktualisiert die visuellen Komponenten des Spielers (Sprite und Namensschild) basierend auf der
+     * Welt-Position des Spielers und dem aktuellen Kamera-Offset.
      * <p>
-     * This method ensures the player's screen position is correct for smooth scrolling and
-     * handles sprite mirroring based on the {@code direction} attribute.
+     * Diese Methode stellt sicher, dass die Bildschirmposition des Spielers für reibungsloses Scrollen korrekt ist,
+     * und handhabt die Spiegelung des Sprites basierend auf dem {@code direction}-Attribut.
      */
     @Override
     public void update() {
@@ -97,14 +98,14 @@ public class EntityPlayer extends Player {
     }
 
     /**
-     * Initializes and draws the player's visual sprite and name tag onto the game pane.
+     * Initialisiert und zeichnet den visuellen Sprite und das Namensschild des Spielers auf das Spiel-Pane.
      * <p>
-     * Sets the initial location, size, and collision bounding box for the entity.
+     * Setzt die anfängliche Position, Größe und die Kollisions-Bounding-Box für die Entität.
      *
-     * @param pane The {@code Pane} (the game root) where the player elements should be added.
-     * @param x The initial world X-coordinate.
-     * @param y The initial world Y-coordinate.
-     * @return The current {@code EntityPlayer} instance for chaining.
+     * @param pane Das {@code Pane} (die Spielwurzel), zu dem die Elemente des Spielers hinzugefügt werden sollen.
+     * @param x Die anfängliche Welt-X-Koordinate.
+     * @param y Die anfängliche Welt-Y-Koordinate.
+     * @return Die aktuelle {@code EntityPlayer}-Instanz zur Verkettung.
      */
     public EntityPlayer drawPlayer(Pane pane, double x, double y) {
         // Nametag zeichnen

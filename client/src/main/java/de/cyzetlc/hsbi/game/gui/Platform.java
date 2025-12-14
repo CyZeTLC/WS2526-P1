@@ -15,12 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@code Platform} class represents a solid, rectangular block of level geometry
- * that the player can interact with (stand on or collide with).
+ * Die Klasse {@code Platform} repräsentiert einen festen, rechteckigen Block der Level-Geometrie,
+ * mit dem der Spieler interagieren kann (darauf stehen oder kollidieren).
+ *
  * <p>
- * This class is responsible for visually rendering the platform by dividing its total
- * area into smaller, texture-mapped tiles based on a tileset. It dynamically updates
- * the position and visibility of these tiles based on the camera's location for optimized rendering.
+ * Diese Klasse ist dafür verantwortlich, die Plattform visuell darzustellen, indem ihre Gesamtfläche
+ * in kleinere, texturierte Kacheln (Tiles) auf der Grundlage eines Kachel-Sets (Tileset) unterteilt wird.
+ * Sie aktualisiert dynamisch die Position und Sichtbarkeit dieser Kacheln basierend auf dem Standort
+ * der Kamera, um eine optimierte Darstellung zu gewährleisten.
  *
  * @author Tom Coombs
  * @author leonardo (aka. Phantomic)
@@ -32,54 +34,54 @@ import java.util.List;
 @Getter
 public class Platform {
     /**
-     * The X-coordinate (world space) of the platform's top-left corner.
+     * Die X-Koordinate (Weltraum) der oberen linken Ecke der Plattform.
      * <p>
-     * The Y-coordinate (world space) of the platform's top-left corner.
+     * Die Y-Koordinate (Weltraum) der oberen linken Ecke der Plattform.
      * <p>
-     * The total width of the platform.
+     * Die Gesamtbreite der Plattform.
      * <p>
-     * The total height of the platform.
+     * Die Gesamthöhe der Plattform.
      */
     private double x, y, width, height;
 
     /**
-     * The JavaFX {@code Pane} where the tiles are drawn as children.
+     * Das JavaFX {@code Pane}, in das die Kacheln als Kindelemente gezeichnet werden.
      */
     private Pane pane;
 
     /**
-     * The resource path for the tileset texture used to draw the platform.
+     * Der Ressourcenpfad für die Tileset-Textur, die zum Zeichnen der Plattform verwendet wird.
      */
     private static final String TILESET_PATH = Material.FLOOR.texturePath;
 
     /**
-     * The pre-loaded image containing all texture tiles.
+     * Das vorgeladene Bild, das alle Textur-Kacheln enthält.
      */
     private static final Image TILESET_IMAGE = ImageAssets.get(TILESET_PATH);
 
     /**
-     * The standard width and height of a single tile in the tileset (in pixels).
+     * Die Standardbreite und -höhe einer einzelnen Kachel im Tileset (in Pixeln).
      */
     private static final int TILE_SIZE = 32;
 
     /**
-     * List of {@code ImageView} objects representing the individual tiles that make up the platform.
+     * Liste von {@code ImageView}-Objekten, die die einzelnen Kacheln darstellen, aus denen die Plattform besteht.
      */
     private List<ImageView> tiles = new ArrayList<>();
 
     /**
-     * The world location of the platform's top-left corner, encapsulated as a {@code Location} object.
+     * Die Welt-Position der oberen linken Ecke der Plattform, gekapselt als {@code Location}-Objekt.
      */
     private Location location;
 
     /**
-     * Constructs a new Platform instance.
+     * Konstruiert eine neue Platform-Instanz.
      *
-     * @param x The world X-coordinate of the platform.
-     * @param y The world Y-coordinate of the platform.
-     * @param width The total width of the platform.
-     * @param height The total height of the platform.
-     * @param pane The root pane where the platform tiles will be drawn.
+     * @param x Die Welt-X-Koordinate der Plattform.
+     * @param y Die Welt-Y-Koordinate der Plattform.
+     * @param width Die Gesamtbreite der Plattform.
+     * @param height Die Gesamthöhe der Plattform.
+     * @param pane Das Root-Pane, in das die Plattform-Kacheln gezeichnet werden.
      */
     public Platform(double x, double y, double width, double height, Pane pane) {
         this.x = x;
@@ -92,12 +94,13 @@ public class Platform {
     }
 
     /**
-     * Draws the platform by calculating and creating individual tiles based on the platform's
-     * dimensions, using the tileset texture.
+     * Zeichnet die Plattform, indem individuelle Kacheln basierend auf den Abmessungen der Plattform
+     * unter Verwendung der Tileset-Textur berechnet und erstellt werden.
      * <p>
-     * This method handles the tiling logic, ensuring correct textures are used for the
-     * top layer and body, and managing partial tiles if the dimensions are not multiples of {@code TILE_SIZE}.
-     * It also performs an initial camera offset to position the tiles correctly.
+     * Diese Methode handhabt die Kachel-Logik, stellt sicher, dass die korrekten Texturen für
+     * die oberste Schicht und den Körper verwendet werden, und verwaltet Teilkacheln, falls die Abmessungen
+     * keine Vielfachen von {@code TILE_SIZE} sind. Sie führt auch einen anfänglichen Kamera-Offset
+     * durch, um die Kacheln korrekt zu positionieren.
      */
     public void drawPlatform() {
         if (pane != null && !tiles.isEmpty()) {
@@ -124,8 +127,8 @@ public class Platform {
             fullTilesY++;
         }
 
-        final int DIRT_TOP_TILE_Y = 0;
-        final int DIRT_BODY_TILE_Y = 32;
+        final int DIRT_TOP_TILE_Y = 0; // Y-Koordinate für die Textur der obersten Schicht im Tileset
+        final int DIRT_BODY_TILE_Y = 32; // Y-Koordinate für die Textur des Körpers im Tileset
 
         for (int i = 0; i < fullTilesX; i++) {
             double currentY = this.y;
@@ -139,22 +142,24 @@ public class Platform {
             for (int j = 0; j < fullTilesY; j++) {
                 ImageView tileView = new ImageView(TILESET_IMAGE);
 
+                // Wähle die Textur: oberste Reihe oder Körper
                 int tileSrcY = (j == 0) ? DIRT_TOP_TILE_Y : DIRT_BODY_TILE_Y;
 
+                // Berechne die effektive Höhe der Kachel (32 oder Rest)
                 double tileDrawHeight = TILE_SIZE;
                 if (j == fullTilesY - 1 && height % TILE_SIZE != 0) {
                     tileDrawHeight = remainingHeight;
                 }
 
-                // Viewport aus dem Tileset
+                // Viewport aus dem Tileset festlegen
                 tileView.setViewport(new Rectangle2D(
-                        0,            // x-Start im Tileset
+                        0,            // x-Start im Tileset (immer 0, da nur eine Spalte)
                         tileSrcY,        // y-Start im Tileset
                         tileDrawWidth,   // Breite des Ausschnitts
                         tileDrawHeight   // Höhe des Ausschnitts
                 ));
 
-                // Setze die Position und Größe der Kachel
+                // Setze die Position und Größe der Kachel (Kamera-Offset anwenden)
                 //tileView.setX(x + i * TILE_SIZE);
                 //tileView.setY(currentY);
                 tileView.setX((x + i * TILE_SIZE) - ((GameScreen) Game.getInstance().getScreenManager().getCurrentScreen()).getCameraX());
@@ -171,18 +176,18 @@ public class Platform {
     }
 
     /**
-     * Updates the position and visibility of the platform's tiles based on the current camera position.
+     * Aktualisiert die Position und Sichtbarkeit der Kacheln der Plattform basierend auf der aktuellen Kameraposition.
      * <p>
-     * This method iterates through all individual tiles and:
+     * Diese Methode iteriert durch alle einzelnen Kacheln und:
      * <ul>
-     * <li>Checks if the tile is within the visible screen area (culling).</li>
-     * <li>Sets the tile's visibility accordingly.</li>
-     * <li>Adjusts the tile's screen coordinates by subtracting the camera's X and Y offset
-     * (parallax effect/screen scrolling).</li>
+     * <li>Prüft, ob die Kachel innerhalb des sichtbaren Bildschirmbereichs liegt (Culling).</li>
+     * <li>Setzt die Sichtbarkeit der Kachel entsprechend.</li>
+     * <li>Passt die Bildschirmkoordinaten der Kachel an, indem der X- und Y-Offset der Kamera subtrahiert wird
+     * (Parallaxeneffekt/Bildschirm-Scrolling).</li>
      * </ul>
-     * If the tile count is inconsistent (e.g., after loading), it triggers a rebuild.
+     * Wenn die Kachelanzahl inkonsistent ist (z. B. nach dem Laden), wird ein Neuaufbau ausgelöst.
      *
-     * @param gameScreen The current active {@code GameScreen} instance, used to retrieve camera and screen dimensions.
+     * @param gameScreen Die aktuell aktive {@code GameScreen}-Instanz, wird verwendet, um Kamera- und Bildschirmabmessungen abzurufen.
      */
     public void update(GameScreen gameScreen) {
         double camX = gameScreen.getCameraX();
@@ -202,7 +207,7 @@ public class Platform {
         if (tiles.size() != expectedTiles) {
             this.rebuildTiles();
             if (tiles.size() != expectedTiles) {
-                return; // Avoid OOB if rebuild failed for some reason
+                return; // Vermeide OOB (Index außerhalb der Grenzen), falls Neuaufbau fehlschlägt
             }
         }
 
@@ -211,7 +216,7 @@ public class Platform {
         for (int i = 0; i < fullTilesX; i++) {
             double tileDrawWidth = (i == fullTilesX - 1 && width % TILE_SIZE != 0) ? remainingWidth : TILE_SIZE;
             double tileX = x + i * TILE_SIZE;
-            // Prüfen, ob Tile horizontal sichtbar ist
+            // Prüfen, ob Tile horizontal sichtbar ist (Culling)
             if (tileX + tileDrawWidth < camX || tileX > camX + screenWidth) {
                 // Tile ist außerhalb des Bildschirms, unsichtbar machen
                 for (int j = 0; j < fullTilesY; j++) {
@@ -231,6 +236,7 @@ public class Platform {
                 try {
                     ImageView tileView = tiles.get(index++);
                     tileView.setVisible(true);
+                    // Position basierend auf Kamera-Offset aktualisieren
                     tileView.setX(tileX - camX);
                     tileView.setY(tileY - camY);
                     tileView.setFitWidth(tileDrawWidth);
@@ -249,10 +255,10 @@ public class Platform {
     }
 
     /**
-     * Rebuilds the list of tiles and redraws the entire platform.
+     * Baut die Liste der Kacheln neu auf und zeichnet die gesamte Plattform neu.
      * <p>
-     * This is typically called when the current tile array size is inconsistent with the
-     * expected size, often indicating a rendering glitch or a setup issue.
+     * Dies wird typischerweise aufgerufen, wenn die Größe des aktuellen Kachel-Arrays nicht mit der
+     * erwarteten Größe übereinstimmt, was oft auf einen Rendering-Fehler oder ein Einrichtungsproblem hindeutet.
      */
     private void rebuildTiles() {
         if (pane != null && !tiles.isEmpty()) {
@@ -263,9 +269,9 @@ public class Platform {
     }
 
     /**
-     * Returns the rectangular bounds of the platform in world coordinates.
+     * Gibt die rechteckigen Begrenzungen der Plattform in Weltkoordinaten zurück.
      *
-     * @return A {@code Rectangle2D} object defining the collision area (X, Y, Width, Height).
+     * @return Ein {@code Rectangle2D}-Objekt, das den Kollisionsbereich (X, Y, Breite, Höhe) definiert.
      */
     public Rectangle2D getBounds() {
         return new Rectangle2D(this.getLocation().getX(), this.getLocation().getY(), width, height);

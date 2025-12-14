@@ -10,11 +10,12 @@ import javafx.scene.layout.Pane;
 import lombok.Getter;
 
 /**
- * The {@code RobotEnemyBlock} represents a persistent, patrolling enemy entity (a robot)
- * that moves horizontally within a defined range and periodically fires projectiles at the player.
+ * Der {@code RobotEnemyBlock} repräsentiert eine persistente, patrouillierende feindliche Entität (ein Roboter),
+ * die sich horizontal innerhalb eines definierten Bereichs bewegt und periodisch Projektile auf den Spieler abfeuert.
+ *
  * <p>
- * This block implements basic AI logic to track the player's horizontal position within its patrol area
- * and manage a firing cooldown.
+ * Dieser Block implementiert grundlegende KI-Logik, um die horizontale Position des Spielers innerhalb seines
+ * Patrouillenbereichs zu verfolgen und einen Feuer-Cooldown zu verwalten.
  *
  * @see Block
  * @see LaserBlock
@@ -24,58 +25,58 @@ import lombok.Getter;
  */
 public class RobotEnemyBlock extends Block {
     /**
-     * The minimum X-coordinate of the enemy's horizontal patrol range.
+     * Die minimale X-Koordinate des horizontalen Patrouillenbereichs des Feindes.
      */
     protected final double minX;
 
     /**
-     * The maximum X-coordinate of the enemy's horizontal patrol range.
+     * Die maximale X-Koordinate des horizontalen Patrouillenbereichs des Feindes.
      */
     protected final double maxX;
 
     /**
-     * The fixed Y-coordinate of the enemy, ensuring it remains grounded on its platform.
+     * Die feste Y-Koordinate des Feindes, die sicherstellt, dass er auf seiner Plattform geerdet bleibt.
      */
     protected double baseY;
 
     /**
-     * The constant speed at which the robot moves horizontally while patrolling or chasing (units per second).
+     * Die konstante Geschwindigkeit, mit der sich der Roboter horizontal beim Patrouillieren oder Verfolgen bewegt (Einheiten pro Sekunde).
      */
     protected final double speed;
 
     /**
-     * Flag indicating whether the enemy has been defeated. A dead enemy is inactive and non-collidable.
+     * Flag, das anzeigt, ob der Feind besiegt wurde. Ein toter Feind ist inaktiv und nicht kollidierbar.
      */
     @Getter
     protected boolean dead = false;
 
     /**
-     * The timestamp of the last update cycle in nanoseconds, used to calculate delta time for movement and timers.
+     * Der Zeitstempel des letzten Update-Zyklus in Nanosekunden, der zur Berechnung der Delta-Zeit für Bewegung und Timer verwendet wird.
      */
     private long lastUpdateNanos = 0L;
 
     /**
-     * Accumulator for the time elapsed since the last projectile was fired.
+     * Akkumulator für die seit dem letzten Abfeuern eines Projektils verstrichene Zeit.
      */
     protected double fireTimer = 0;
 
     /**
-     * The minimum required time (in seconds) between firing projectiles.
+     * Die minimal erforderliche Zeit (in Sekunden) zwischen dem Abfeuern von Projektilen.
      */
     protected final double fireCooldown = 1.2;
 
     /**
-     * Timestamp (in seconds) of the last time the player was successfully hit by this enemy.
-     * Used to implement hit invulnerability/cooldown for the player.
+     * Zeitstempel (in Sekunden) des letzten erfolgreichen Treffers des Spielers durch diesen Feind.
+     * Wird verwendet, um die Unverwundbarkeits-/Cooldown-Zeit des Spielers zu implementieren.
      */
     private double lastHitTime = -1;
 
     /**
-     * Constructs a new {@code RobotEnemyBlock} instance.
+     * Konstruiert eine neue {@code RobotEnemyBlock}-Instanz.
      *
-     * @param location The initial world location (top-left corner).
-     * @param patrolWidth The total width of the area the robot should patrol (measured from the initial X).
-     * @param speed The horizontal movement speed.
+     * @param location Die anfängliche Weltposition (obere linke Ecke).
+     * @param patrolWidth Die Gesamtbreite des Bereichs, den der Roboter patrouillieren soll (gemessen von der anfänglichen X-Koordinate).
+     * @param speed Die horizontale Bewegungsgeschwindigkeit.
      */
     public RobotEnemyBlock(Location location, double patrolWidth, double speed) {
         super(location);
@@ -90,10 +91,10 @@ public class RobotEnemyBlock extends Block {
     }
 
     /**
-     * Draws the robot enemy, ensuring its visual bounds match its collision bounds and
-     * maintaining its fixed vertical position. Also brings the sprite to the front.
+     * Zeichnet den Roboterfeind, stellt sicher, dass seine visuellen Grenzen mit seinen Kollisionsgrenzen übereinstimmen
+     * und behält seine feste vertikale Position bei. Bringt auch den Sprite nach vorne.
      *
-     * @param pane The {@code Pane} where the block is drawn.
+     * @param pane Das {@code Pane}, auf dem der Block gezeichnet wird.
      */
     @Override
     public void draw(Pane pane) {
@@ -107,19 +108,19 @@ public class RobotEnemyBlock extends Block {
     }
 
     /**
-     * Placeholder for the collision logic. Actual collision processing (checking if the
-     * player jumps on the enemy) is often handled centrally in the {@code GameScreen}
-     * or level update loop to avoid double processing.
+     * Platzhalter für die Kollisionslogik. Die eigentliche Kollisionsverarbeitung (Prüfung, ob der
+     * Spieler auf den Feind springt) wird oft zentral im {@code GameScreen} oder in der Level-Update-Schleife
+     * behandelt, um eine doppelte Verarbeitung zu vermeiden.
      *
-     * @param player The {@code Player} entity that collided with the enemy.
+     * @param player Die {@code Player}-Entität, die mit dem Feind kollidiert ist.
      */
     @Override
     public void onCollide(de.cyzetlc.hsbi.game.entity.Player player) {
-        // handled in GameScreen to avoid double processing
+        // wird im GameScreen behandelt, um doppelte Verarbeitung zu vermeiden
     }
 
     /**
-     * Marks the enemy as dead, deactivates the block, and disables collisions.
+     * Markiert den Feind als tot, deaktiviert den Block und deaktiviert Kollisionen.
      */
     public void kill() {
         this.dead = true;
@@ -128,11 +129,11 @@ public class RobotEnemyBlock extends Block {
     }
 
     /**
-     * Updates the robot's movement and internal timers.
+     * Aktualisiert die Bewegung und die internen Timer des Roboters.
      * <p>
-     * Calculates delta time, determines a target X position (clamped to the patrol range,
-     * chasing the player), updates the robot's position based on speed, and updates the
-     * facing direction.
+     * Berechnet die Delta-Zeit, bestimmt eine Ziel-X-Position (begrenzt auf den Patrouillenbereich,
+     * den Spieler verfolgend), aktualisiert die Position des Roboters basierend auf der Geschwindigkeit
+     * und aktualisiert die Blickrichtung.
      */
     @Override
     public void update() {
@@ -167,14 +168,15 @@ public class RobotEnemyBlock extends Block {
     }
 
     /**
-     * Attempts to create and return a new {@code LaserBlock} projectile if the enemy is not dead,
-     * the player is within a close horizontal range, and the firing cooldown has expired.
+     * Versucht, ein neues {@code LaserBlock}-Projektil zu erstellen und zurückzugeben, wenn der Feind
+     * nicht tot ist, der Spieler sich in einem engen horizontalen Bereich befindet und der
+     * Feuer-Cooldown abgelaufen ist.
      * <p>
-     * If a laser is created, the {@code fireTimer} is reset. The laser is spawned from the
-     * approximate "eye" level of the robot.
+     * Wenn ein Laser erstellt wird, wird der {@code fireTimer} zurückgesetzt. Der Laser wird auf
+     * ungefährer "Augenhöhe" des Roboters gespawnt.
      *
-     * @param player The target player entity.
-     * @return A new {@code LaserBlock} if ready to fire, or {@code null} otherwise.
+     * @param player Die Ziel-Spieler-Entität.
+     * @return Ein neuer {@code LaserBlock}, wenn bereit zum Feuern, ansonsten {@code null}.
      */
     public LaserBlock tryFire(EntityPlayer player) {
         if (dead || player == null) return null;
@@ -197,6 +199,14 @@ public class RobotEnemyBlock extends Block {
         return new LaserBlock(new Location(spawnX, eyeY), dir, 320);
     }
 
+    /**
+     * Verarbeitet einen Treffer auf den Spieler durch diesen Roboter.
+     * <p>
+     * Reduziert die Gesundheit des Spielers um 1 Punkt, wenn der Spieler nicht unverwundbar ist
+     * und der interne Cooldown des Roboters abgelaufen ist.
+     *
+     * @param player Die {@code Player}-Entität, die getroffen wurde.
+     */
     public void hitPlayer(de.cyzetlc.hsbi.game.entity.Player player) {
         if (dead) return;
         // Treffer ignorieren, wenn der Spieler unverwundbar ist.
@@ -210,6 +220,10 @@ public class RobotEnemyBlock extends Block {
         }
     }
 
+    /**
+     * Aktualisiert die Blickrichtung (horizontaler Spiegelzustand) des Roboters, sodass er
+     * dem Spieler zugewandt ist.
+     */
     private void updateFacingToPlayer() {
         if (this.sprite == null) {
             return;

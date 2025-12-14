@@ -12,11 +12,12 @@ import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 /**
- * The {@code JumpBoostBlock} represents a temporary power-up that, when collected by the player,
- * significantly increases the player's jump strength for a limited duration.
+ * Der {@code JumpBoostBlock} repräsentiert ein temporäres Power-up, das, wenn es vom Spieler eingesammelt wird,
+ * die Sprungkraft des Spielers für eine begrenzte Dauer deutlich erhöht.
  * <p>
- * This block is a single-use collectible that triggers an effect, then deactivates and
- * schedules a reset of the player's jump power after a set timeout.
+ * Dieser Block ist ein einmalig einsammelbares Objekt, das einen Effekt auslöst, sich dann deaktiviert und
+ * eine Rücksetzung der Sprungkraft des Spielers nach einer festgelegten Zeitverzögerung plant.
+ *
  *
  * @see PerkBlock
  * @see Material#JUMP_PERK
@@ -25,18 +26,18 @@ import javafx.util.Duration;
  */
 public class JumpBoostBlock extends PerkBlock {
     /**
-     * Flag indicating whether this boost block has already been triggered by the player.
-     * Prevents the effect from stacking if the player remains in collision.
+     * Flag, das anzeigt, ob dieser Boost-Block bereits vom Spieler ausgelöst wurde.
+     * Verhindert das Stapeln des Effekts, falls der Spieler in der Kollision verbleibt.
      */
     private boolean isTriggered = false;
 
     /**
-     * Constructs a new {@code JumpBoostBlock} at the specified location.
+     * Konstruiert einen neuen {@code JumpBoostBlock} an der angegebenen Position.
      * <p>
-     * Initializes the block with the {@code JUMP_PERK} material and sets it as non-collidable,
-     * meaning the player can overlap it to trigger the perk.
+     * Initialisiert den Block mit dem Material {@code JUMP_PERK} und setzt ihn als nicht kollidierbar,
+     * was bedeutet, dass der Spieler ihn überlappen kann, um den Perk auszulösen.
      *
-     * @param location The world location where the block should be placed.
+     * @param location Die Weltposition, an der der Block platziert werden soll.
      */
     public JumpBoostBlock(Location location) {
         super(location);
@@ -45,16 +46,17 @@ public class JumpBoostBlock extends PerkBlock {
     }
 
     /**
-     * Handles the logic executed when a player entity collides (overlaps) with the {@code JumpBoostBlock}.
+     * Behandelt die Logik, die ausgeführt wird, wenn eine Spieler-Entität mit dem {@code JumpBoostBlock}
+     * kollidiert (überlappt).
      * <p>
-     * If not already triggered:
+     * Falls noch nicht ausgelöst:
      * <ul>
-     * <li>Increases the player jump power (Game.jumpPower) by 25%.</li>
-     * <li>Plays a boosted sound effect while ducking the background music (if the tutorial is not finished).</li>
-     * <li>Deactivates the block and schedules a {@code PauseTransition} to reset the jump power after 10 seconds.</li>
+     * <li>Erhöht die Sprungkraft des Spielers (Game.jumpPower) um 25%.</li>
+     * <li>Spielt einen Boost-Soundeffekt ab und dämpft dabei die Hintergrundmusik (falls das Tutorial nicht beendet ist).</li>
+     * <li>Deaktiviert den Block und plant eine {@code PauseTransition} zur Rücksetzung der Sprungkraft nach 10 Sekunden.</li>
      * </ul>
      *
-     * @param player The {@code Player} instance that collided with the block.
+     * @param player Die {@code Player}-Instanz, die mit dem Block kollidiert ist.
      */
     @Override
     public void onCollide(Player player) {

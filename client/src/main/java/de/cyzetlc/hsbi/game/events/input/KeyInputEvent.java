@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * The {@code KeyInputEvent} is an event fired whenever a keyboard key state changes
- * (pressed or released) or its current pressed state is polled.
+ * Das {@code KeyInputEvent} ist ein Ereignis, das ausgelöst wird, wann immer sich der Zustand
+ * einer Tastaturtaste ändert (gedrückt oder losgelassen) oder ihr aktueller gedrückter Zustand
+ * abgefragt wird.
  * <p>
- * This event contains information about which key was involved and the nature of the
- * input action (e.g., PRESS, RELEASE).
+ * Dieses Ereignis enthält Informationen darüber, welche Taste beteiligt war und welche Art von
+ * Eingabeaktion stattgefunden hat (z. B. PRESS, RELEASE).
  *
  * @see Event
  * @see InputType

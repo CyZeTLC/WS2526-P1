@@ -28,7 +28,7 @@ Um das Projekt zu bauen und auszuführen, benötigst du folgende Software:
 
 - **Java Development Kit (JDK):** Version **Amazon Corretto SDK 19.0.2** (oder kompatibles OpenJDK 19+).
 - **Apache Maven:** Zum Verwalten der Abhängigkeiten und Bauen des Projekts.
-- **MySQL-Datenbank:** Eine laufende Instanz für die Datenhaltung *(In der aktuellen Version noch nicht benötigt)*.
+- **IntelIJ IDEA**: Zum Starten/Bauen des Projektes (IDEs wie Eclipse könnten auch funktionieren)
 
 ---
 
@@ -45,22 +45,12 @@ cd WS2526-P1
 
 ---
 
-## Bauen des Projekts
-
-Lege falls nicht vorhanden ein Artifact unter Projekt Struktur->Artifacts für das Modul client an.
-Setze ``de.cyzetlc.hsbi.Main`` als Main Klasse.
-
-Danach wähle in der toolbar Build->Build Artifacts.
-
-Navigiere in das Projektverzeichnis und nutze Maven:
-Dadurch wird der Code kompiliert und es wird ein ausführbares Artefakt im Ordner `out/artifacts/client_jar` erstellt.
-
----
-
 ## Starten der Anwendung
 
+Die wichtigste Anforderung ist, dass die config.json Datei existiert. Diese muss im Ordner der Jar oder im Baseordner des Projekts liegen. Sollte das Projekt aus der Repo geladen worden, so ist diese Datei bereits vorhanden.
+
 ### Option 1: Über die IDE (Empfohlen)
-Importiere das Projekt als **Maven-Projekt**. Erstelle eine "Run Configuration" für die Main-Klasse und füge bei Bedarf die VM-Optionen für JavaFX hinzu:
+Importiere das Projekt als **Maven-Projekt**. Erstelle eine "Run Configuration" für die Main-Klasse und füge bei Bedarf die VM-Optionen für JavaFX hinzu (im Normalfall nicht benötigt):
 ```text
 --module-path /pfad/zu/javafx-sdk-17.0.17/lib --add-modules javafx.controls,javafx.fxml
 ```
@@ -74,7 +64,19 @@ java --module-path /pfad/zu/javafx-sdk-17.0.17/lib \
      -jar target/client.jar
 ```
 
-Bei beiden Optionen können die Startargumente weggelassen werden, wenn man die Klasse ``de.cyzetcl.hsbi.Main`` startet anstelle der Klasse ``de.cyzetlc.hsbi.game.Game``!
+Bei beiden Optionen können die Startargumente im Normalfall ohne Probleme weggelassen werden.
+
+---
+
+## Bauen des Projekts
+
+Lege falls nicht vorhanden ein Artifact unter Projekt Struktur->Artifacts für das Modul client an.
+Setze ``de.cyzetlc.hsbi.Main`` als Main Klasse.
+
+Danach wähle in der toolbar Build->Build Artifacts.
+
+Navigiere in das Projektverzeichnis und nutze Maven:
+Dadurch wird der Code kompiliert und es wird ein ausführbares Artefakt im Ordner `out/artifacts/client_jar` erstellt.
 
 ---
 

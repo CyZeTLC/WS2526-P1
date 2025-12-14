@@ -9,11 +9,11 @@ import de.cyzetlc.hsbi.game.gui.block.PerkBlock;
 import de.cyzetlc.hsbi.game.world.Location;
 
 /**
- * The {@code FolderBlock} represents a collectible item within the game, symbolizing
- * a file that the player needs to acquire.
+ * Der {@code FolderBlock} repräsentiert ein einsammelbares Objekt im Spiel, das eine
+ * Datei symbolisiert, die der Spieler erwerben muss.
  * <p>
- * This block only becomes collectible and triggers an effect if the player is in the correct state
- * to collect files (checked via {@code Game.thePlayer.isCanCollectFiles()}).
+ * Dieser Block kann nur eingesammelt werden und löst einen Effekt aus, wenn der Spieler
+ * sich im korrekten Zustand zum Sammeln von Dateien befindet (geprüft über {@code Game.thePlayer.isCanCollectFiles()}).
  *
  * @see PerkBlock
  * @see Material#FOLDER_ITEM
@@ -23,12 +23,13 @@ import de.cyzetlc.hsbi.game.world.Location;
 public class FolderBlock extends PerkBlock {
 
     /**
-     * Constructs a new {@code FolderBlock} at the specified location.
+     * Konstruiert einen neuen {@code FolderBlock} an der angegebenen Position.
      * <p>
-     * Initializes the block with the {@code FOLDER_ITEM} material and sets it as non-collidable,
-     * meaning the player can overlap it to trigger the collection event.
+     * Initialisiert den Block mit dem Material {@code FOLDER_ITEM} und setzt ihn als
+     * nicht kollidierbar, was bedeutet, dass der Spieler ihn überlappen kann, um
+     * das Einsammelevent auszulösen.
      *
-     * @param location The world location where the block should be placed.
+     * @param location Die Weltposition, an der der Block platziert werden soll.
      */
     public FolderBlock(Location location) {
         super(location);
@@ -37,12 +38,12 @@ public class FolderBlock extends PerkBlock {
     }
 
     /**
-     * Handles the collection logic when a player entity overlaps with the {@code FolderBlock}.
+     * Behandelt die Einsammel-Logik, wenn eine Spieler-Entität den {@code FolderBlock} überlappt.
      * <p>
-     * The block is only collected (and thus deactivated) if the player's {@code canCollectFiles}
-     * flag is set to true. If collected, a click sound is played.
+     * Der Block wird nur dann eingesammelt (und dadurch deaktiviert), wenn das {@code canCollectFiles}-Flag
+     * des Spielers auf {@code true} gesetzt ist. Falls eingesammelt, wird ein Klick-Sound abgespielt.
      *
-     * @param player The {@code Player} instance that collided with the block.
+     * @param player Die {@code Player}-Instanz, die mit dem Block kollidiert ist.
      */
     @Override
     public void onCollide(Player player) {

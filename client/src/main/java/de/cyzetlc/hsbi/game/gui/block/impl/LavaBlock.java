@@ -16,11 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@code LavaBlock} represents a deadly animated environmental hazard.
- * When the player collides (overlaps) with this block, the player takes recurring damage.
+ * Der {@code LavaBlock} repräsentiert eine tödliche, animierte Umweltgefahr.
+ * Wenn der Spieler mit diesem Block kollidiert (überlappt), erleidet der Spieler wiederkehrenden Schaden.
+ *
  * <p>
- * This block extends {@code AnimatedBlock} to display a flowing lava texture.
- * Collision logic is handled specifically to bypass damage if God Mode is active.
+ * Dieser Block erweitert {@code AnimatedBlock}, um eine fließende Lava-Textur anzuzeigen.
+ * Die Kollisionslogik ist speziell darauf ausgelegt, Schaden zu umgehen, wenn der God Mode aktiv ist.
  *
  * @see AnimatedBlock
  * @see Material#LAVA
@@ -30,11 +31,11 @@ import java.util.List;
  */
 public class LavaBlock extends AnimatedBlock {
     /**
-     * Constructs a new {@code LavaBlock} at the specified location.
+     * Konstruiert einen neuen {@code LavaBlock} an der angegebenen Position.
      * <p>
-     * Initializes the block with the animation frames for lava and sets its material type.
+     * Initialisiert den Block mit den Animations-Frames für Lava und setzt seinen Materialtyp.
      *
-     * @param location The world location (top-left corner) where the block should be placed.
+     * @param location Die Weltposition (obere linke Ecke), an der der Block platziert werden soll.
      */
     public LavaBlock(Location location) {
         super(location, new String[] {
@@ -46,13 +47,14 @@ public class LavaBlock extends AnimatedBlock {
     }
 
     /**
-     * Handles the collision logic when a player entity overlaps with this block,
-     * resulting in instantaneous death if God Mode is not active.
+     * Behandelt die Kollisionslogik, wenn eine Spieler-Entität mit diesem Block überlappt,
+     * was zu sofortigem Tod führt, falls der God Mode nicht aktiv ist.
      * <p>
-     * If the player is in God Mode, the collision is ignored. Otherwise, the player's
-     * health is immediately set to zero, triggering the death sequence (handled elsewhere).
+     * Wenn der Spieler sich im God Mode befindet, wird die Kollision ignoriert. Andernfalls
+     * wird die Gesundheit des Spielers sofort auf Null gesetzt, wodurch die Todessequenz
+     * ausgelöst wird (die an anderer Stelle behandelt wird).
      *
-     * @param player The {@code Player} instance that collided with the block.
+     * @param player Die {@code Player}-Instanz, die mit dem Block kollidiert ist.
      */
     @Override
     public void onCollide(Player player) {

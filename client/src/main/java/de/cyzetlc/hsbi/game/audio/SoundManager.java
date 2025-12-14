@@ -11,12 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 /**
- * The {@code SoundManager} utility class provides static methods for managing all audio playback
- * in the game, including sound effects and background music.
+ * Die {@code SoundManager} Utility-Klasse stellt statische Methoden zur Verwaltung
+ * der gesamten Audio-Wiedergabe im Spiel bereit, einschließlich Soundeffekten
+ * und Hintergrundmusik.
  * <p>
- * It implements functionality for media caching, volume control (including global mute),
- * persistence via configuration, and advanced features like "audio ducking" to lower
- * background music volume temporarily when a key sound effect plays.
+ * Sie implementiert Funktionalität für Medien-Caching, Lautstärkeregelung
+ * (einschließlich globaler Stummschaltung), Persistenz über die Konfiguration
+ * und erweiterte Funktionen wie "Audio Ducking", um die Lautstärke der
+ * Hintergrundmusik vorübergehend zu senken, wenn ein wichtiger Soundeffekt
+ * abgespielt wird.
  *
  * @see Sound
  * @see Music
@@ -28,53 +31,54 @@ import java.util.concurrent.CompletableFuture;
 public class SoundManager {
 
     /**
-     * Cache storing pre-loaded {@code Media} objects mapped by their file path to avoid
-     * repeated loading times and resource spikes.
+     * Cache, der vorgeladene {@code Media}-Objekte speichert, die ihrem Dateipfad
+     * zugeordnet sind, um wiederholte Ladezeiten und Ressourcen-Spitzen zu vermeiden.
      */
     private static final Map<String, Media> mediaCache = new HashMap<>();
 
     /**
-     * The master volume level (0.0 to 1.0) applied to all sound playback.
+     * Der globale Master-Lautstärkepegel (0.0 bis 1.0), der auf die gesamte Soundwiedergabe angewendet wird.
      */
     private static double globalVolume = 1.0;
 
     /**
-     * Decibel (dB) increase applied to sounds to make them slightly louder than the default 1.0.
+     * Dezibel (dB) Erhöhung, die auf Sounds angewendet wird, um sie etwas lauter als den Standardwert 1.0 zu machen.
      */
     private static final double DB_BOOST = 10.0;
 
     /**
-     * The calculated linear factor corresponding to the {@code DB_BOOST} (approximately 3.162).
+     * Der berechnete lineare Faktor, der dem {@code DB_BOOST} entspricht (ungefähr 3.162).
      */
     private static final double DB_FACTOR = Math.pow(10.0, DB_BOOST / 20.0); // ~3.162
 
     /**
-     * Lock object used to synchronize access to {@code duckDepth} during audio ducking operations.
+     * Sperrobjekt (Lock) zur Synchronisierung des Zugriffs auf {@code duckDepth} während Audio-Ducking-Operationen.
      */
     private static final Object duckLock = new Object();
 
     /**
-     * Counter for active audio ducking requests. Used to restore background volume only when
-     * all temporary sounds have finished playing.
+     * Zähler für aktive Audio-Ducking-Anfragen. Wird verwendet, um die Hintergrundlautstärke
+     * erst dann wiederherzustellen, wenn alle temporären Sounds beendet wurden.
      */
     private static int duckDepth = 0;
 
     /**
-     * Flag indicating whether all sound output is currently muted.
+     * Flag, das angibt, ob die gesamte Soundausgabe derzeit stummgeschaltet ist.
      */
     @Getter
     private static boolean muted = false;
 
     /**
-     * The dedicated media player instance for background music playback.
+     * Die dedizierte MediaPlayer-Instanz für die Wiedergabe der Hintergrundmusik.
      */
     private static MediaPlayer backgroundPlayer;
 
     /**
-     * Plays a short sound effect once. Supports concurrent playback of multiple effects.
-     * The sound's volume is limited by the current {@code globalVolume} and respects the {@code muted} state.
+     * Spielt einen kurzen Soundeffekt einmal ab. Unterstützt die gleichzeitige Wiedergabe mehrerer Effekte.
+     * Die Lautstärke des Sounds wird durch die aktuelle {@code globalVolume} begrenzt und
+     * berücksichtigt den {@code muted}-Zustand.
      *
-     * @param sound The {@code Sound} enum entry to play.
+     * @param sound Der abzuspielende {@code Sound} Enum-Eintrag.
      */
     public static void play(Sound sound) {
         try {
@@ -91,12 +95,13 @@ public class SoundManager {
     }
 
     /**
-     * Plays a short sound effect with an explicit volume override.
+     * Spielt einen kurzen Soundeffekt mit einer expliziten Lautstärke-Überschreibung ab.
      * <p>
-     * The effective volume is capped by the current {@code globalVolume} setting and respects the {@code muted} state.
+     * Die effektive Lautstärke wird durch die aktuelle {@code globalVolume}-Einstellung begrenzt
+     * und berücksichtigt den {@code muted}-Zustand.
      *
-     * @param sound The {@code Sound} enum entry to play.
-     * @param volumeOverride The desired base volume (0.0 - 1.0).
+     * @param sound Der abzuspielende {@code Sound} Enum-Eintrag.
+     * @param volumeOverride Die gewünschte Basis-Lautstärke (0.0 - 1.0).
      */
     public static void play(Sound sound, double volumeOverride) {
         try {
@@ -116,14 +121,14 @@ public class SoundManager {
     }
 
     /**
-     * Plays a short sound effect and simultaneously lowers ("ducks") the background music volume
-     * to a specified target value for the duration of the sound effect.
+     * Spielt einen kurzen Soundeffekt ab und senkt gleichzeitig ("ducks") die Lautstärke der
+     * Hintergrundmusik auf einen bestimmten Zielwert für die Dauer des Soundeffekts.
      * <p>
-     * Ducking is managed via {@code duckDepth} to handle overlapping sounds correctly.
+     * Das Ducking wird über {@code duckDepth} verwaltet, um überlappende Sounds korrekt zu behandeln.
      *
-     * @param sound The sound effect to play.
-     * @param volumeOverride The volume of the effect (0.0 - 1.0).
-     * @param duckVolume The target volume for the background music while the effect plays (0.0 - 1.0).
+     * @param sound Der abzuspielende Soundeffekt.
+     * @param volumeOverride Die Lautstärke des Effekts (0.0 - 1.0).
+     * @param duckVolume Die Ziel-Lautstärke für die Hintergrundmusik, während der Effekt abgespielt wird (0.0 - 1.0).
      */
     public static void playWithDuck(Sound sound, double volumeOverride, double duckVolume) {
         try {
@@ -150,12 +155,12 @@ public class SoundManager {
     }
 
     /**
-     * Stops any currently playing background music and starts playback of the specified music track.
+     * Stoppt die aktuell laufende Hintergrundmusik und startet die Wiedergabe des angegebenen Musiktitels.
      * <p>
-     * This operation runs asynchronously to prevent blocking the JavaFX Application Thread.
+     * Dieser Vorgang wird asynchron ausgeführt, um eine Blockierung des JavaFX Application Thread zu verhindern.
      *
-     * @param music The {@code Music} enum entry to play.
-     * @param looping {@code true} if the music should repeat indefinitely; {@code false} otherwise.
+     * @param music Der abzuspielende {@code Music} Enum-Eintrag.
+     * @param looping {@code true}, wenn die Musik unbegrenzt wiederholt werden soll; {@code false} andernfalls.
      */
     public static void playBackground(Music music, boolean looping) {
         CompletableFuture.runAsync(() -> {
@@ -180,7 +185,7 @@ public class SoundManager {
     }
 
     /**
-     * Stops the currently running background music player and releases its resources.
+     * Stoppt den aktuell laufenden Hintergrundmusik-Player und gibt dessen Ressourcen frei.
      */
     public static void stopBackground() {
         if (backgroundPlayer != null) {
@@ -195,10 +200,10 @@ public class SoundManager {
     }
 
     /**
-     * Preloads all defined {@code Sound} and {@code Music} tracks into the media cache asynchronously.
+     * Lädt alle definierten {@code Sound}- und {@code Music}-Titel asynchron in den Medien-Cache vor.
      * <p>
-     * This is typically called once at startup (e.g., in the loading screen) to eliminate
-     * audio delays during gameplay.
+     * Dies wird typischerweise einmal beim Start aufgerufen (z. B. im Ladebildschirm), um
+     * Audioverzögerungen während des Gameplays zu eliminieren.
      */
     public static void preloadAll() {
         CompletableFuture.runAsync(() -> {
@@ -212,12 +217,12 @@ public class SoundManager {
     }
 
     /**
-     * Sets the global master volume level (0.0 - 1.0).
+     * Stellt den globalen Master-Lautstärkepegel ein (0.0 - 1.0).
      * <p>
-     * The new volume is clamped, saved to the game configuration, and immediately applied
-     * to the currently playing background music.
+     * Die neue Lautstärke wird begrenzt (clamped), in der Spielkonfiguration gespeichert
+     * und sofort auf die aktuell spielende Hintergrundmusik angewendet.
      *
-     * @param volume The new volume level (0.0 to 1.0).
+     * @param volume Der neue Lautstärkepegel (0.0 bis 1.0).
      */
     public static void setVolume(double volume) {
         globalVolume = Math.max(0, Math.min(1, volume));
@@ -227,21 +232,21 @@ public class SoundManager {
     }
 
     /**
-     * Returns the current global master volume level.
+     * Gibt den aktuellen globalen Master-Lautstärkepegel zurück.
      *
-     * @return The current volume (0.0 to 1.0).
+     * @return Die aktuelle Lautstärke (0.0 bis 1.0).
      */
     public static double getVolume() {
         return globalVolume;
     }
 
     /**
-     * Activates or deactivates the global mute state.
+     * Aktiviert oder deaktiviert den globalen Stummschaltzustand.
      * <p>
-     * The mute state is saved to the game configuration, and the new volume (0.0 or the current {@code globalVolume})
-     * is immediately applied to the background player.
+     * Der Stummschaltzustand wird in der Spielkonfiguration gespeichert, und die neue Lautstärke
+     * (0.0 oder die aktuelle {@code globalVolume}) wird sofort auf den Hintergrund-Player angewendet.
      *
-     * @param muted {@code true} to mute all sound; {@code false} to unmute.
+     * @param muted {@code true}, um den gesamten Sound stummzuschalten; {@code false}, um die Stummschaltung aufzuheben.
      */
     public static void setMuted(boolean muted) {
         SoundManager.muted = muted;
@@ -251,10 +256,10 @@ public class SoundManager {
     }
 
     /**
-     * Applies the current effective volume (respecting global volume, boost, and mute state)
-     * to a given {@code MediaPlayer} instance.
+     * Wendet die aktuell effektive Lautstärke (unter Berücksichtigung von globaler Lautstärke,
+     * Boost und Stummschaltzustand) auf eine gegebene {@code MediaPlayer}-Instanz an.
      *
-     * @param player The player to apply the volume setting to.
+     * @param player Der Player, auf den die Lautstärkeeinstellung angewendet werden soll.
      */
     private static void applyVolume(MediaPlayer player) {
         if (player != null) {
@@ -263,11 +268,11 @@ public class SoundManager {
     }
 
     /**
-     * Temporarily lowers the background music volume to the specified {@code duckVolume}.
+     * Senkt die Lautstärke der Hintergrundmusik vorübergehend auf die angegebene {@code duckVolume}.
      * <p>
-     * Increases the {@code duckDepth} counter and synchronizes access via {@code duckLock}.
+     * Erhöht den {@code duckDepth}-Zähler und synchronisiert den Zugriff über {@code duckLock}.
      *
-     * @param duckVolume The temporary target base volume (0.0 - 1.0).
+     * @param duckVolume Die temporäre Ziel-Basis-Lautstärke (0.0 - 1.0).
      */
     private static void duckBackground(double duckVolume) {
         synchronized (duckLock) {
@@ -280,10 +285,10 @@ public class SoundManager {
     }
 
     /**
-     * Restores the background music volume to the normal {@code globalVolume} if no other
-     * temporary sounds are currently active (i.e., {@code duckDepth} returns to 0).
+     * Stellt die Lautstärke der Hintergrundmusik auf die normale {@code globalVolume} wieder her,
+     * wenn keine anderen temporären Sounds mehr aktiv sind (d. h. {@code duckDepth} kehrt zu 0 zurück).
      * <p>
-     * Decreases the {@code duckDepth} counter and synchronizes access via {@code duckLock}.
+     * Verringert den {@code duckDepth}-Zähler und synchronisiert den Zugriff über {@code duckLock}.
      */
     private static void unduckBackground() {
         synchronized (duckLock) {
@@ -297,14 +302,15 @@ public class SoundManager {
     }
 
     /**
-     * Attempts to load an audio file into a {@code Media} object.
+     * Versucht, eine Audiodatei in ein {@code Media}-Objekt zu laden.
      * <p>
-     * It first tries to load the file as a resource from the application's classpath (for packed JARs).
-     * If that fails, it falls back to loading the file directly from the filesystem path.
+     * Zuerst wird versucht, die Datei als Ressource aus dem Classpath der Anwendung zu laden
+     * (für gepackte JARs). Schlägt dies fehl, wird als Fallback die Datei direkt über den
+     * Dateisystempfad geladen.
      *
-     * @param path The resource or file path of the audio file.
-     * @return A loaded {@code Media} object.
-     * @throws RuntimeException if the media file cannot be found or loaded.
+     * @param path Der Ressourcen- oder Dateipfad der Audiodatei.
+     * @return Ein geladenes {@code Media}-Objekt.
+     * @throws RuntimeException wenn die Mediendatei nicht gefunden oder geladen werden kann.
      */
     private static Media loadMedia(String path) {
         try {
@@ -331,12 +337,14 @@ public class SoundManager {
     }
 
     /**
-     * Calculates the "boosted" volume level by multiplying the base volume by the {@code DB_FACTOR}.
+     * Berechnet den "verstärkten" Lautstärkepegel, indem die Basis-Lautstärke mit dem {@code DB_FACTOR}
+     * multipliziert wird.
      * <p>
-     * The result is clamped between 0.0 and 1.0. This is used to make sound effects audibly clearer.
+     * Das Ergebnis wird zwischen 0.0 und 1.0 begrenzt (clamped). Dies wird verwendet, um Soundeffekte
+     * hörbar klarer zu machen.
      *
-     * @param baseVolume The input volume (0.0 to 1.0).
-     * @return The boosted and clamped volume.
+     * @param baseVolume Die Eingabelautstärke (0.0 bis 1.0).
+     * @return Die verstärkte und begrenzte Lautstärke.
      */
     private static double boostedVolume(double baseVolume) {
         double boosted = clamp01(baseVolume) * DB_FACTOR;
@@ -344,10 +352,10 @@ public class SoundManager {
     }
 
     /**
-     * Clamps a double value between 0.0 and 1.0.
+     * Begrenzt (Clamps) einen Double-Wert zwischen 0.0 und 1.0.
      *
-     * @param value The input value.
-     * @return The value constrained to the range [0.0, 1.0].
+     * @param value Der Eingabewert.
+     * @return Der Wert, der auf den Bereich [0.0, 1.0] beschränkt ist.
      */
     private static double clamp01(double value) {
         if (value < 0.0) return 0.0;

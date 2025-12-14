@@ -27,23 +27,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@code GameScreen} class represents the central in-game state and is responsible
- * for both the visual representation and the core logic of the running game.
+ * Die Klasse {@code GameScreen} repräsentiert den zentralen In-Game-Zustand und ist sowohl
+ * für die visuelle Darstellung als auch für die Kernlogik des laufenden Spiels verantwortlich.
+ *
  * <p>
- * This class acts as the main controller for the gameplay session and handles the following responsibilities:
+ * Diese Klasse fungiert als Haupt-Controller für die Gameplay-Sitzung und übernimmt folgende Aufgaben:
  * <ul>
- * <li><b>Rendering:</b> Draws the player, level elements (blocks, platforms), animated backgrounds, and the HUD (Heads-Up Display).</li>
- * <li><b>Physics Engine:</b> Calculates gravity, movement velocity, and collision detection against platforms, barriers, and enemies.</li>
- * <li><b>Camera Control:</b> Manages the viewport coordinates (CameraX/Y) with a smooth scrolling algorithm to track the player.</li>
- * <li><b>Input Handling:</b> Processes user input for movement (WASD), jumping (Space), interaction (E), and UI controls.</li>
- * <li><b>Game State Management:</b> Handles win/loss conditions (Game Over), pausing logic, and scene transitions.</li>
+ * <li><b>Rendering:</b> Zeichnet den Spieler, Level-Elemente (Blöcke, Plattformen), animierte Hintergründe und das HUD (Heads-Up Display).</li>
+ * <li><b>Physik-Engine:</b> Berechnet Schwerkraft, Bewegungsgeschwindigkeit und Kollisionserkennung gegen Plattformen, Barrieren und Feinde.</li>
+ * <li><b>Kamera-Steuerung:</b> Verwaltet die Viewport-Koordinaten (CameraX/Y) mit einem sanften Scroll-Algorithmus, um den Spieler zu verfolgen.</li>
+ * <li><b>Eingabeverarbeitung:</b> Verarbeitet Benutzereingaben für Bewegung (WASD), Springen (Leertaste), Interaktion (E) und UI-Steuerungen.</li>
+ * <li><b>Spielzustandsverwaltung:</b> Behandelt Gewinn-/Verlustbedingungen (Game Over), Pausenlogik und Szenenübergänge.</li>
  * </ul>
  * <p>
- * Additionally, this class implements extensive debugging tools accessible via function keys:
+ * Zusätzlich implementiert diese Klasse umfangreiche Debugging-Tools, die über Funktionstasten zugänglich sind:
  * <ul>
- * <li><b>F1:</b> Toggles tooltips, quest progress, and help text.</li>
- * <li><b>F2:</b> Toggles the technical debug bar (FPS, coordinates, etc.).</li>
- * <li><b>F3:</b> Toggles "NoClip" and "GodMode" (flight and invulnerability).</li>
+ * <li><b>F1:</b> Schaltet Tooltips, Questfortschritt und Hilfetexte um.</li>
+ * <li><b>F2:</b> Schaltet die technische Debug-Leiste (FPS, Koordinaten, etc.) um.</li>
+ * <li><b>F3:</b> Schaltet "NoClip" und "GodMode" (Fliegen und Unverwundbarkeit) um.</li>
  * </ul>
  *
  * @author Tom Coombs
@@ -55,129 +56,129 @@ import java.util.List;
  */
 public class GameScreen implements GuiScreen {
     /**
-     * The root container for all visual elements displayed on the screen.
+     * Der Wurzel-Container für alle auf dem Bildschirm angezeigten visuellen Elemente.
      */
     protected final Pane root = new Pane();
 
     /**
-     * Reference to the ScreenManager, used for handling screen transitions (e.g., Pause, Game Over).
+     * Referenz auf den ScreenManager, der für die Behandlung von Bildschirmübergängen (z. B. Pause, Game Over) verwendet wird.
      */
     protected final ScreenManager screenManager;
 
     /**
-     * The main player entity.
+     * Die Haupt-Spieler-Entität.
      */
     private EntityPlayer player;
 
     /**
-     * Current velocity component in the X-direction (horizontal movement).
+     * Aktuelle Geschwindigkeitskomponente in X-Richtung (horizontale Bewegung).
      */
     private double dx = 1;
 
     /**
-     * Current velocity component in the Y-direction (vertical movement/gravity).
+     * Aktuelle Geschwindigkeitskomponente in Y-Richtung (vertikale Bewegung/Schwerkraft).
      */
     private double dy = 0.5;
 
     /**
-     * Text label used to display debug information (e.g., FPS, coordinates).
+     * Text-Label zur Anzeige von Debug-Informationen (z. B. FPS, Koordinaten).
      */
     private Text debugLbl;
 
     /**
-     * Flag indicating whether the game is currently paused.
+     * Flag, das anzeigt, ob das Spiel derzeit pausiert ist.
      */
     private boolean paused = false;
 
     /**
-     * The translucent overlay Pane displayed when the game is paused.
+     * Das durchscheinende Overlay-Pane, das angezeigt wird, wenn das Spiel pausiert ist.
      */
     private Pane pauseOverlay;
 
     /**
-     * Flag ensuring the Game Over sequence is triggered only once to prevent
-     * multiple screen transitions.
+     * Flag, das sicherstellt, dass die Game-Over-Sequenz nur einmal ausgelöst wird, um
+     * mehrfache Bildschirmübergänge zu verhindern.
      */
     private boolean gameOverTriggered = false;
 
     /**
-     * The current X-coordinate of the camera/viewport in the game world.
-     * This value determines the horizontal offset for rendering game elements.
+     * Die aktuelle X-Koordinate der Kamera/des Viewports in der Spielwelt.
+     * Dieser Wert bestimmt den horizontalen Versatz für das Rendern von Spielelementen.
      */
     @Getter
     private double cameraX = 0;
 
     /**
-     * The current Y-coordinate of the camera/viewport in the game world.
-     * This value determines the vertical offset for rendering game elements.
+     * Die aktuelle Y-Koordinate der Kamera/des Viewports in der Spielwelt.
+     * Dieser Wert bestimmt den vertikalen Versatz für das Rendern von Spielelementen.
      */
     @Getter
     private double cameraY = 0;
 
     /**
-     * Smoothing factor (interpolation value) used to gradually move the camera
-     * towards the target position, creating a smooth follow effect. (0.0 to 1.0)
+     * Glättungsfaktor (Interpolationswert), der verwendet wird, um die Kamera allmählich
+     * zur Zielposition zu bewegen, wodurch ein sanfter Verfolgungseffekt entsteht. (0.0 bis 1.0)
      */
     private final double cameraSmooth = 0.1; // wie schnell die Kamera folgt
 
     /**
-     * Horizontal margin (dead zone) distance in pixels. The camera only starts
-     * following the player when they move outside this margin.
+     * Horizontaler Rand (Todeszone) in Pixeln. Die Kamera beginnt erst mit der Verfolgung des Spielers,
+     * wenn dieser sich außerhalb dieses Randes bewegt.
      */
     private final double marginX = 400;
 
     /**
-     * Vertical margin (dead zone) distance in pixels. The camera only starts
-     * following the player when they move outside this margin.
+     * Vertikaler Rand (Todeszone) in Pixeln. Die Kamera beginnt erst mit der Verfolgung des Spielers,
+     * wenn dieser sich außerhalb dieses Randes bewegt.
      */
     private final double marginY = 150;
 
     /**
-     * Text label used to display hints related to the Flipper item and interaction (KeyCode.E).
+     * Text-Label zur Anzeige von Hinweisen bezüglich des Flipper-Items und der Interaktion (KeyCode.E).
      */
     private Text flipperHint;
 
     /**
-     * Flag to track if the Flipper interaction hint has already been displayed to the player.
+     * Flag, um zu verfolgen, ob der Flipper-Interaktionshinweis dem Spieler bereits angezeigt wurde.
      */
     private boolean flipperHintShown = false;
 
     /**
-     * Text label displaying the current main quest objective.
+     * Text-Label, das das aktuelle Haupt-Questziel anzeigt.
      */
     private Text questLbl;
 
     /**
-     * Text label showing the player's progress in collecting files (e.g., "Files: 3/5").
+     * Text-Label, das den Fortschritt des Spielers beim Sammeln von Dateien anzeigt (z. B. "Files: 3/5").
      */
     private Text filesProgressLbl;
 
     /**
-     * The total number of collectible FolderBlock items present in the current level.
+     * Die Gesamtzahl der einsammelbaren FolderBlock-Items, die im aktuellen Level vorhanden sind.
      */
     private int totalFolderCount = 0;
 
     /**
-     * Toggle state for displaying user-facing tooltips and quest information (controlled by F1).
+     * Umschaltzustand für die Anzeige von benutzerorientierten Tooltips und Questinformationen (gesteuert durch F1).
      */
     @Getter @Setter
     private boolean showTooltips = true; // F1
 
     /**
-     * Text label displaying general control hints (e.g., F1/F2/F3 instructions).
+     * Text-Label zur Anzeige allgemeiner Steuerungshinweise (z. B. F1/F2/F3-Anweisungen).
      */
     private Text tipsLbl;
 
     /**
-     * A list of ImageView objects representing the heart icons (full, half, empty)
-     * used to visually display the player's health in the HUD.
+     * Eine Liste von ImageView-Objekten, die die Herz-Symbole (voll, halb, leer) darstellen,
+     * welche zur visuellen Anzeige der Gesundheit des Spielers im HUD verwendet werden.
      */
     private List<ImageView> heartImageViews;
 
     /**
-     * Constructs a new GameScreen.
+     * Konstruiert einen neuen GameScreen.
      *
-     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     * @param screenManager Die ScreenManager-Instanz, die für die Behandlung von Bildschirmübergängen verantwortlich ist.
      */
     public GameScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
@@ -185,20 +186,21 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Initializes the GameScreen and sets up the entire scene.
+     * Initialisiert den GameScreen und richtet die gesamte Szene ein.
+     *
      * <p>
-     * This method is called once when switching to this screen and performs all necessary
-     * initial setup of the graphical interface, game state, and controls.
-     * The steps include:
+     * Diese Methode wird einmal beim Wechsel zu diesem Bildschirm aufgerufen und führt alle notwendigen
+     * anfänglichen Einrichtungsarbeiten der grafischen Oberfläche, des Spielzustands und der Steuerung durch.
+     * Die Schritte umfassen:
      * <ul>
-     * <li>Clearing all previous elements from the root pane.</li>
-     * <li>Drawing the animated background.</li>
-     * <li>Setting the player at the start position and ensuring health points are correctly initialized.</li>
-     * <li>Clearing and reloading all {@code Blocks} and {@code Platforms} of the current level.</li>
-     * <li>Drawing static HUD elements, such as the "Back" and "Pause" buttons, debug text fields, and the health bar display.</li>
-     * <li>Setting up the pause overlay and configuring the initial HUD layout positions.</li>
+     * <li>Löschen aller vorherigen Elemente aus dem Wurzel-Pane.</li>
+     * <li>Zeichnen des animierten Hintergrunds.</li>
+     * <li>Setzen des Spielers an der Startposition und Sicherstellen, dass die Gesundheitspunkte korrekt initialisiert sind.</li>
+     * <li>Löschen und erneutes Laden aller {@code Blocks} und {@code Platforms} des aktuellen Levels.</li>
+     * <li>Zeichnen statischer HUD-Elemente, wie z. B. der "Zurück"- und "Pause"-Schaltflächen, Debug-Textfelder und der Gesundheitsanzeige.</li>
+     * <li>Einrichten des Pause-Overlays und Konfigurieren der anfänglichen HUD-Layout-Positionen.</li>
      * </ul>
-     * This method ensures the screen is ready for the logical processing within the {@code update} cycle.
+     * Diese Methode stellt sicher, dass der Bildschirm für die logische Verarbeitung innerhalb des {@code update}-Zyklus bereit ist.
      *
      * @see GameScreen#update(double)
      * @see de.cyzetlc.hsbi.game.level.Level#draw(double, double, javafx.scene.layout.Pane)
@@ -223,14 +225,14 @@ public class GameScreen implements GuiScreen {
                 height - 450 - cameraY);
 
         /*
-         * Remove all blocks & platforms from current level and
-         * load draw current level
+         * Entfernt alle Blöcke & Plattformen aus dem aktuellen Level und
+         * lädt das aktuelle Level neu
          */
         Game.getInstance().getCurrentLevel().getBlocks().clear();
         Game.getInstance().getCurrentLevel().getPlatforms().clear();
         Game.getInstance().getCurrentLevel().draw(width, height, root);
 
-        // Draws the two buttons displayed on the top left
+        // Zeichnet die beiden Schaltflächen oben links
         UIUtils.drawButton(root, messageHandler.getMessageForLanguage("gui.game.btn.back"), 10, 10, () -> screenManager.showScreen(new MainMenuScreen(screenManager)));
         //UIUtils.drawButton(root, "Pause", 150, 10, this::togglePause);
 
@@ -254,25 +256,25 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Executes the main game loop logic, running once per frame to update the game state.
+     * Führt die Haupt-Spielschleifenlogik aus, die einmal pro Frame läuft, um den Spielzustand zu aktualisieren.
      * <p>
-     * This method is responsible for all dynamic game elements, including physics, input handling,
-     * collision resolution, camera movement, and HUD updates.
+     * Diese Methode ist für alle dynamischen Spielelemente verantwortlich, einschließlich Physik, Eingabeverarbeitung,
+     * Kollisionsauflösung, Kamerabewegung und HUD-Updates.
      * <p>
-     * Key operations performed in this method include:
+     * Zu den wichtigsten Vorgängen, die in dieser Methode ausgeführt werden, gehören:
      * <ul>
-     * <li>Processing frame-rate independent physics (gravity, velocity calculation).</li>
-     * <li>Handling standard player input for movement, jumping, and interaction (E).</li>
-     * <li>Managing debug input toggles (F1) for tooltips.</li>
-     * <li>Comprehensive collision detection against {@code Platforms} and various types of {@code Blocks}.</li>
-     * <li>Processing specific interactions, such as collecting items (Flipper), activating barriers (GasBarrier), and enemy combat (RobotEnemyBlock).</li>
-     * <li>Updating the camera position based on player location for smooth scrolling.</li>
-     * <li>Checking for Game Over conditions (loss of health or falling out of the world).</li>
-     * <li>Updating all dynamic HUD elements (health percentage, folder progress, debug status).</li>
+     * <li>Verarbeitung der von der Bildrate unabhängigen Physik (Schwerkraft, Geschwindigkeitsberechnung).</li>
+     * <li>Verarbeitung der Standard-Spielereingaben für Bewegung, Springen und Interaktion (E).</li>
+     * <li>Verwaltung der Debug-Eingabeumschaltungen (F1) für Tooltips.</li>
+     * <li>Umfassende Kollisionserkennung gegen {@code Platforms} und verschiedene Arten von {@code Blocks}.</li>
+     * <li>Verarbeitung spezifischer Interaktionen, wie das Einsammeln von Gegenständen (Flipper), das Aktivieren von Barrieren (GasBarrier) und Feindkampf (RobotEnemyBlock).</li>
+     * <li>Aktualisierung der Kameraposition basierend auf der Spielerposition für sanftes Scrollen.</li>
+     * <li>Prüfung auf Game-Over-Bedingungen (Verlust der Gesundheit oder Herausfallen aus der Welt).</li>
+     * <li>Aktualisierung aller dynamischen HUD-Elemente (Gesundheitsprozentsatz, Ordnerfortschritt, Debug-Status).</li>
      * </ul>
      *
-     * @param delta The time elapsed since the last frame, used to ensure physics calculations
-     * are independent of the frame rate.
+     * @param delta Die seit dem letzten Frame verstrichene Zeit, die verwendet wird, um sicherzustellen, dass die Physikberechnungen
+     * von der Bildrate unabhängig sind.
      * @see GameScreen#initialize()
      * @see GameScreen#updateCamera(double, double)
      * @see de.cyzetlc.hsbi.game.entity.EntityPlayer
@@ -287,9 +289,9 @@ public class GameScreen implements GuiScreen {
         double width = screenManager.getStage().getWidth();
         double height = screenManager.getStage().getHeight();
 
-        double gravity = Game.gravity;       // gravity strength
-        double moveSpeed = Game.moveSpeed;    // horizontal speed
-        double jumpPower = Game.jumpPower;    // jump power
+        double gravity = Game.gravity;       // Schwerkraftstärke
+        double moveSpeed = Game.moveSpeed;    // horizontale Geschwindigkeit
+        double jumpPower = Game.jumpPower;    // Sprungkraft
         boolean onGround = false;
         boolean hittingCeiling = false;
         boolean interactPressed = screenManager.getInputManager().isPressed(KeyCode.E);
@@ -303,7 +305,7 @@ public class GameScreen implements GuiScreen {
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
 
-        // input
+        // Eingabe
         if (screenManager.getInputManager().isPressed(KeyCode.A)) {
             dx = -moveSpeed * delta;
             player.setDirection(Direction.WALK_LEFT);
@@ -314,28 +316,28 @@ public class GameScreen implements GuiScreen {
             dx = 0;
         }
 
-        // gravity
+        // Schwerkraft
         dy += gravity * delta;
 
-        // tentative position
+        // Versuchte Position
         double nextX = x + dx;
         double nextY = y + dy;
 
         Rectangle2D nextBounds = new Rectangle2D(nextX, nextY, player.getWidth(), player.getHeight());
 
-        // platform collisions
+        // Plattform-Kollisionen
         for (Platform platform : Game.getInstance().getCurrentLevel().getPlatforms()) {
             Rectangle2D pBounds = platform.getBounds();
             platform.update(this);
 
             if (nextBounds.intersects(pBounds)) {
-                // landing from above
+                // Landung von oben
                 if (y + player.getHeight() <= platform.getY()) {
                     nextY = platform.getY() - player.getHeight();
                     dy = 0;
                     onGround = true;
                 }
-                // collision from below
+                // Kollision von unten
                 if (dy < 0 && y >= platform.getY() + platform.getHeight() && nextY <= platform.getY() + platform.getHeight()) {
                     nextY = platform.getY() + platform.getHeight();
                     hittingCeiling = true;
@@ -344,7 +346,7 @@ public class GameScreen implements GuiScreen {
                     hittingCeiling = false;
                 }
 
-                // side collision
+                // Seitenkollision
                 if (x + player.getWidth() <= platform.getX()) {
                     nextX = platform.getX() - player.getWidth();
                     dx = 0;
@@ -356,7 +358,7 @@ public class GameScreen implements GuiScreen {
             }
         }
 
-        // block collisions
+        // Block-Kollisionen
         List<Block> pendingBlocks = new ArrayList<>();
         List<Block> blocks = Game.getInstance().getCurrentLevel().getBlocks();
         for (Block block : blocks) {
@@ -370,6 +372,7 @@ public class GameScreen implements GuiScreen {
             }
 
             if (block instanceof RobotEnemyBlock enemy) {
+                // Feind-Schusslogik
                 LaserBlock laser = enemy.tryFire(player);
                 if (laser != null) {
                     laser.draw(root);
@@ -379,38 +382,40 @@ public class GameScreen implements GuiScreen {
 
             if (nextBounds.intersects(pBounds) && block.isActive() && !player.isNoClipEnabled()) {
                 if (block instanceof GasBarrierBlock barrier && interactPressed && player.hasFlipper()) {
+                    // Gasbarriere deaktivieren, wenn Spieler Flipper hat und E drückt
                     barrier.deactivate();
                     continue;
                 }
                 if (block instanceof RobotEnemyBlock enemy) {
                     double enemyTop = enemy.getLocation().getY();
+                    // Prüfen, ob der Spieler auf den Feind tritt
                     boolean stomp = (y + player.getHeight() <= enemyTop + 6) && dy > 0;
                     if (stomp) {
                         enemy.kill();
                         nextY = enemyTop - player.getHeight();
-                        dy = -jumpPower * delta * 0.6;
+                        dy = -jumpPower * delta * 0.6; // leichten Sprung-Rebound geben
                     } else {
-                        enemy.hitPlayer(player);
+                        enemy.hitPlayer(player); // Spieler nimmt Schaden
                     }
-                    // continue with collision resolution but skip duplicate onCollide
+                    // Mit Kollisionsauflösung fortfahren, aber doppelte onCollide überspringen
                 } else {
                     block.onCollide(player);
                 }
 
                 if (block.isCollideAble()) {
-                    // landing from above
+                    // Landung von oben
                     if (y + player.getHeight() <= block.getLocation().getY()) {
                         nextY = block.getLocation().getY() - player.getHeight();
-                        nextX += block.getDeltaX(); // follow moving platform x movement
+                        nextX += block.getDeltaX(); // der Bewegung einer beweglichen Plattform folgen
                         dy = 0;
                         onGround = true;
                     }
-                    // left
+                    // Links
                     else if (x + player.getWidth() <= block.getLocation().getX()) {
                         nextX = block.getLocation().getX() - player.getWidth();
                         dx = 0;
                     }
-                    // right
+                    // Rechts
                     else if (x >= block.getLocation().getX() + block.getWidth()) {
                         nextX = block.getLocation().getX() + block.getWidth();
                         dx = 0;
@@ -419,13 +424,14 @@ public class GameScreen implements GuiScreen {
             }
         }
         if (!pendingBlocks.isEmpty()) {
+            // Neue Projektile zur Blockliste hinzufügen
             blocks.addAll(pendingBlocks);
         }
 
-        // window bounds
+        // Fensterbegrenzung
         if (nextX < 0) nextX = 0;
 
-        // fell out of the world -> game over
+        // Herausfallen aus der Welt -> Game Over
         double screenNextY = nextY - this.cameraY;
         if (screenNextY + player.getHeight() > height) {
             if (player.getHealth() > 0) {
@@ -435,13 +441,13 @@ public class GameScreen implements GuiScreen {
             return;
         }
 
-        // jump (only if on ground)
+        // Springen (nur wenn auf dem Boden)
         if (screenManager.getInputManager().isPressed(KeyCode.SPACE) && dy == 0 && !hittingCeiling) {
             dy = -jumpPower * delta;
             player.setDirection(Direction.JUMP);
         }
 
-        // apply position
+        // Position anwenden
         player.getLocation().setX(nextX);
         player.getLocation().setY(nextY);
 
@@ -460,17 +466,18 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Updates the position of the camera viewport to follow the player with a smooth scrolling effect.
-     * <p>
-     * This method implements a "dead zone" logic: the camera only begins to move when the player's
-     * screen position exceeds the predefined margins ({@code marginX} and {@code marginY}).
-     * The movement is then smoothed using the {@code cameraSmooth} factor to prevent jerky transitions.
-     * <p>
-     * The camera is also clamped to prevent viewing coordinates less than zero, ensuring the viewport
-     * stays within the intended level boundaries, unless NoClip mode is active.
+     * Aktualisiert die Position des Kamera-Viewports, um dem Spieler mit einem sanften Scroll-Effekt zu folgen.
      *
-     * @param width  The width of the screen/stage, used for calculating the right margin boundary.
-     * @param height The height of the screen/stage, used for calculating the bottom margin boundary.
+     * <p>
+     * Diese Methode implementiert eine "Todeszonen"-Logik: Die Kamera beginnt sich erst zu bewegen, wenn die
+     * Bildschirmposition des Spielers die vordefinierten Ränder ({@code marginX} und {@code marginY}) überschreitet.
+     * Die Bewegung wird dann unter Verwendung des {@code cameraSmooth}-Faktors geglättet, um ruckartige Übergänge zu vermeiden.
+     * <p>
+     * Die Kamera wird auch begrenzt, um das Anzeigen von Koordinaten kleiner als Null zu verhindern, wodurch
+     * sichergestellt wird, dass der Viewport innerhalb der beabsichtigten Level-Grenzen bleibt, es sei denn, der NoClip-Modus ist aktiv.
+     *
+     * @param width  Die Breite des Bildschirms/der Bühne, die zur Berechnung der rechten Randgrenze verwendet wird.
+     * @param height Die Höhe des Bildschirms/der Bühne, die zur Berechnung der unteren Randgrenze verwendet wird.
      * @see GameScreen#cameraSmooth
      * @see EntityPlayer#isNoClipEnabled()
      */
@@ -505,12 +512,12 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Creates and initializes the visual overlay displayed when the game is paused.
-     * It includes a transparent black background, a "Pause" title, and control buttons
-     * (Continue and Back to Menu).
+     * Erstellt und initialisiert das visuelle Overlay, das angezeigt wird, wenn das Spiel pausiert ist.
+     * Es enthält einen transparenten schwarzen Hintergrund, einen "Pause"-Titel und Steuerschaltflächen
+     * (Weiter und Zurück zum Menü).
      *
-     * @param width The current width of the game window/stage.
-     * @param height The current height of the game window/stage.
+     * @param width Die aktuelle Breite des Spielfensters/der Bühne.
+     * @param height Die aktuelle Höhe des Spielfensters/der Bühne.
      */
     private void setupPauseOverlay(double width, double height) {
         this.pauseOverlay = new Pane();
@@ -530,9 +537,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Toggles the paused state of the game.
-     * If the game is paused, it resumes, and the pause overlay is hidden.
-     * If the game is running, it pauses, and the pause overlay is shown.
+     * Schaltet den Pausenzustand des Spiels um.
+     * Wenn das Spiel pausiert ist, wird es fortgesetzt und das Pause-Overlay wird ausgeblendet.
+     * Wenn das Spiel läuft, wird es pausiert und das Pause-Overlay wird angezeigt.
      */
     private void togglePause() {
         this.paused = !this.paused;
@@ -542,9 +549,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Handles the Game Over state.
-     * This is triggered when the player's health drops to zero, or they fall out of the world.
-     * It prevents multiple triggers and transitions the screen back to the Main Menu.
+     * Behandelt den Game-Over-Zustand.
+     * Dies wird ausgelöst, wenn die Gesundheit des Spielers auf Null sinkt oder er aus der Welt fällt.
+     * Es verhindert mehrere Auslösungen und wechselt den Bildschirm zurück zum Hauptmenü.
      */
     private void handleGameOver() {
         if (this.gameOverTriggered) {
@@ -585,10 +592,10 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Draws the player's health bar visually using heart icons (full, half, empty).
-     * The health display is aligned to the top-right corner of the screen.
+     * Zeichnet die Gesundheitsleiste des Spielers visuell mithilfe von Herz-Symbolen (voll, halb, leer).
+     * Die Gesundheitsanzeige ist an der oberen rechten Ecke des Bildschirms ausgerichtet.
      *
-     * @param width The current width of the game window/stage, used for right-side alignment.
+     * @param width Die aktuelle Breite des Spielfensters/der Bühne, die für die Ausrichtung auf der rechten Seite verwendet wird.
      */
     private void createHealthBar(double width) {
         int heartSize = 32;
@@ -612,9 +619,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Sets the consistent vertical positions for all heads-up display (HUD) text elements.
-     * This method ensures text blocks like debug information, tips, and quest progress
-     * are neatly spaced below the primary control buttons (Back, Pause).
+     * Legt die konsistenten vertikalen Positionen für alle Heads-Up Display (HUD)-Text-Elemente fest.
+     * Diese Methode stellt sicher, dass Textblöcke wie Debug-Informationen, Tipps und Questfortschritt
+     * ordentlich unterhalb der primären Steuerschaltflächen (Zurück, Pause) angeordnet sind.
      */
     private void layoutHudPositions() {
         int hudX = 0;
@@ -647,13 +654,13 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Updates and formats the debug information displayed in the top-left corner (Debug Bar).
-     * This bar shows technical details like FPS, player state, camera coordinates, and game parameters.
-     * It is only visible if the {@code showDebugBar} flag is true (toggled by F2).
+     * Aktualisiert und formatiert die Debug-Informationen, die in der oberen linken Ecke angezeigt werden (Debug-Leiste).
+     * Diese Leiste zeigt technische Details wie FPS, Spielerstatus, Kamerakoordinaten und Spielparameter.
+     * Sie ist nur sichtbar, wenn das Flag {@code showDebugBar} auf true gesetzt ist (umgeschaltet durch F2).
      *
-     * @param onGround Indicates if the player is currently standing on a surface.
-     * @param moveSpeed The current horizontal movement speed parameter.
-     * @param jumpPower The current vertical jump power parameter.
+     * @param onGround Zeigt an, ob der Spieler sich gerade auf einer Oberfläche befindet.
+     * @param moveSpeed Der aktuelle Parameter für die horizontale Bewegungsgeschwindigkeit.
+     * @param jumpPower Der aktuelle Parameter für die vertikale Sprungkraft.
      */
     private void updateDebugBar(boolean onGround, double moveSpeed, double jumpPower) {
         String line1 = "FPS: " + (int) screenManager.getCurrentFps()
@@ -671,9 +678,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Counts the total number of folder blocks (collectible files) present in the current level.
+     * Zählt die Gesamtzahl der Ordnerblöcke (einsammelbare Dateien), die im aktuellen Level vorhanden sind.
      *
-     * @return The total count of {@code FolderBlock} instances in the level's block list.
+     * @return Die Gesamtzahl der {@code FolderBlock}-Instanzen in der Blockliste des Levels.
      */
     private int countFolderBlocks() {
         return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
@@ -682,9 +689,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Counts the number of active (uncollected) folder blocks remaining in the current level.
+     * Zählt die Anzahl der aktiven (nicht eingesammelten) Ordnerblöcke, die im aktuellen Level verbleiben.
      *
-     * @return The count of {@code FolderBlock} instances that are currently active.
+     * @return Die Anzahl der {@code FolderBlock}-Instanzen, die derzeit aktiv sind.
      */
     private int countActiveFolders() {
         return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
@@ -694,9 +701,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Updates the HUD element showing the file collection progress.
-     * It calculates the number of collected files against the total available files
-     * and sets the text for {@code filesProgressLbl}.
+     * Aktualisiert das HUD-Element, das den Fortschritt beim Sammeln von Dateien anzeigt.
+     * Es berechnet die Anzahl der gesammelten Dateien im Vergleich zur Gesamtzahl der verfügbaren Dateien
+     * und setzt den Text für {@code filesProgressLbl}.
      */
     private void updateFolderProgress() {
         if (this.totalFolderCount == 0) {
@@ -709,9 +716,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Retrieves the root pane of the GameScreen, which contains all visual elements.
+     * Ruft das Wurzel-Pane des GameScreens ab, das alle visuellen Elemente enthält.
      *
-     * @return The JavaFX {@code Pane} used as the root container.
+     * @return Das JavaFX {@code Pane}, das als Wurzel-Container verwendet wird.
      */
     @Override
     public Pane getRoot() {
@@ -719,9 +726,9 @@ public class GameScreen implements GuiScreen {
     }
 
     /**
-     * Returns the identifying name of this screen.
+     * Gibt den identifizierenden Namen dieses Bildschirms zurück.
      *
-     * @return The constant screen name "GameScreen".
+     * @return Der konstante Bildschirmname "GameScreen".
      */
     @Override
     public String getName() {

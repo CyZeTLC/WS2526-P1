@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The {@code UIUtils} class provides a collection of static utility methods for creating,
- * drawing, positioning, and animating common JavaFX UI elements such as Text, Buttons,
- * Rectangles, and ImageViews within a {@code Pane}.
+ * Die Klasse {@code UIUtils} bietet eine Sammlung statischer Dienstprogramm-Methoden zum Erstellen,
+ * Zeichnen, Positionieren und Animieren gängiger JavaFX UI-Elemente wie Text, Schaltflächen (Buttons),
+ * Rechtecke und Bildansichten (ImageViews) innerhalb eines {@code Pane}.
  * <p>
- * It includes complex features like responsive centering and frame-based background animation.
+ * Sie beinhaltet komplexe Funktionen wie die reaktive Zentrierung und die Frame-basierte Hintergrundanimation.
+ *
  *
  * @author Tom Coombs
  * @author Leonardo Parrino
@@ -36,6 +37,13 @@ public class UIUtils {
 
     /**
      * Zentriert einen Text horizontal (und optional vertikal) innerhalb einer Pane.
+     * <p>
+     * Verwendet Listener, um die Zentrierung automatisch anzupassen, wenn sich die Größe
+     * der {@code Pane} oder des {@code Text}-Knotens ändert.
+     *
+     * @param text Der zu zentrierende {@code Text}-Knoten.
+     * @param parent Die übergeordnete {@code Pane}.
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
      */
     public static void centerText(Text text, Pane parent, boolean vertical) {
         text.applyCss();
@@ -49,6 +57,7 @@ public class UIUtils {
             text.setLayoutX(x);
 
             if (vertical) {
+                // Zentrierung berücksichtigt die Baseline für eine korrekte vertikale Mitte
                 double y = (parent.getHeight() - textHeight) / 2.0 + baseline;
                 text.setLayoutY(y);
             }
@@ -60,11 +69,19 @@ public class UIUtils {
         parent.widthProperty().addListener(parentSizeListener);
         if (vertical) parent.heightProperty().addListener(parentSizeListener);
 
+        // Reagiert auf Änderungen der Textgröße (z. B. durch CSS oder Schriftarten-Laden)
         text.layoutBoundsProperty().addListener((obs, oldB, newB) -> Platform.runLater(doCenter));
     }
 
     /**
      * Zentriert einen Button horizontal (und optional vertikal) innerhalb einer Pane.
+     * <p>
+     * Verwendet Listener, um die Zentrierung automatisch anzupassen, wenn sich die Größe
+     * der {@code Pane} oder des {@code Button}-Knotens ändert.
+     *
+     * @param button Der zu zentrierende {@code Button}-Knoten.
+     * @param parent Die übergeordnete {@code Pane}.
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
      */
     public static void centerButton(Button button, Pane parent, boolean vertical) {
         button.applyCss();
@@ -93,12 +110,13 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen einfachen Text in eine Pane an der angegebenen Position.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Text eingefügt wird.
+     * @param label  Der anzuzeigende Textinhalt.
+     * @param x      X-Position (LayoutX).
+     * @param y      Y-Position (LayoutY, Baseline).
+     * @return Der erstellte {@code Text}-Knoten.
      */
     public static Text drawText(Pane parent, String label, double x, double y) {
         Text text = new Text(label);
@@ -109,13 +127,14 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen einfachen Text in eine Pane mit einer zugewiesenen CSS-ID.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @param id     CSS-ID
-     * @return der erstellte Button
+     * @param parent Pane, in die der Text eingefügt wird.
+     * @param label  Der anzuzeigende Textinhalt.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param id     CSS-ID für das Styling.
+     * @return Der erstellte {@code Text}-Knoten.
      */
     public static Text drawText(Pane parent, String label, double x, double y, String id) {
         Text text = new Text(label);
@@ -127,12 +146,14 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen Text und zentriert ihn automatisch in der übergeordneten Pane.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Text eingefügt wird.
+     * @param label  Der anzuzeigende Textinhalt.
+     * @param x      X-Position (wird durch Zentrierung überschrieben).
+     * @param y      Y-Position (wird durch Zentrierung überschrieben, wenn {@code vertical} {@code true} ist).
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
+     * @return Der erstellte und zentrierte {@code Text}-Knoten.
      */
     public static Text drawCenteredText(Pane parent, String label, double x, double y, boolean vertical) {
         Text text = drawText(parent, label, x, y);
@@ -141,12 +162,15 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen Text mit CSS-ID und zentriert ihn automatisch.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Text eingefügt wird.
+     * @param label  Der anzuzeigende Textinhalt.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
+     * @param id     CSS-ID für das Styling.
+     * @return Der erstellte und zentrierte {@code Text}-Knoten.
      */
     public static Text drawCenteredText(Pane parent, String label, double x, double y, boolean vertical, String id) {
         Text text = drawText(parent, label, x, y, id);
@@ -155,12 +179,14 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen einfachen Button in eine Pane und registriert einen {@code onClick}-Handler.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param label  Der anzuzeigende Text auf dem Button.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param onClick Die Aktion, die beim Klicken ausgeführt wird.
+     * @return Der erstellte {@code Button}-Knoten.
      */
     public static Button drawButton(Pane parent, String label, double x, double y, Runnable onClick) {
         Button button = new Button(label);
@@ -176,12 +202,15 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen einfachen Button mit CSS-ID und {@code onClick}-Handler.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param label  Der anzuzeigende Text auf dem Button.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param id     CSS-ID für das Styling.
+     * @param onClick Die Aktion, die beim Klicken ausgeführt wird (kann {@code null} sein).
+     * @return Der erstellte {@code Button}-Knoten.
      */
     public static Button drawButton(Pane parent, String label, double x, double y, String id, Runnable onClick) {
         Button button = new Button(label);
@@ -200,36 +229,38 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen einfachen Button ohne spezifischen {@code onClick}-Handler.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @return Der erstellte {@code Button}-Knoten.
      */
     public static Button drawButton(Pane parent, String label, double x, double y) {
         return drawButton(parent, label, x, y, () -> {});
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen einfachen Button mit CSS-ID, aber ohne spezifischen {@code onClick}-Handler.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @return Der erstellte {@code Button}-Knoten.
      */
     public static Button drawButton(Pane parent, String label, double x, double y, String id) {
         return drawButton(parent, label, x, y, id, () -> {});
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen Button und zentriert ihn automatisch.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
+     * @param onClick Die Aktion, die beim Klicken ausgeführt wird.
+     * @return Der erstellte und zentrierte {@code Button}-Knoten.
      */
     public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical, Runnable onClick) {
         Button button = drawButton(parent, label, x, y, onClick);
@@ -238,12 +269,15 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen Button mit CSS-ID und zentriert ihn automatisch.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
+     * @param id     CSS-ID für das Styling.
+     * @param onClick Die Aktion, die beim Klicken ausgeführt wird.
+     * @return Der erstellte und zentrierte {@code Button}-Knoten.
      */
     public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical, String id, Runnable onClick) {
         Button button = drawButton(parent, label, x, y, id, onClick);
@@ -252,12 +286,13 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen einfachen Button in eine Pane.
+     * Zeichnet einen Button und zentriert ihn automatisch, ohne spezifischen {@code onClick}-Handler.
      *
-     * @param parent Pane, in die der Button eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @return der erstellte Button
+     * @param parent Pane, in die der Button eingefügt wird.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param vertical {@code true}, um auch vertikal zu zentrieren.
+     * @return Der erstellte und zentrierte {@code Button}-Knoten.
      */
     public static Button drawCenteredButton(Pane parent, String label, double x, double y, boolean vertical) {
         Button button = drawButton(parent, label, x, y);
@@ -268,13 +303,13 @@ public class UIUtils {
     /**
      * Zeichnet ein einfaches Rechteck in eine Pane.
      *
-     * @param parent Pane, in die das Rechteck eingefügt wird
-     * @param x      X-Position
-     * @param y      Y-Position
-     * @param width  Breite
-     * @param height Höhe
-     * @param color  Farbe des Rechtecks
-     * @return das erstellte Rechteck
+     * @param parent Pane, in die das Rechteck eingefügt wird.
+     * @param x      X-Position.
+     * @param y      Y-Position.
+     * @param width  Breite.
+     * @param height Höhe.
+     * @param color  Füllfarbe des Rechtecks.
+     * @return Das erstellte {@code Rectangle}-Objekt.
      */
     public static Rectangle drawRect(Pane parent, double x, double y, double width, double height, Color color) {
         Rectangle rect = new Rectangle(x, y, width, height);
@@ -286,15 +321,16 @@ public class UIUtils {
     /**
      * Zeichnet eine Textur (Bild) in eine Pane.
      *
-     * @param parent  Pane, in die das Bild eingefügt wird
-     * @param texture Pfad oder URL zur Bilddatei (z. B. "/assets/gui/button.png")
-     * @param x       X-Position
-     * @param y       Y-Position
-     * @param width   Breite des Bildes
-     * @param height  Höhe des Bildes
-     * @return das erstellte ImageView
+     * @param parent  Pane, in die das Bild eingefügt wird.
+     * @param texture Pfad oder URL zur Bilddatei (z. B. "/assets/gui/button.png").
+     * @param x       X-Position.
+     * @param y       Y-Position.
+     * @param width   Breite des Bildes (FitWidth).
+     * @param height  Höhe des Bildes (FitHeight).
+     * @return Das erstellte {@code ImageView}.
      */
     public static ImageView drawImage(Pane parent, String texture, double x, double y, double width, double height) {
+        // Verwende getResourceAsStream für den sicheren Zugriff auf interne Ressourcen
         Image img = new Image(UIUtils.class.getResourceAsStream(texture));
         ImageView view = new ImageView(img);
         view.setX(x);
@@ -306,22 +342,29 @@ public class UIUtils {
     }
 
     /**
-     * Zeichnet einen animierten Hintergrund als einfache Frame-Schleife.
+     * Zeichnet einen animierten Hintergrund als einfache Frame-Schleife mit einer Standarddauer von 800 ms pro Frame.
+     *
+     * @param parent Pane, in die der Hintergrund eingefügt wird.
+     * @param width Die Breite des Viewports.
+     * @param height Die Höhe des Viewports.
+     * @param framePaths Variable Liste der Ressourcenpfade für die Animations-Frames.
+     * @return Der erstellte {@code ImageView}-Knoten, der die Animation hält.
      */
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, String... framePaths) {
         return drawAnimatedBackground(parent, width, height, Duration.millis(800), framePaths);
     }
 
     /**
-     * Draws a background {@code ImageView} that animates between multiple image frames
-     * using a specified frame duration. Includes fallback logic if the primary paths fail.
+     * Zeichnet einen Hintergrund-{@code ImageView}, der mithilfe einer angegebenen Frame-Dauer
+     * zwischen mehreren Bild-Frames animiert wird. Enthält Fallback-Logik, falls die primären Pfade fehlschlagen.
      *
-     * @param parent The {@code Pane} where the background will be added.
-     * @param width The width of the viewport.
-     * @param height The height of the viewport.
-     * @param frameDuration The time duration for each frame in the animation.
-     * @param framePaths Variable list of resource paths for the animation frames.
-     * @return The created {@code ImageView} node holding the animation.
+     *
+     * @param parent Die {@code Pane}, in die der Hintergrund eingefügt wird.
+     * @param width Die Breite des Viewports.
+     * @param height Die Höhe des Viewports.
+     * @param frameDuration Die Zeitdauer für jeden Frame in der Animation.
+     * @param framePaths Variable Liste der Ressourcenpfade für die Animations-Frames.
+     * @return Der erstellte {@code ImageView}-Knoten, der die Animation hält.
      */
     public static ImageView drawAnimatedBackground(Pane parent, double width, double height, Duration frameDuration, String... framePaths) {
         List<Image> frameList = new ArrayList<>();
@@ -333,6 +376,7 @@ public class UIUtils {
         }
 
         if (frameList.isEmpty()) {
+            // Fallback-Logik zu älteren/generischen Pfaden
             String[] fallbackOld = {
                     "/assets/hud/BackgroundMainZustand1.png",
                     "/assets/hud/BackgroundMainZustand2.png",
@@ -347,6 +391,7 @@ public class UIUtils {
         }
 
         if (frameList.isEmpty()) {
+            // Letzter Fallback zu einem einzelnen allgemeinen Hintergrund
             InputStream fallback = UIUtils.class.getResourceAsStream("/assets/hud/background.png");
             if (fallback != null) {
                 frameList.add(new Image(fallback));
@@ -354,6 +399,7 @@ public class UIUtils {
         }
 
         if (frameList.isEmpty()) {
+            // Letzter Notfall-Fallback (transparenter 1x1-Pixel)
             frameList.add(new WritableImage(1, 1));
         }
 
@@ -369,6 +415,7 @@ public class UIUtils {
 
         if (frames.length > 1) {
             int[] frameIndex = {0};
+            // Definiert die Zeitleiste für die Animation
             Timeline loop = new Timeline(
                     new KeyFrame(frameDuration, e -> {
                         frameIndex[0] = (frameIndex[0] + 1) % frames.length;
@@ -377,27 +424,28 @@ public class UIUtils {
             );
             loop.setCycleCount(Animation.INDEFINITE);
             loop.play();
-            view.getProperties().put("backgroundLoop", loop); // keep reference alive
+            // Referenz auf die Timeline in den Eigenschaften speichern, um Garbage Collection zu verhindern
+            view.getProperties().put("backgroundLoop", loop);
         }
         return view;
     }
 
     /**
-     * Draws a {@code Slider} and automatically centers it horizontally within the parent {@code Pane}.
+     * Zeichnet einen {@code Slider} und zentriert ihn automatisch horizontal innerhalb der übergeordneten {@code Pane}.
      *
-     * @param parent The {@code Pane} where the slider will be added.
-     * @param min The minimum value of the slider.
-     * @param max The maximum value of the slider.
-     * @param value The initial value of the slider.
-     * @param y The Y-position of the slider (if {@code verticalCenter} is false).
-     * @param verticalCenter {@code true} to center vertically as well; {@code false} to use the specified Y.
-     * @return The created and centered {@code Slider} node.
+     * @param parent Die {@code Pane}, in die der Slider eingefügt wird.
+     * @param min Der Minimalwert des Sliders.
+     * @param max Der Maximalwert des Sliders.
+     * @param value Der Startwert des Sliders.
+     * @param y Die Y-Position des Sliders (wenn {@code verticalCenter} {@code false} ist).
+     * @param verticalCenter {@code true}, um auch vertikal zu zentrieren; {@code false}, um das angegebene Y zu verwenden.
+     * @return Der erstellte und zentrierte {@code Slider}-Knoten.
      */
     public static Slider drawCenteredSlider(Pane parent, double min, double max, double value, double y, boolean verticalCenter) {
 
         Slider slider = new Slider(min, max, value);
         slider.applyCss();
-        slider.setPrefWidth(200);
+        slider.setPrefWidth(200); // Standardbreite festlegen
         parent.getChildren().add(slider);
 
         Runnable doCenter = () -> {
@@ -427,10 +475,10 @@ public class UIUtils {
     }
 
     /**
-     * Calculates and returns the rendered width of a {@code Text} node after applying CSS.
+     * Berechnet und gibt die gerenderte Breite eines {@code Text}-Knotens nach Anwendung von CSS zurück.
      *
-     * @param text The {@code Text} node.
-     * @return The actual width of the text layout bounds.
+     * @param text Der {@code Text}-Knoten.
+     * @return Die tatsächliche Breite der Text-Layout-Begrenzungen.
      */
     public static double getTextWidth(Text text) {
         text.applyCss();

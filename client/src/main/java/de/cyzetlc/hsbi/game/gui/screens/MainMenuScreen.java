@@ -17,10 +17,11 @@ import javafx.util.Duration;
 import java.util.Random;
 
 /**
- * The {@code MainMenuScreen} represents the primary navigation screen for the game.
+ * Der {@code MainMenuScreen} repräsentiert den primären Navigationsbildschirm für das Spiel.
+ *
  * <p>
- * It provides options to start the game, access multiplayer, configure settings, and exit.
- * The screen features an animated, continuously scrolling background.
+ * Er bietet Optionen zum Starten des Spiels, zum Zugriff auf den Mehrspieler-Modus, zum Konfigurieren der Einstellungen und zum Beenden.
+ * Der Bildschirm verfügt über einen animierten, kontinuierlich scrollenden Hintergrund.
  *
  * @author Tom Coombs
  * @author Leonardo (aka. Phantomic)
@@ -31,30 +32,30 @@ import java.util.Random;
  */
 public class MainMenuScreen implements GuiScreen {
     /**
-     * The root container for all visual elements displayed on this screen.
+     * Der Wurzel-Container für alle auf diesem Bildschirm angezeigten visuellen Elemente.
      */
     private final Pane root = new Pane();
 
     /**
-     * Reference to the ScreenManager, used for handling screen transitions.
+     * Referenz auf den ScreenManager, der für die Behandlung von Bildschirmübergängen verwendet wird.
      */
     private final ScreenManager screenManager;
 
     /**
-     * Constructs a new MainMenuScreen.
+     * Konstruiert einen neuen MainMenuScreen.
      *
-     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     * @param screenManager Die ScreenManager-Instanz, die für die Behandlung von Bildschirmübergängen verantwortlich ist.
      */
     public MainMenuScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
     /**
-     * Initializes the Main Menu screen by setting up the animated background,
-     * drawing the main title, creating navigation buttons, and initializing the achievement panel.
+     * Initialisiert den Hauptmenü-Bildschirm, indem der animierte Hintergrund eingerichtet wird,
+     * der Haupttitel gezeichnet wird, Navigationsschaltflächen erstellt werden und das Erfolgs-Panel initialisiert wird.
      * <p>
-     * The method establishes a {@code Timeline} for the background animation, which continuously
-     * shifts two background {@code ImageView}s horizontally to simulate endless scrolling.
+     * Die Methode erstellt eine {@code Timeline} für die Hintergrundanimation, die kontinuierlich
+     * zwei Hintergrund-{@code ImageView}s horizontal verschiebt, um endloses Scrollen zu simulieren.
      */
     @Override
     public void initialize() {
@@ -63,7 +64,7 @@ public class MainMenuScreen implements GuiScreen {
         double height = screenManager.getStage().getHeight();
 
         /*
-        Background mit Bewegung von links nach rechts (so ähnlich wie in Minecraft halt)
+        Hintergrund mit Bewegung von links nach rechts (so ähnlich wie in Minecraft halt)
          */
         ImageView bg1 = UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
         ImageView bg2 = UIUtils.drawImage(root, "/assets/hud/background.png", 0, 0, width, height);
@@ -73,12 +74,12 @@ public class MainMenuScreen implements GuiScreen {
 
         bg2.setFitWidth(width);
         bg2.setFitHeight(height);
-        bg2.setTranslateX(width);
+        bg2.setTranslateX(width); // Zweites Bild direkt rechts neben dem ersten positionieren
 
         double speed = 1;
 
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(16), e -> {
+                new KeyFrame(Duration.millis(16), e -> { // ca. 60 FPS
 
                     // beide verschieben sich nach rechts
                     bg1.setTranslateX(bg1.getTranslateX() + speed);
@@ -100,44 +101,50 @@ public class MainMenuScreen implements GuiScreen {
 
         UIUtils.drawCenteredText(root, messageHandler.getStaticMessage("gui.mainmenu.title"), 0, height / 2 - 230, false).setId("menu-title");
 
+        // Schaltflächen
         UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.start"), 0, height / 2 - 150, false, "mainmenu-button", () -> screenManager.showScreen(new GameScreen(screenManager)));
         UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.multiplayer"), 0, height / 2 - 70, false, "mainmenu-button", () -> screenManager.showScreen(new CommunityScreen(screenManager))).setDisable(true);
         UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.settings"), 0, height / 2 + 10, false, "mainmenu-button", () -> screenManager.showScreen(Game.getInstance().getSettingsScreen()));
         UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.mainmenu.btn.exit"), 0, height / 2 + 90, false, "mainmenu-button", screenManager::closeScreen);
+
+        // Footer
         UIUtils.drawText(root, "(c) Copyright CyZeTLC.DE & Phantomic", 10, height - 20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width - 210, height - 20);
 
-        // Achievements
+        // Achievements Panel
         UIUtils.drawRect(root, 60, height / 2 - 200, 400, 400, Color.valueOf("#222626")).setOpacity(0.6);
         Text achievementsLbl = UIUtils.drawText(root, "Achievements", 200, height / 2 - 165, "achievements");
-        achievementsLbl.setLayoutX((445 - UIUtils.getTextWidth(achievementsLbl)) / 2);
+        // Text zentrieren (Mitte des Panels ist bei 60 + 400/2 = 260. Abstand zum linken Rand ist (260 - Textbreite/2) - 60)
+        achievementsLbl.setLayoutX((445 - UIUtils.getTextWidth(achievementsLbl)) / 2); // 445 ist die rechte Kante des Panels (60 + 400 - 15)
         this.drawAchievementProgress(height / 2 - 130);
     }
 
     /**
-     * Draws a placeholder panel showing the progress bars for a set number of achievements.
+     * Zeichnet ein Platzhalter-Panel, das die Fortschrittsbalken für eine festgelegte Anzahl von Erfolgen (Achievements) anzeigt.
      * <p>
-     * This method uses random values to simulate the progress percentage for each achievement
-     * and visualizes it using overlaid green and black {@code Rectangle}s.
+     * Diese Methode verwendet Zufallswerte, um den Fortschrittsprozentsatz für jeden Erfolg zu simulieren
+     * und visualisiert ihn mithilfe von überlagerten grünen und schwarzen {@code Rectangle}s.
      *
-     * @param y The starting Y-coordinate for the first achievement line.
+     * @param y Die Start-Y-Koordinate für die erste Erfolgszeile.
      */
     public void drawAchievementProgress(double y) {
         for (int i = 0; i < 5; i++) {
-            double progress = new Random().nextDouble(1);
+            double progress = new Random().nextDouble(1); // Zufälliger Fortschritt (0.0 bis 1.0)
             int fullWidth = 360;
             double greenWidth = 360 * progress;
             double blackWidth = fullWidth - greenWidth;
             UIUtils.drawText(root, "No. " + i + ": " + Math.round(progress * 100) + "%", 80, y - 5 + i * 60);
+            // Grüner Balken für den Fortschritt
             UIUtils.drawRect(root, 80, y + i * 60, greenWidth, 20, Color.GREEN);
+            // Schwarzer Balken für den verbleibenden Teil
             UIUtils.drawRect(root, 80 + greenWidth, y + i * 60, blackWidth, 20, Color.BLACK);
         }
     }
 
     /**
-     * Retrieves the root pane of the MainMenuScreen.
+     * Ruft das Wurzel-Pane des MainMenuScreens ab.
      *
-     * @return The JavaFX {@code Pane} used as the root container.
+     * @return Das JavaFX {@code Pane}, das als Wurzel-Container verwendet wird.
      */
     @Override
     public Pane getRoot() {
@@ -145,9 +152,9 @@ public class MainMenuScreen implements GuiScreen {
     }
 
     /**
-     * Returns the identifying name of this screen.
+     * Gibt den identifizierenden Namen dieses Bildschirms zurück.
      *
-     * @return The constant screen name "MainMenu".
+     * @return Der konstante Bildschirmname "MainMenu".
      */
     @Override
     public String getName() {
