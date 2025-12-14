@@ -7,33 +7,87 @@ import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Die abstrakte Klasse {@code AnimatedBlock} erweitert {@code Block} und bietet die Grundfunktionalität
+ * zur Verwaltung und Anzeige einer Bildsequenz (Animation).
+ * <p>
+ * Sie kümmert sich um das Laden der Frames, die Zeitsteuerung der Animation und das Aktualisieren
+ * des angezeigten Sprites basierend auf der verstrichenen Zeit.
+ *
+ * @see Block
+ *
+ * @author Tom Coombs
+ */
 public abstract class AnimatedBlock extends Block {
+    /**
+     * Ein Array von Pfaden zu den Bilddateien, die die Animations-Frames bilden.
+     */
     protected final String[] FRAME_PATHS;
+
+    /**
+     * Die Dauer (in Sekunden), die jeder Frame angezeigt wird, bevor zum nächsten gewechselt wird.
+     */
     private final double FRAME_DURATION_SECONDS = 0.6;
 
+    /**
+     * Liste der geladenen {@code Image}-Frames.
+     */
     private final List<Image> frames = new ArrayList<>();
+    /**
+     * Index des aktuell angezeigten Animations-Frames.
+     */
     private int currentFrame = 0;
+    /**
+     * Zähler für die Zeit, die seit dem letzten Frame-Wechsel vergangen ist.
+     */
     private double frameTimer = 0;
+    /**
+     * Der Zeitstempel des letzten Updates in Nanosekunden, zur Berechnung der Delta-Zeit.
+     */
     private long lastFrameTimeNanos = 0L;
 
+    /**
+     * Konstruiert einen neuen {@code AnimatedBlock}.
+     *
+     * @param location Die Weltposition des Blocks.
+     * @param frame_paths Ein Array von String-Pfaden zu den Animations-Frames.
+     */
     public AnimatedBlock(Location location, String[] frame_paths) {
         super(location);
         this.FRAME_PATHS = frame_paths;
     }
 
+    /**
+     * Zeichnet den Block auf das {@code Pane} und stellt sicher, dass die Animations-Frames
+     * geladen werden, bevor sie angezeigt werden können.
+     *
+     * @param pane Das {@code Pane}, auf dem der Block gezeichnet wird.
+     */
     @Override
     public void draw(Pane pane) {
         super.draw(pane);
         this.loadFrames();
     }
 
+    /**
+     * Aktualisiert den Zustand des Blocks.
+     * <p>
+     * Ruft die Animationsfortschrittslogik auf und setzt den Sprite auf den aktuellen Frame.
+     */
     @Override
     public void update() {
         super.update();
         this.advanceAnimation();
-        this.sprite.setImage(this.frames.get(this.currentFrame));
+        if (!this.frames.isEmpty()) {
+            this.sprite.setImage(this.frames.get(this.currentFrame));
+        }
     }
 
+    /**
+     * Lädt die Bilder für alle in {@code FRAME_PATHS} definierten Animations-Frames.
+     * <p>
+     * Bei Fehlern wird ein Fallback auf eine Standard-Tileset-Textur verwendet, um Abstürze zu vermeiden.
+     */
     private void loadFrames() {
         if (!this.frames.isEmpty()) {
             return;
@@ -51,6 +105,12 @@ public abstract class AnimatedBlock extends Block {
         }
     }
 
+    /**
+     * Bewegt die Animation basierend auf der seit dem letzten Update verstrichenen Zeit weiter.
+     * <p>
+     * Berechnet die Delta-Zeit und wechselt zum nächsten Frame, wenn die {@code FRAME_DURATION_SECONDS}
+     * überschritten wurde.
+     */
     private void advanceAnimation() {
         if (this.frames.size() < 2) {
             return;

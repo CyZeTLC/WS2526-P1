@@ -1,5 +1,14 @@
 package de.cyzetlc.hsbi.game.gui.block;
 
+/**
+ * Die {@code Material} Enumeration definiert alle möglichen Blockmaterialien oder Texturen,
+ * die in der Spielwelt verwendet werden können.
+ * <p>
+ * Jedes Material ist mit einem Dateipfad zur entsprechenden Textur verknüpft.
+ *
+ *
+ * @author Tom Coombs
+ */
 public enum Material {
     AIR(""),
     DIRT("/assets/tileset/dirt_tiles.png"),
@@ -18,8 +27,16 @@ public enum Material {
     SERVER("/assets/hud/PlatformServerMehreZustände/Zugeschnitten1.png"),
     FLOATING_PLATFORM("/assets/movingplatform/1MovingPlatform32x64.png");
 
+    /**
+     * Der Dateipfad zur Textur des Materials.
+     */
     public String texturePath;
 
+    /**
+     * Konstruiert ein {@code Material} mit dem angegebenen Texturpfad.
+     *
+     * @param texturePath Der relative Pfad zur Bilddatei der Textur.
+     */
     Material(String texturePath) {
         this.texturePath = texturePath;
     }

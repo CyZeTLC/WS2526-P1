@@ -18,12 +18,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
- * The {@code LoadingScreen} class displays a visual loading progress bar
- * while essential game assets (textures, materials) are loaded in the background.
+ * Die Klasse {@code LoadingScreen} zeigt eine visuelle Ladefortschrittsanzeige an,
+ * während essenzielle Spiel-Assets (Texturen, Materialien) im Hintergrund geladen werden.
+ *
  * <p>
- * This screen ensures that all necessary resources are prepared before transitioning
- * the user to the main menu. The loading time is primarily synchronized with an
- * animated progress bar timeline for a smooth user experience.
+ * Dieser Bildschirm stellt sicher, dass alle notwendigen Ressourcen vorbereitet sind,
+ * bevor der Benutzer zum Hauptmenü wechselt. Die Ladezeit wird primär mit einer
+ * animierten Fortschrittsbalken-Timeline für ein reibungsloses Benutzererlebnis synchronisiert.
  *
  * @author Tom Coombs
  * @author Leonardo (aka. Phantomic)
@@ -33,29 +34,32 @@ import javafx.util.Duration;
  * @see Material
  */
 public class LoadingScreen implements GuiScreen {
+    /** Der Wurzel-Container für alle visuellen Elemente auf diesem Bildschirm. */
     private final Pane root = new Pane();
+    /** Referenz auf den ScreenManager zur Handhabung von Bildschirmübergängen. */
     private final ScreenManager screenManager;
 
     /**
-     * Constructs a new LoadingScreen.
+     * Konstruiert einen neuen LoadingScreen.
      *
-     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     * @param screenManager Die ScreenManager-Instanz, die für die Behandlung von Bildschirmübergängen verantwortlich ist.
      */
     public LoadingScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
     /**
-     * Initializes the LoadingScreen, sets up the background, the title,
-     * the progress bar animation, and starts the asynchronous asset loading thread.
+     * Initialisiert den LoadingScreen, richtet den Hintergrund, den Titel,
+     * die Fortschrittsbalken-Animation ein und startet den asynchronen Asset-Lade-Thread.
+     *
      * <p>
-     * The method performs the following main steps:
+     * Die Methode führt die folgenden Hauptschritte durch:
      * <ul>
-     * <li>Draws the animated background and centered "Lade..." text.</li>
-     * <li>Creates and visualizes the static background and dynamic foreground of the progress bar.</li>
-     * <li>Initializes a {@code Timeline} for the progress bar animation (currently set to 3 seconds).</li>
-     * <li>Starts a separate thread to iterate through all {@code Material} values and load/cache their textures.</li>
-     * <li>Sets the {@code Timeline}'s completion handler to switch to the {@code MainMenuScreen}.</li>
+     * <li>Zeichnet den animierten Hintergrund und den zentrierten Text "Lade...".</li>
+     * <li>Erstellt und visualisiert den statischen Hintergrund und den dynamischen Vordergrund des Fortschrittsbalkens.</li>
+     * <li>Initialisiert eine {@code Timeline} für die Fortschrittsbalken-Animation (derzeit auf 3 Sekunden eingestellt).</li>
+     * <li>Startet einen separaten Thread, um alle {@code Material}-Werte zu durchlaufen und deren Texturen zu laden/cachen.</li>
+     * <li>Stellt den Abschluss-Handler der {@code Timeline} so ein, dass zum {@code MainMenuScreen} gewechselt wird.</li>
      * </ul>
      */
     @Override
@@ -73,23 +77,28 @@ public class LoadingScreen implements GuiScreen {
         double barWidth = width/2;   // Endbreite des Balkens
         double barHeight = 60;
 
+        // Hintergrund des Ladebalkens
         UIUtils.drawRect(root, width/2 - barWidth/2, height/2 - barHeight/2, barWidth, barHeight, Color.GRAY);
 
+        // Dynamischer Fortschrittsbalken (startet bei 0 Breite)
         Rectangle progress = UIUtils.drawRect(root, width/2 - barWidth/2, height/2 - barHeight/2, 0, barHeight, Color.LIMEGREEN);
 
         Timeline timeline = new Timeline();
 
+        // KeyValue: Animation der Breite von 0 bis barWidth
         KeyValue kvWidth = new KeyValue(progress.widthProperty(), barWidth);
+        // KeyFrame: Die Animation dauert 3000 Millisekunden
         KeyFrame kf = new KeyFrame(Duration.millis(3000), kvWidth);
 
         timeline.getKeyFrames().add(kf);
 
         /*
-         * Load assets
+         * Assets laden (asynchron)
          */
         new Thread() {
             @Override
             public void run() {
+                // Alle Material-Texturen vorladen
                 for (Material material : Material.values()) {
                     if (material.texturePath != null && !material.texturePath.isEmpty()) {
                         try {
@@ -99,28 +108,32 @@ public class LoadingScreen implements GuiScreen {
                                 ImageAssets.cacheBlockImage(material, image);
                             }
                         } catch (Exception ignored) {
-                            // skip missing asset to avoid crash
+                            // Fehlendes Asset überspringen, um Absturz zu vermeiden
                         }
                     }
                 }
+                // Assets für den Spieler vorwärmen
                 ImageAssets.warm();
+                // Alle Sounds vorladen
                 SoundManager.preloadAll();
             }
         }.start();
 
+        // Nach Abschluss der Timeline zum Hauptmenü wechseln
         timeline.setOnFinished(e -> Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen()));
 
         timeline.play();
 
+        // Footer-Informationen
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
 
     }
 
     /**
-     * Retrieves the root pane of the LoadingScreen, which contains all visual elements.
+     * Ruft das Wurzel-Pane des LoadingScreens ab, das alle visuellen Elemente enthält.
      *
-     * @return The JavaFX {@code Pane} used as the root container.
+     * @return Das JavaFX {@code Pane}, das als Wurzel-Container verwendet wird.
      */
     @Override
     public Pane getRoot() {
@@ -128,9 +141,9 @@ public class LoadingScreen implements GuiScreen {
     }
 
     /**
-     * Returns the identifying name of this screen.
+     * Gibt den identifizierenden Namen dieses Bildschirms zurück.
      *
-     * @return The constant screen name "LoadingScreen".
+     * @return Der konstante Bildschirmname "LoadingScreen".
      */
     @Override
     public String getName() {

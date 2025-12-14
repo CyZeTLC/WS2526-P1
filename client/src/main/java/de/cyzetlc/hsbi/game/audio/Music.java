@@ -1,35 +1,36 @@
 package de.cyzetlc.hsbi.game.audio;
 
 /**
- * The {@code Music} enumeration defines all background music tracks available in the game,
- * linking a logical name (e.g., MENU) to the physical resource path of the audio file.
+ * Die {@code Music} Enumeration definiert alle im Spiel verfügbaren Hintergrundmusiktitel
+ * und verknüpft einen logischen Namen (z. B. MENU) mit dem physischen Ressourcenpfad
+ * der Audiodatei.
  *
  * @see SoundManager
  *
- * @author Leonardo Parrino
+ * @author Tom Coombs
  */
 public enum Music {
     MENU("/assets/audio/background_music/Sonic Empire (Short Mix) (128kbit_AAC).m4a"),
     GAME("/assets/audio/background_music/Sonic Empire (Short Mix) (128kbit_AAC).m4a");
 
     /**
-     * The resource path (classpath) to the corresponding audio file.
+     * Der Ressourcenpfad (Classpath) zur entsprechenden Audiodatei.
      */
     private final String path;
 
     /**
-     * Constructs a {@code Music} enum constant with the specified resource path.
+     * Konstruiert eine {@code Music} Enum-Konstante mit dem angegebenen Ressourcenpfad.
      *
-     * @param path The classpath resource path of the audio file.
+     * @param path Der Classpath-Ressourcenpfad der Audiodatei.
      */
     Music(String path) {
         this.path = path;
     }
 
     /**
-     * Returns the resource path to the audio file associated with this music track.
+     * Gibt den Ressourcenpfad zur Audiodatei zurück, die diesem Musiktitel zugeordnet ist.
      *
-     * @return The resource path string.
+     * @return Der Ressourcenpfad als String.
      */
     public String path() {
         return path;

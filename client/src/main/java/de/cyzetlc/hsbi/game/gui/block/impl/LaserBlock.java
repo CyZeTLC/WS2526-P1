@@ -6,11 +6,12 @@ import de.cyzetlc.hsbi.game.world.Location;
 import javafx.scene.layout.Pane;
 
 /**
- * The {@code LaserBlock} represents a projectile fired by an enemy, designed to move
- * horizontally and inflict damage upon collision with the player.
+ * Der {@code LaserBlock} repräsentiert ein von einem Feind abgefeuertes Projektil, das
+ * horizontal fliegt und bei Kollision mit dem Spieler Schaden zufügt.
  * <p>
- * This block has a limited lifetime (4.0 seconds) and automatically disappears upon impact or expiration.
- * The movement is calculated based on the time elapsed between frames (`delta`).
+ * Dieser Block hat eine begrenzte Lebensdauer (4,0 Sekunden) und verschwindet automatisch
+ * bei Aufprall oder Ablauf der Zeit. Die Bewegung wird basierend auf der zwischen den
+ * Frames verstrichenen Zeit (`delta`) berechnet.
  *
  * @see Block
  * @see Material#ROBOT_LASER
@@ -19,31 +20,31 @@ import javafx.scene.layout.Pane;
  */
 public class LaserBlock extends Block {
     /**
-     * The constant speed at which the laser projectile travels (units per second).
+     * Die konstante Geschwindigkeit, mit der das Laserprojektil fliegt (Einheiten pro Sekunde).
      */
     private final double speed;
 
     /**
-     * The horizontal direction of movement: 1 for right, -1 for left.
+     * Die horizontale Bewegungsrichtung: 1 für rechts, -1 für links.
      */
     private final int direction;
 
     /**
-     * Tracks the total time (in seconds) the laser has been active since creation.
+     * Verfolgt die Gesamtzeit (in Sekunden), die der Laser seit seiner Erstellung aktiv war.
      */
     private double lifeSeconds = 0;
 
     /**
-     * The timestamp of the last update cycle in nanoseconds, used to calculate delta time.
+     * Der Zeitstempel des letzten Update-Zyklus in Nanosekunden, der zur Berechnung der Delta-Zeit verwendet wird.
      */
     private long lastUpdateNanos = 0L;
 
     /**
-     * Constructs a new {@code LaserBlock} instance, initializing its movement properties and appearance.
+     * Konstruiert eine neue {@code LaserBlock}-Instanz und initialisiert deren Bewegungseigenschaften und Aussehen.
      *
-     * @param location The initial world location of the laser.
-     * @param direction The initial direction of movement (any non-negative value is right, negative is left).
-     * @param speed The constant movement speed of the laser.
+     * @param location Die anfängliche Weltposition des Lasers.
+     * @param direction Die anfängliche Bewegungsrichtung (jeder nicht-negative Wert ist rechts, negativ ist links).
+     * @param speed Die konstante Bewegungsgeschwindigkeit des Lasers.
      */
     public LaserBlock(Location location, int direction, double speed) {
         super(location);
@@ -56,10 +57,10 @@ public class LaserBlock extends Block {
     }
 
     /**
-     * Overrides the default drawing method to adjust the visual size of the laser sprite
-     * while keeping the collision box size constant.
+     * Überschreibt die Standard-Zeichnenmethode, um die visuelle Größe des Laser-Sprites anzupassen,
+     * während die Kollisions-Box-Größe konstant bleibt.
      *
-     * @param pane The {@code Pane} where the laser is drawn.
+     * @param pane Das {@code Pane}, auf dem der Laser gezeichnet wird.
      */
     @Override
     public void draw(Pane pane) {
@@ -70,12 +71,12 @@ public class LaserBlock extends Block {
     }
 
     /**
-     * Handles collision logic when the laser hits a player.
+     * Behandelt die Kollisionslogik, wenn der Laser einen Spieler trifft.
      * <p>
-     * If the player is in God Mode, the laser is simply consumed and disappears.
-     * Otherwise, the player takes 1 point of damage, and the laser is deactivated.
+     * Wenn sich der Spieler im God Mode befindet, wird der Laser einfach konsumiert und verschwindet.
+     * Andernfalls erleidet der Spieler 1 Schadenspunkt, und der Laser wird deaktiviert.
      *
-     * @param player The {@code Player} entity that collided with the laser.
+     * @param player Die {@code Player}-Entität, die mit dem Laser kollidiert ist.
      */
     @Override
     public void onCollide(de.cyzetlc.hsbi.game.entity.Player player) {
@@ -90,10 +91,11 @@ public class LaserBlock extends Block {
     }
 
     /**
-     * Updates the laser's position and lifetime based on the time elapsed since the last frame.
+     * Aktualisiert die Position und Lebensdauer des Lasers basierend auf der seit dem letzten Frame
+     * verstrichenen Zeit.
      * <p>
-     * Calculates the delta time (`delta`), checks if the laser's lifetime exceeds 4.0 seconds,
-     * and updates the horizontal position based on speed and direction.
+     * Berechnet die Delta-Zeit (`delta`), prüft, ob die Lebensdauer des Lasers 4,0 Sekunden überschreitet,
+     * und aktualisiert die horizontale Position basierend auf Geschwindigkeit und Richtung.
      */
     @Override
     public void update() {

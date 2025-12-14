@@ -10,11 +10,12 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
- * The {@code LevelFinishedScreen} displays a summary screen when the player successfully
- * completes a game level.
+ * Der {@code LevelFinishedScreen} zeigt einen Übersichts-Bildschirm an, wenn der Spieler erfolgreich
+ * ein Spiel-Level abgeschlossen hat.
+ *
  * <p>
- * This screen shows the player's performance statistics (time taken, score, enemies defeated,
- * health lost) and provides options to proceed to the next level or return to the main menu.
+ * Dieser Bildschirm zeigt die Leistungsstatistiken des Spielers (benötigte Zeit, gesammelte Dateien,
+ * verlorene Gesundheit) und bietet Optionen, um zum nächsten Level fortzufahren oder zum Hauptmenü zurückzukehren.
  *
  * @author Tom Coombs
  * @author Leonardo (aka. Phantomic)
@@ -24,31 +25,31 @@ import javafx.util.Duration;
  */
 public class LevelFinishedScreen implements GuiScreen {
     /**
-     * The root container for all visual elements displayed on this screen.
+     * Der Wurzel-Container für alle auf diesem Bildschirm angezeigten visuellen Elemente.
      */
     private final Pane root = new Pane();
 
     /**
-     * Reference to the ScreenManager, used for handling screen transitions.
+     * Referenz auf den ScreenManager, der für die Behandlung von Bildschirmübergängen verwendet wird.
      */
     private final ScreenManager screenManager;
 
     /**
-     * Constructs a new LevelFinishedScreen.
+     * Konstruiert einen neuen LevelFinishedScreen.
      *
-     * @param screenManager The screen manager instance responsible for handling screen transitions.
+     * @param screenManager Die ScreenManager-Instanz, die für die Behandlung von Bildschirmübergängen verantwortlich ist.
      */
     public LevelFinishedScreen(ScreenManager screenManager) {
         this.screenManager = screenManager;
     }
 
     /**
-     * Initializes the Level Finished screen, sets up the background, title, statistics,
-     * and navigation buttons.
+     * Initialisiert den Level-Abgeschlossen-Bildschirm, richtet den Hintergrund, den Titel, die Statistiken
+     * und die Navigationsschaltflächen ein.
      * <p>
-     * This method calculates the required time taken (minutes and seconds) by comparing
-     * the current time against the level's start time, and displays statistics
-     * for points, enemies killed, and health lost.
+     * Diese Methode berechnet die benötigte Zeit (Minuten und Sekunden) durch den Vergleich
+     * der aktuellen Zeit mit der Startzeit des Levels und zeigt Statistiken
+     * für gesammelte Dateien und verlorene Gesundheit an.
      */
     @Override
     public void initialize() {
@@ -60,9 +61,11 @@ public class LevelFinishedScreen implements GuiScreen {
                 "/assets/hud/BackgroundZustand1.png",
                 "/assets/hud/BackgroundZustand2.png");
 
+        // Zeichnet ein halbtransparentes schwarzes Rechteck als Hintergrund für die Statistiken
         UIUtils.drawRect(root, width/2 - 300, height/2 - 300, 600, 600, Color.BLACK).setOpacity(0.4);
         UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.title"), 0, 50, false).setId("menu-title");
 
+        // Schaltfläche "Nächstes Level" anzeigen, falls vorhanden
         if (Game.getInstance().getCurrentLevel().getNextLevel() != null) {
             UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.finished.btn.next"), 0, height / 2 + 150, false, "mainmenu-button", () -> {
                 Game.getInstance().setCurrentLevel(Game.getInstance().getCurrentLevel().getNextLevel());
@@ -70,31 +73,37 @@ public class LevelFinishedScreen implements GuiScreen {
                 Game.getLogger().info(Game.getInstance().getCurrentLevel().getName() + " successfully loaded & saved!");
             });
         }
+        // Schaltfläche "Zurück zum Menü"
         UIUtils.drawCenteredButton(root, messageHandler.getMessageForLanguage("gui.finished.btn.mainmenu"), 0, height / 2 + 230, false, "mainmenu-button", () -> {
             Game.getInstance().getScreenManager().showScreen(Game.getInstance().getMainMenuScreen());
         });
 
+        // Zeitberechnung
         long millis = System.currentTimeMillis() - Game.getInstance().getCurrentLevel().getLevelStarted();
         long secs = millis / 1000;
         long mins = secs / 60;
         long restsecs = secs % 60;
 
+        // Gesammelte Dateien zählen
         int collected = Math.max(0, countFolderBlocks() - countActiveFolders());
 
+        // Statistiken anzeigen
         UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.title", Game.getInstance().getCurrentLevel().getName()), 0, 300, false, "stats-line-title");
         UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.time", mins + ":" + restsecs), 0, 380, false, "stats-line");
         UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.folder", String.valueOf(collected)), 0, 420, false, "stats-line");
+        // Gesundheit verloren (Maximalgesundheit - aktuelle Gesundheit)
         UIUtils.drawCenteredText(root, messageHandler.getMessageForLanguage("gui.finished.level.health", String.valueOf((Game.thePlayer.getMaxHealth() - Game.thePlayer.getHealth()))), 0, 460, false, "stats-line");
 
+        // Footer
         UIUtils.drawText(root, "© Copyright CyZeTLC.DE & Phantomic", 10, height-20);
         UIUtils.drawText(root, "Steal The Files v0.1 (BETA)", width-210, height-20);
 
     }
 
     /**
-     * Counts the total number of folder blocks (collectible files) present in the current level.
+     * Zählt die Gesamtzahl der Ordnerblöcke (einsammelbare Dateien), die im aktuellen Level vorhanden sind.
      *
-     * @return The total count of {@code FolderBlock} instances in the level's block list.
+     * @return Die Gesamtzahl der {@code FolderBlock}-Instanzen in der Blockliste des Levels.
      */
     private int countFolderBlocks() {
         return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
@@ -103,9 +112,9 @@ public class LevelFinishedScreen implements GuiScreen {
     }
 
     /**
-     * Counts the number of active (uncollected) folder blocks remaining in the current level.
+     * Zählt die Anzahl der aktiven (nicht eingesammelten) Ordnerblöcke, die im aktuellen Level verbleiben.
      *
-     * @return The count of {@code FolderBlock} instances that are currently active.
+     * @return Die Anzahl der {@code FolderBlock}-Instanzen, die derzeit aktiv sind.
      */
     private int countActiveFolders() {
         return (int) Game.getInstance().getCurrentLevel().getBlocks().stream()
@@ -115,9 +124,9 @@ public class LevelFinishedScreen implements GuiScreen {
     }
 
     /**
-     * Retrieves the root pane of the LevelFinishedScreen.
+     * Ruft das Wurzel-Pane des LevelFinishedScreens ab.
      *
-     * @return The JavaFX {@code Pane} used as the root container.
+     * @return Das JavaFX {@code Pane}, das als Wurzel-Container verwendet wird.
      */
     @Override
     public Pane getRoot() {
@@ -125,9 +134,9 @@ public class LevelFinishedScreen implements GuiScreen {
     }
 
     /**
-     * Returns the identifying name of this screen.
+     * Gibt den identifizierenden Namen dieses Bildschirms zurück.
      *
-     * @return The constant screen name "LevelFinished".
+     * @return Der konstante Bildschirmname "LevelFinished".
      */
     @Override
     public String getName() {

@@ -14,12 +14,13 @@ import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 /**
- * The {@code FinishBlock} represents the end goal or exit point of a game level.
- * When the player collides with this block, the current level is considered finished,
- * triggering the display of the {@code LevelFinishedScreen} and handling the transition
- * to the next level or resetting the game state if all levels are complete.
+ * Der {@code FinishBlock} repräsentiert das Endziel oder den Ausgangspunkt eines Levels.
+ * Wenn der Spieler mit diesem Block kollidiert, gilt das aktuelle Level als abgeschlossen,
+ * was die Anzeige des {@code LevelFinishedScreen} auslöst und den Übergang zum nächsten
+ * Level oder das Zurücksetzen des Spielzustands behandelt, falls alle Level abgeschlossen sind.
  * <p>
- * This block is visually animated and non-collidable (only triggers an effect upon overlap).
+ * Dieser Block ist visuell animiert und nicht kollidierbar (löst nur einen Effekt beim Überlappen aus).
+ *
  *
  * @see AnimatedBlock
  * @see LevelFinishedScreen
@@ -30,12 +31,12 @@ import javafx.util.Duration;
 public class FinishBlock extends AnimatedBlock {
 
     /**
-     * Constructs a new {@code FinishBlock} at the specified location.
+     * Konstruiert einen neuen {@code FinishBlock} an der angegebenen Position.
      * <p>
-     * Initializes the block with a set of animation frames, sets its material,
-     * disables collision, and defines its size.
+     * Initialisiert den Block mit einem Satz von Animations-Frames, setzt sein Material,
+     * deaktiviert die Kollision und definiert seine Größe.
      *
-     * @param location The world location where the block should be placed.
+     * @param location Die Weltposition, an der der Block platziert werden soll.
      */
     public FinishBlock(Location location) {
         super(location, new String[] {
@@ -52,17 +53,19 @@ public class FinishBlock extends AnimatedBlock {
     }
 
     /**
-     * Handles the logic executed when a player entity collides (overlaps) with the {@code FinishBlock}.
+     * Behandelt die Logik, die ausgeführt wird, wenn eine Spieler-Entität mit dem {@code FinishBlock}
+     * kollidiert (überlappt).
      * <p>
-     * This method performs the following critical actions:
+     * Diese Methode führt die folgenden kritischen Aktionen aus:
      * <ul>
-     * <li>Calls {@code onFinish()} on the current level.</li>
-     * <li>Shows the {@code LevelFinishedScreen}.</li>
-     * <li>Determines the next level based on {@code getCurrentLevel().getNextLevel()}.</li>
-     * <li>Saves the name of the next level to the configuration or resets to "Tutorial" if the game is completed.</li>
+     * <li>Ruft {@code onFinish()} für das aktuelle Level auf.</li>
+     * <li>Zeigt den {@code LevelFinishedScreen} an.</li>
+     * <li>Bestimmt das nächste Level basierend auf {@code getCurrentLevel().getNextLevel()}.</li>
+     * <li>Speichert den Namen des nächsten Levels in der Konfiguration oder setzt auf "Tutorial" zurück,
+     * wenn das Spiel abgeschlossen ist.</li>
      * </ul>
      *
-     * @param player The {@code Player} instance that collided with the block.
+     * @param player Die {@code Player}-Instanz, die mit dem Block kollidiert ist.
      */
     @Override
     public void onCollide(Player player) {

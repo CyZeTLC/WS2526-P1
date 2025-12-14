@@ -3,44 +3,45 @@ package de.cyzetlc.hsbi.game.gui;
 import javafx.scene.layout.Pane;
 
 /**
- * The {@code GuiScreen} interface defines the contract for all screens within the game's graphical user interface (GUI).
+ * Das {@code GuiScreen} Interface definiert den Vertrag für alle Bildschirme innerhalb der grafischen Benutzeroberfläche (GUI) des Spiels.
+ *
  * <p>
- * Any class representing a state (e.g., Main Menu, Game Screen, Settings) must implement this interface,
- * providing a root pane for display and methods for initialization and state updates.
+ * Jede Klasse, die einen Zustand repräsentiert (z. B. Hauptmenü, Spielbildschirm, Einstellungen), muss dieses Interface implementieren
+ * und ein Root-Pane zur Anzeige sowie Methoden zur Initialisierung und Zustandsaktualisierung bereitstellen.
  *
  * @author Tom Coombs
  */
 public interface GuiScreen {
     /**
-     * Retrieves the root pane of the GameScreen, which contains all visual elements.
-     * All components associated with this screen are children of this pane.
+     * Ruft das Root-Pane des GameScreens ab, das alle visuellen Elemente enthält.
+     * Alle Komponenten, die diesem Bildschirm zugeordnet sind, sind Kinder dieses Panes.
      *
-     * @return The JavaFX {@code Pane} used as the root container.
+     * @return Das JavaFX {@code Pane}, das als Root-Container verwendet wird.
      */
     Pane getRoot();
 
     /**
-     * Returns the identifying name of this screen.
+     * Gibt den identifizierenden Namen dieses Bildschirms zurück.
      *
-     * @return The constant screen name (e.g., "MainMenuScreen", "GameScreen").
+     * @return Der konstante Bildschirmname (z. B. "MainMenuScreen", "GameScreen").
      */
     String getName();
 
     /**
-     * Initializes the screen's state and visual components.
-     * This method is called once when the screen is first loaded or activated,
-     * typically used for loading resources, setting initial positions, and drawing static UI elements.
+     * Initialisiert den Zustand und die visuellen Komponenten des Bildschirms.
+     * Diese Methode wird einmal aufgerufen, wenn der Bildschirm zum ersten Mal geladen oder aktiviert wird.
+     * Sie wird typischerweise zum Laden von Ressourcen, zum Festlegen von Anfangspositionen und zum Zeichnen statischer UI-Elemente verwendet.
      */
     void initialize();
 
     /**
-     * Updates the state of the screen. This method is part of the core game loop.
+     * Aktualisiert den Zustand des Bildschirms. Diese Methode ist Teil der zentralen Spielschleife.
      * <p>
-     * It is used to calculate physics, handle input, update animations, and check for state changes.
-     * It is defined as a default method so that static screens (like simple menus) are not
-     * forced to implement complex update logic.
+     * Sie wird verwendet, um Physik zu berechnen, Eingaben zu verarbeiten, Animationen zu aktualisieren und Zustandsänderungen zu überprüfen.
+     * Sie ist als Standardmethode (default method) definiert, damit statische Bildschirme (wie einfache Menüs)
+     * nicht gezwungen sind, komplexe Aktualisierungslogik zu implementieren.
      *
-     * @param delta The time elapsed since the last frame, used for frame-rate independent calculations.
+     * @param delta Die seit dem letzten Frame verstrichene Zeit, verwendet für Frame-Raten-unabhängige Berechnungen.
      */
     default void update(double delta) {}
 }
