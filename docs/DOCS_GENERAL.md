@@ -34,8 +34,13 @@ Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autor
   - [6.1. Custom Runtime Image (JLink)](#61-custom-runtime-image-jlink)
   - [6.2. Native Installer (JPackage)](#62-native-installer-jpackage)
 - [7. Herausforderungen & Technische Lösungen](#7-herausforderungen--technische-lösungen)
-- [8. Game Assets & Design]()
-- [9. Dokumentation für das GUI & LevelDesign]()
+- [8. Game Assets & Design](#8-game-assets--design)
+- [9. Dokumentation für das GUI & LevelDesign](#9-dokumentation-aufbau-von-gui-und-level-architektur)
+  - [9.1. GUI-Rendering mit JavaFX](#91-gui-rendering-mit-javafx)
+    - [9.1.1. Kurze Erklärung zu JavaFX](#911-kurze-erklärung-zu-javafx)
+    - [9.1.2. Das vereinfachte erstellen der einzelnen GUIs durch die `UIUtils` Klasse](#912-das-vereinfachte-erstellen-der-einzelnen-guis-durch-die-uiutils-klasse)
+  - [9.2. Das `GuiScreen`-Konzept](#92-das-guiscreen-konzept)
+  - [9.3. Level-Implementierung über den GameScreen](#93-level-implementierung-über-den-gamescreen)
 ---
 
 ## 1. Konzept & Projekteidee
@@ -237,19 +242,36 @@ In diesem Abschnitt wird der schrittweise Aufbau der **Graphical User Interface 
 
 ---
 
-## 1. GUI-Rendering mit JavaFX
+## 9.1. GUI-Rendering mit JavaFX
 
 Die gesamte grafische Oberfläche des Spiels wird mithilfe der **JavaFX-Bibliothek** gerendert.
 
-### Kurze Erklärung zu JavaFX
+### 9.1.1 Kurze Erklärung zu JavaFX
 
 **JavaFX** ist eine Java-Bibliothek, die speziell für die Entwicklung von Desktop-Anwendungen und Rich Internet Applications (RIA) konzipiert wurde. Im Vergleich zu älteren Technologien wie Swing bietet JavaFX eine **modernere, hardwarebeschleunigte Oberfläche** und unterstützt **CSS** für einfaches Styling.
 
 * **Technische Notiz:** JavaFX wurde gewählt, da es **leistungsstarkes 2D-Rendering** und eine klare Trennung von Logik und Darstellung (mittels FXML/CSS) ermöglicht, was die Entwicklung der Benutzeroberfläche vereinfacht und beschleunigt.
 
+### 9.1.2 Das vereinfachte erstellen der einzelnen GUIs durch die `UIUtils` Klasse
+
+Die UIUtils-Klasse dient dazu, die Erstellung von Benutzeroberflächen zu vereinfachen und Wiederholungen im Code zu vermeiden (DRY-Prinzip). Sie kapselt komplexe JavaFX-Abläufe wie die reaktive Zentrierung von Elementen oder die Implementierung von Hintergrundanimationen in einfache Methoden wie `UIUtils#drawCenteredButton()`. Dadurch muss diese Logik nicht in jedem Menü-Screen neugeschrieben werden. Zudem gewährleistet die Klasse eine konsistente Benutzererfahrung, indem sie beispielsweise automatisch einen Klick-Sound für alle Buttons hinzufügt. Dies macht den Code in den eigentlichen Screens sauberer, wartbarer und fokussierter auf die spezifische Level- oder Menü-Logik.
+<br>
+Ein anschauliches Beispiel dafür wäre die Methode `UIUtils#drawRect(..)`, mit welcher das Zeichnen eines Rechtecks um einiges vereinfacht wird.
+
+```java
+public static Rectangle drawRect(Pane parent, double x, double y, double width, double height, Color color) {
+    Rectangle rect = new Rectangle(x, y, width, height);
+    rect.setFill(color);
+    parent.getChildren().add(rect);
+    return rect;
+}
+```
+
+Solche Methoden zur Vereinfachung gibt es dazu auch für Textelemente, Buttons etc.
+
 ---
 
-## 2. Das `GuiScreen`-Konzept
+## 9.2. Das `GuiScreen`-Konzept
 
 Um die **verschiedenen Zustände** und Ansichten des Fensters (z. B. Hauptmenü, Einstellungen, eigentliches Spiel) sauber voneinander trennen und effizient wechseln zu können, wurde das **`GuiScreen`-Konzept** implementiert.
 
@@ -292,7 +314,7 @@ public class ScreenManager {
 }
 ```
 
-## 3. Level-Implementierung über den `GameScreen`
+## 9.3. Level-Implementierung über den `GameScreen`
 
 Für das eigentliche Spiel-Gameplay wurde die Architektur so gestaltet, dass nicht für jedes Level ein neuer `GuiScreen` erstellt wird, sondern ein **einheitlicher `GameScreen`** als Container dient.
 
@@ -317,8 +339,8 @@ public class GameScreen implements GuiScreen {
         // .. HUD laden ..
 
         /*
-         * Remove all blocks & platforms from current level and
-         * load draw current level
+         * Entferne alle Bloecke & Platformen des aktuellen Levels und
+         * zeichne das aktuelle Level (dort werden Bloecke & Platformen dann neu geladen)
          */
         Game.getInstance().getCurrentLevel().getBlocks().clear();
         Game.getInstance().getCurrentLevel().getPlatforms().clear();
