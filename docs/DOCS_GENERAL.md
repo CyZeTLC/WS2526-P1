@@ -95,18 +95,13 @@ Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfr
 
 **Verwendetes Modell: Gemini 2.0 Flash Thinking**
 
-<details>
-<summary><strong>Hier klicken, um die verwendeten Prompts anzuzeigen</strong></summary>
-
-<br>
+### Die verwendeten Prompts:
 
 **Prompt 1: Der Überblick (Design-Fokus)**
 > "Ich entwickle einen 2D-Platformer in JavaFX und suche nach einer besseren Kamera-Lösung als der starren Spieler-Fixierung. Kannst du mir eine Übersicht der gängigen Systeme geben?"
 
 **Prompt 2: Die Technik (Mathematik & Code-Logik)**
 > "Meine Kamera wirkt ruckelig und springt immer etwas nach vorne. Ich möchte ein flüssiges Verhalten wie bei modernen Platformern wie z.B. Hollow Knight erreichen. Kannst du mir die Mathematik hinter 'Position Smoothing' erklären und wie ich das sauber einbaue? Wichtig ist mir auch, dass die Kamera nicht über den Levelrand hinausfährt. Ich möchte die Logik verstehen, um sie selbst zu implementieren."
-
-</details>
 
 Wir hatten zu einem Zeitpunkt während des Entwicklungsprozesses versucht, dass einige aus unserem Team KI nutzen, jedoch mussten wir dort schnell feststellen, dass egal welche KI wir benutzt haben, keine auch nur im Ansatz gut mit der Projektstruktur kalr gekommen ist. Ein dort sehr häufig zu beobachtendes Verhalten war, dass die LLMs den großteil des generierten Codes alles in eine große Dateie gesteckt haben, welches die Organisation und Verständlichkeit des Codes sehr stark reduziert. Am Ende sind wir bei dem Entschluss geblieben, dass LLMs genutzt werden können, um kleine Teilprobleme zu lösen, allerdings bei komplexeren Aufgaben gänzlich versagen. Das beste wofür wir die LLMs nutzen konnten war für Vorschläge oder Erklärungen, jedoch war selbst dort eine schnelle suche auf StackOverflow oder anderen Foren meist hilfreicher.
 
@@ -366,15 +361,13 @@ public class GameScreen implements GuiScreen {
 **Matrikelnummer:** 50212815  
 **Zum Projekt:** StealTheFiles
 
-<details>
-<summary><strong>Reflexion und Fazit anzeigen</strong></summary>
+### Reflexion und Fazit:
 
 Das Projekt war für mich trotz meiner Erfahrung tatsächlich besonders interessant. Das liegt vor allem daran, da ich davor eher wenig mit der Entwicklung eines eigenen Java-Spiels zu tun hatte. Ebenfalls war es sehr besonders für mich, mit anderen aus dem ersten Semester daran zu arbeiten.<br>
 Trotzdem würde ich sagen, dass das Projekt für mich eher eine Form des Zeitvertreibs war als ein anspruch volles Projekt, was nun mal auf die Erfahrung zurückzuführen ist. Vor allem am Anfang, wo die anderen Leute aus meiner Gruppe noch keinerlei Erfahrung hatten, war es unglaublich schwer dieses Projekt zu entwickeln und verständlich zu erklären.
 
 Allgemein war es trotzdem eine gute Abwechslung zu meinen sonstigen Projekten die mehr im Bereich der Backend-Entwicklung und Serversicherheit liegen sowie TypeScript-Anwendungen liegen.
 
-</details>
 
 ---
 
@@ -382,8 +375,7 @@ Allgemein war es trotzdem eine gute Abwechslung zu meinen sonstigen Projekten di
 **Matrikelnummer:** 50197039  
 **Zum Projekt:** StealTheFiles
 
-<details>
-<summary><strong>Reflexion und Fazit anzeigen</strong></summary>
+### Reflexion und Fazit:
 
 Das Projekt **„StealTheFiles“** stellte für mich weit mehr dar als eine spielerische Aufgabe; es war der entscheidende Schritt, um die theoretischen Vorlesungsinhalte in ein funktionierendes Softwaresystem zu überführen. Besonders die hohe Komplexität der verschiedenen Subsysteme – von der Bewegungslogik über Kollisionsabfragen bis hin zum Event-Handling und UI – verdeutlichte mir die Notwendigkeit einer sauberen **Softwarearchitektur**. Ich habe gelernt, Interdependenzen zwischen Modulen frühzeitig zu erkennen und technisch sauber zu lösen, was mein Verständnis für das technische „Big Picture“ nachhaltig geschärft hat.
 
@@ -392,5 +384,3 @@ Auf methodischer Ebene konnte ich meinen Umgang mit **Versionsverwaltung** profe
 Ein besonderes Augenmerk legte ich auf den reflektierten Umgang mit modernen Tools wie **LLMs**. Ich nutzte KI als unterstützendes Werkzeug, erkannte jedoch schnell die Grenzen und die Gefahr einer "blinden Übernahme". Dies schärfte mein Verständnis dafür, dass die Problemlösungskompetenz und die Kontrolle über den Code stets beim Entwickler bleiben müssen.
 
 Rückblickend war das Projekt nicht nur kognitiv fordernd, sondern auch eine Quelle großer Motivation. Das „Flow-Erleben“ während der Programmierung und das erfolgreiche Zusammenfügen der Komponenten haben mir ein stabiles technisches Fundament verschafft und meine Begeisterung für die Softwareentwicklung bestätigt.
-
-</details>
