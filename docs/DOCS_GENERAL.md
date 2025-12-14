@@ -359,3 +359,38 @@ public class GameScreen implements GuiScreen {
     // ...
 }
 ```
+
+---
+
+**Name:** Tom Coombs
+**Matrikelnummer:** 50212815  
+**Zum Projekt:** StealTheFiles
+
+<details>
+<summary><strong>Reflexion und Fazit anzeigen</strong></summary>
+
+Das Projekt war für mich trotz meiner Erfahrung tatsächlich besonders interessant. Das liegt vor allem daran, da ich davor eher wenig mit der Entwicklung eines eigenen Java-Spiels zu tun hatte. Ebenfalls war es sehr besonders für mich, mit anderen aus dem ersten Semester daran zu arbeiten.<br>
+Trotzdem würde ich sagen, dass das Projekt für mich eher eine Form des Zeitvertreibs war als ein anspruch volles Projekt, was nun mal auf die Erfahrung zurückzuführen ist. Vor allem am Anfang, wo die anderen Leute aus meiner Gruppe noch keinerlei Erfahrung hatten, war es unglaublich schwer dieses Projekt zu entwickeln und verständlich zu erklären.
+
+Allgemein war es trotzdem eine gute Abwechslung zu meinen sonstigen Projekten die mehr im Bereich der Backend-Entwicklung und Serversicherheit liegen sowie TypeScript-Anwendungen liegen.
+
+</details>
+
+---
+
+**Name:** Leonardo Rosario Parrino  
+**Matrikelnummer:** 50197039  
+**Zum Projekt:** StealTheFiles
+
+<details>
+<summary><strong>Reflexion und Fazit anzeigen</strong></summary>
+
+Das Projekt **„StealTheFiles“** stellte für mich weit mehr dar als eine spielerische Aufgabe; es war der entscheidende Schritt, um die theoretischen Vorlesungsinhalte in ein funktionierendes Softwaresystem zu überführen. Besonders die hohe Komplexität der verschiedenen Subsysteme – von der Bewegungslogik über Kollisionsabfragen bis hin zum Event-Handling und UI – verdeutlichte mir die Notwendigkeit einer sauberen **Softwarearchitektur**. Ich habe gelernt, Interdependenzen zwischen Modulen frühzeitig zu erkennen und technisch sauber zu lösen, was mein Verständnis für das technische „Big Picture“ nachhaltig geschärft hat.
+
+Auf methodischer Ebene konnte ich meinen Umgang mit **Versionsverwaltung** professionalisieren. Die Nutzung von GitHub ging über bloßes Speichern hinaus: Strukturierte Commits und ein sauberer Workflow waren essenziell für die Nachvollziehbarkeit und die kollaborative Entwicklung. Auch die **Teamarbeit** war ein Schlüsselfaktor; wir haben gelernt, Aufgaben effizient zu parzellieren und uns bei Engpässen gegenseitig zu unterstützen, was den Entwicklungsprozess deutlich beschleunigte und professionalisierte.
+
+Ein besonderes Augenmerk legte ich auf den reflektierten Umgang mit modernen Tools wie **LLMs**. Ich nutzte KI als unterstützendes Werkzeug, erkannte jedoch schnell die Grenzen und die Gefahr einer "blinden Übernahme". Dies schärfte mein Verständnis dafür, dass die Problemlösungskompetenz und die Kontrolle über den Code stets beim Entwickler bleiben müssen.
+
+Rückblickend war das Projekt nicht nur kognitiv fordernd, sondern auch eine Quelle großer Motivation. Das „Flow-Erleben“ während der Programmierung und das erfolgreiche Zusammenfügen der Komponenten haben mir ein stabiles technisches Fundament verschafft und meine Begeisterung für die Softwareentwicklung bestätigt.
+
+</details>
