@@ -6,6 +6,13 @@
 
 Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autoren: Tom Coombs, Leonardo Rosario Parrino 
 
+### Aufteilung der Arbeit
+
+- Spielidee & Kreatives: Leonardo Parrino
+- Technische Konzepte & Struktur-Vorschläge: Tom Coombs
+- Technische Grundstruktur (Gui, Input Handling, Game-Loop etc..): Tom Coombs
+- Dokumentation: Leonardo Parrino (kleinere Teil auch von Tom Coombs)
+
 ---
 ## Inhaltsverzeichnis
 
@@ -26,7 +33,9 @@ Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autor
 - [6. Build & Deployment (Verteilung)](#6-build--deployment-verteilung)
   - [6.1. Custom Runtime Image (JLink)](#61-custom-runtime-image-jlink)
   - [6.2. Native Installer (JPackage)](#62-native-installer-jpackage)
-  - [7. Herausforderungen & Technische Lösungen](#7-herausforderungen--technische-lösungen)
+- [7. Herausforderungen & Technische Lösungen](#7-herausforderungen--technische-lösungen)
+- [8. Game Assets & Design]()
+- [9. Dokumentation für das GUI & LevelDesign]()
 ---
 
 ## 1. Konzept & Projekteidee
@@ -36,6 +45,12 @@ Wintersemester 2025/26 – HSBI Campus Minden Programmieren 1 - Testat – Autor
   - Dieser Ordner befinden sich über das ganze Level verteilt.
 - Die Steuerung soll sich mit `A`, `D` und `SPACE` einfach halten und ein intuitives Spielerlebnis bieten.
 - Geplant war auch die Umsetzung eines Mehrspielermodus, welcher ermöglichen soll, in einer großen gemeinsamen Map zu spielen.
+- Projektstruktur:
+  - Da ein Multiplayer geplant war, haben wir das Projekt in mehreren Modulen aufgebaut.
+    - Das `core` Modul beinhaltet alle Funktionen und Klaseen, welche vom Client sowie vom Server benötigt werden.
+    - Das `client` Modul ist das, was man als das Spiel verstehen würde. Der Client beinhaltet alle JavaFX Komponenten, verfügt jedoch nicht über eine Datenbankverbindung um Stats direkt selber zu speichern.
+    - Das `server` Modul ist sozusagen der GameServer. Dieser handelt das gesamte Multiplayer verhalten sowie alle Datenbankanfragen für z.B. Stats.
+    - Die Grundidee für diese Aufteilung in verschiedene Module ist, dass man zum einen für den Client und Server die selben Klassen für z.B. `Entities` oder `Locations` nutzen kann. Dazu bietet ein getrenntes Servermodul die Möglichkeit, das der GameServer unabhänig von einem Client allein laufen kann, und somit nicht jeder Client über sein Heimnetzwerk den gesamten Netzwerktraffic laufen lassen muss.
 
 ## 2. Entwicklungsumgebung & genutzte Dependencies 
 
@@ -81,15 +96,14 @@ Dabei konnte auch festgestellt werden, dass LLMs für einige Probleme sehr hilfr
 <br>
 
 **Prompt 1: Der Überblick (Design-Fokus)**
-> "Ich entwickle einen 2D-Platformer in JavaFX und suche nach einer besseren Kamera-Lösung als der starren Spieler-Fixierung. Kannst du mir eine Übersicht der gängigen Systeme (z.B. Deadzones, Smoothing, Look-Ahead) geben? Mich interessieren besonders die Auswirkungen auf das 'Game Feel' und welches Genre typischerweise welche Methode nutzt, damit ich das richtige Konzept für mein Spiel wählen kann."
+> "Ich entwickle einen 2D-Platformer in JavaFX und suche nach einer besseren Kamera-Lösung als der starren Spieler-Fixierung. Kannst du mir eine Übersicht der gängigen Systeme geben?"
 
 **Prompt 2: Die Technik (Mathematik & Code-Logik)**
-> "Mein JavaFX-Kameracode (hartes setTranslateX) wirkt steif und ruckelig. Ich möchte das flüssige Verhalten moderner Platformer (Hollow Knight) erreichen. Kannst du mir die Mathematik hinter 'Position Smoothing' (Lerp) erklären und wie ich das sauber in einen AnimationTimer einbaue? Wichtig ist mir auch das 'Clamping', damit die Kamera nicht über den Levelrand hinausfährt. Ich möchte die Logik verstehen, um sie selbst zu implementieren."
-
-**Prompt 3: Die Entscheidung (Pro/Contra Analyse)**
-> "Ich muss eine fundierte Design-Entscheidung für meine Kamera treffen. Bitte erstelle mir eine Vergleichsanalyse (Vor-/Nachteile) für: Locked, Deadzone, Smoothing und Look-Ahead. Bewerte sie bitte nach Implementierungsaufwand, Game Feel/UX und Genre-Eignung. Ich brauche diese Argumente, um meine Wahl im Projekt technisch begründen zu können."
+> "Meine Kamera wirkt ruckelig und springt immer etwas nach vorne. Ich möchte ein flüssiges Verhalten wie bei modernen Platformern wie z.B. Hollow Knight erreichen. Kannst du mir die Mathematik hinter 'Position Smoothing' erklären und wie ich das sauber einbaue? Wichtig ist mir auch, dass die Kamera nicht über den Levelrand hinausfährt. Ich möchte die Logik verstehen, um sie selbst zu implementieren."
 
 </details>
+
+Wir hatten zu einem Zeitpunkt während des Entwicklungsprozesses versucht, dass einige aus unserem Team KI nutzen, jedoch mussten wir dort schnell feststellen, dass egal welche KI wir benutzt haben, keine auch nur im Ansatz gut mit der Projektstruktur kalr gekommen ist. Ein dort sehr häufig zu beobachtendes Verhalten war, dass die LLMs den großteil des generierten Codes alles in eine große Dateie gesteckt haben, welches die Organisation und Verständlichkeit des Codes sehr stark reduziert. Am Ende sind wir bei dem Entschluss geblieben, dass LLMs genutzt werden können, um kleine Teilprobleme zu lösen, allerdings bei komplexeren Aufgaben gänzlich versagen. Das beste wofür wir die LLMs nutzen konnten war für Vorschläge oder Erklärungen, jedoch war selbst dort eine schnelle suche auf StackOverflow oder anderen Foren meist hilfreicher.
 
 ## 4. Softwarearchitektur & Design-Patterns
 
@@ -169,16 +183,27 @@ Während der Entwicklung stießen wir auf technische Herausforderungen, die durc
 
 * **Problem: Statische Bewegungsmuster**
     * *Lösung: Mathematische Bewegungsmodelle.*
-        * **Hovering:** `EntityMovingPlatform` nutzt eine Sinus-Funktion (`Math.sin`), um ein sanftes Schweben zu simulieren.
         * **Interpolation:** `FloatingPlatformBlock` nutzt Vektormathematik, um sich flüssig zwischen zwei Punkten zu bewegen (Lerp).
 
-* **Problem: Gegner-KI und Kollision**
+* **Problem: Gegner und Kollision**
     * *Lösung: Clamped Vector Movement.*
         Der `RobotEnemyBlock` berechnet die Richtung zum Spieler, begrenzt die Bewegung aber strikt auf einen definierten Bereich (`minX`, `maxX`). Dies verhindert, dass Gegner blindlings von Plattformen laufen.
 
-* **Problem: Audio-Konflikte (Race Conditions)**
+* **Problem: Audio-Konflikte**
     * *Lösung: Synchronisation.*
         Da Musik und Soundeffekte in unterschiedlichen Threads laufen können, werden kritische Audio-Operationen (wie das Ducking) durch ein Lock-Objekt (`duckLock`) synchronisiert. Dies verhindert inkonsistente Lautstärkepegel bei gleichzeitigen Events.
+
+* **Problem: Komplexität des Projektes**
+  * Das Projekt wurde von uns für die Vorgegebene Zeit und Aufgabenstellung mit einem viel zu komplexen Ansatzt angeganen. Wir wollten anstelle eines einfachen Spiels, ein sehr komplexes mit viele Funktionen und Erweiterungen, wie z.B. eine Multiplayer Funktion.
+  * *Lösung:* 
+      Da wir bereits viele weitere Funktionen wie den `FlipperBlock/Item` oder den `Multiplayer` angefangen hatten, wollten wir diese Code-Stücke einfach erstmal behalten für den Falle, dass man später in höheren Semestern oder privat das Projekt weiter entwickeln möchte.
+
+* **Problem: Arbeit als Gruppe**
+  * Das wohl mitabstand größte Problem war, dass unsere Gruppe Erfahrungsniveau auf komplett verschiedenen Leveln ist. Dies stellte bei der Entwicklung einige Probleme dar.
+    * Ein gutes Beispiel dafür ist die Projektstruktur. Für alle die aus unserer Gruppe die bisher nur sehr wenig Erfahrung in diesem Bereich haben, ist ein so großes Projekt allein aufgrund der schieren Größe sehr erdrückend. Das Projekt ist für Leute ohne Erfahrung viel zu komplex gewesen. Deswegen hat es bereits einige Stunden gedauert, den einzelnen Leuten aus der Gruppe zu erklären, wie genau das Projekt aufgebaut ist und wie man dieses erweitern kann.
+    * Ein weiteres Problem was dadurch entstanden ist, ist, dass all die ohne Erfahrung oft vorhanden Code strukturen zur einfachen Erweiterung z.B. den `KeyListener` nicht verwendet haben, sondern alles in eine Klasse gepackt haben. Dies erforderte oft viel Arbeit um alles geordnet und getrennt zu halten.
+  * *Lösung:*
+      Die einfachste Lösung, die wir dafür hatten, war fast alles einmal neuzuschreiben und dabei nur wenige der Kommentare im Code zu übernehmen.
 
 ## 8. Game Assets & Design
 
@@ -204,3 +229,111 @@ Das Asset-Pack umfasst folgende Elemente:
     * **USB-Stick:** Das Sammelobjekt (Ziel des Spiels).
     * **Power-Ups:** Speedboost und Jumpboost.
     * **UI:** Eine integrierte Lebensanzeige (Health Bar).
+
+
+## 9. Dokumentation: Aufbau von GUI und Level-Architektur
+
+In diesem Abschnitt wird der schrittweise Aufbau der **Graphical User Interface (GUI)** sowie die architektonische Umsetzung der **Levels** dokumentiert. Wichtige Design- und technische Entscheidungen werden kommentiert.
+
+---
+
+## 1. GUI-Rendering mit JavaFX
+
+Die gesamte grafische Oberfläche des Spiels wird mithilfe der **JavaFX-Bibliothek** gerendert.
+
+### Kurze Erklärung zu JavaFX
+
+**JavaFX** ist eine Java-Bibliothek, die speziell für die Entwicklung von Desktop-Anwendungen und Rich Internet Applications (RIA) konzipiert wurde. Im Vergleich zu älteren Technologien wie Swing bietet JavaFX eine **modernere, hardwarebeschleunigte Oberfläche** und unterstützt **CSS** für einfaches Styling.
+
+* **Technische Notiz:** JavaFX wurde gewählt, da es **leistungsstarkes 2D-Rendering** und eine klare Trennung von Logik und Darstellung (mittels FXML/CSS) ermöglicht, was die Entwicklung der Benutzeroberfläche vereinfacht und beschleunigt.
+
+---
+
+## 2. Das `GuiScreen`-Konzept
+
+Um die **verschiedenen Zustände** und Ansichten des Fensters (z. B. Hauptmenü, Einstellungen, eigentliches Spiel) sauber voneinander trennen und effizient wechseln zu können, wurde das **`GuiScreen`-Konzept** implementiert.
+
+### Designentscheidung: `GuiScreen`
+
+Die Entscheidung für dieses konzeptionelle Framework ermöglicht eine klare **Trennung der Zuständigkeiten (Single Responsibility Principle)**. Jede Ansicht (z. B. das Hauptmenü) wird zu einer **eigenständigen Klasse** (`MainMenuScreen`), die nur für ihre spezifische Logik und Darstellung verantwortlich ist.
+
+* **Struktur:** Jede `GuiScreen`-Instanz besitzt die folgenden zentralen Methoden:
+    * `initialize()`: Wird einmalig beim Erstellen des Screens ausgeführt, um alle zu rendernden Komponenten erstmalig zu erstellen (z. B. Buttons, Textfelder).
+    * `draw()`: Zeichnet die erstellten Komponenten auf den Bildschirm.
+    * `update()`: Wird **jeden Frame** ausgeführt, um Logik wie Animationen, Eingabeverarbeitung oder Zustandsprüfungen darzustellen.
+
+### Implementierung des Screen-Wechsels
+
+Der Wechsel zwischen den `GuiScreen`s wird über einen zentralen **`ScreenManager`** gesteuert.
+
+```java
+public class ScreenManager {
+    @Getter
+    private GuiScreen currentScreen;
+    // ..
+
+    public void showScreen(GuiScreen screen) {
+        // Setze aktuellen Screen
+        this.currentScreen = screen;
+
+        /*
+         * Wenn screen noch nie geladen wurde -> screen erstmals laden
+         */
+        if (!this.screenList.contains(screen)) {
+            screen.initialize();
+        }
+
+        // Screen in Liste hinzufügen und als Root setzen (anzeigen)
+        this.screenList.add(screen);
+        Platform.runLater(() -> stage.getScene().setRoot(screen.getRoot()));
+    }
+
+    //..
+}
+```
+
+## 3. Level-Implementierung über den `GameScreen`
+
+Für das eigentliche Spiel-Gameplay wurde die Architektur so gestaltet, dass nicht für jedes Level ein neuer `GuiScreen` erstellt wird, sondern ein **einheitlicher `GameScreen`** als Container dient.
+
+### Designentscheidung: Einheitlicher `GameScreen`
+
+Anstatt viele Level-spezifische Screens zu erstellen (z. B. `Level1Screen`, `Level2Screen`), fungiert der **`GameScreen`** als **zentrale Spiel-Umgebung**. Dies vereinfacht das **Laden und Entladen von Level-Daten** und stellt sicher, dass Elemente wie das **HUD (Head-Up Display)** oder die **Pausenfunktion** konsistent über alle Level hinweg funktionieren.
+
+* **Workflow beim Levelstart:** Der `GameScreen` ist dafür verantwortlich, die **Level-Daten** zu laden, die **HUD-Elemente** zu instanziieren und die **Spiel-Loop** zu starten.
+
+### Implementierung des Level-Ladens
+
+Der `GameScreen` orchestriert das Laden des aktuellen Levels und der Benutzeroberfläche (HUD).
+
+```java
+public class GameScreen implements GuiScreen {
+    // ...
+    @Override
+    public void initialize() {
+        double width = screenManager.getStage().getWidth();
+        double height = screenManager.getStage().getHeight();
+
+        // .. HUD laden ..
+
+        /*
+         * Remove all blocks & platforms from current level and
+         * load draw current level
+         */
+        Game.getInstance().getCurrentLevel().getBlocks().clear();
+        Game.getInstance().getCurrentLevel().getPlatforms().clear();
+        Game.getInstance().getCurrentLevel().draw(width, height, root);
+
+        // ...
+    }
+
+    @Override
+    public void update() {
+        // .. Update der Spiellogik (Bewegung, Kollision) ..
+        
+
+        // .. Update der HUD (Animationen etc.) ..
+    }
+    // ...
+}
+```
