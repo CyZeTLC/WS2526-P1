@@ -36,6 +36,12 @@ Um das Projekt zu bauen und auszuführen, benötigst du folgende Software:
 
 ### 1. Repository klonen
 
+Im Optimalfall klonst du die Repo direkt über IntelIJ mit Version-Controll, da IntelIJ bei Projekten mit mehreren Modulen meistens Probleme mit dem Source Root hat und man dieses sonst oft manuel setzen muss.
+<br>
+
+**Dazu sollte man, nachdem man die Repo geklont hat, solange warten, bis alle maven Dependencies heruntergeladen sind, da es sonst oft Konflikte mit lombok oder JavaFX und nicht gefunden Klassen gibt!!!**
+
+
 Öffne dein Terminal und klone das Repository auf deinen lokalen Rechner:
 
 ```bash
