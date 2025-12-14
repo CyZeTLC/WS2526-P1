@@ -165,6 +165,13 @@ public class Game extends Application {
         getLogger().info("Loading configuration..");
 
         config = new JsonConfig("./config.json");
+
+        if (!config.getObject().has("currentLevel")) {
+            getLogger().error("Die Config.json ist nicht vollständig!");
+            System.exit(-1);
+            return;
+        }
+
         messageHandler = new MessageHandler();
         messageHandler.loadFromJson(config.getObject().getJSONObject("messages"));
 
