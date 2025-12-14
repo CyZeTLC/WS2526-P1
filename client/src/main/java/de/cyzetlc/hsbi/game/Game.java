@@ -28,13 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@code Game} class serves as the main application entry point and the central
- * singleton container for all core components of the game, including the JavaFX application
- * lifecycle, configuration, screen management, event system, and global physics constants.
+ * Die Klasse {@code Game} dient als Haupt-Einstiegspunkt der Anwendung und als zentrale
+ * Singleton-Container für alle Kernkomponenten des Spiels. Dazu gehören der JavaFX-Anwendungslebenszyklus,
+ * die Konfiguration, das Screen-Management, das Event-System und globale Physikkonstanten.
+ *
  * <p>
- * It extends {@code Application} to manage the primary {@code Stage} and executes all
- * initial setup routines upon startup, such as loading configuration, initializing the
- * network client, and setting up screens and event listeners.
+ * Sie erweitert {@code Application}, um die primäre {@code Stage} zu verwalten, und führt bei
+ * Programmstart alle anfänglichen Setup-Routinen aus, wie das Laden der Konfiguration, die Initialisierung
+ * des Netzwerk-Clients und das Einrichten von Screens und Event-Listenern.
  *
  * @see ScreenManager
  * @see SoundManager
@@ -42,106 +43,108 @@ import org.slf4j.LoggerFactory;
  * @see Client
  *
  * @author Tom Coombs
+ * @author leonardo (aka. Phantomic)
  */
 public class Game extends Application {
     /**
-     * The SLF4J logger instance used for all application logging.
-     * Initialized in the {@code start} method.
+     * Die SLF4J Logger-Instanz, die für alle Anwendungs-Logmeldungen verwendet wird.
+     * Initialisiert in der {@code start}-Methode.
      */
     @Getter
     private static Logger logger;
 
     /**
-     * The static reference to the main player entity in the game world.
+     * Die statische Referenz auf die Hauptspieler-Entität in der Spielwelt.
      */
     public static EntityPlayer thePlayer;
 
     /**
-     * Configuration object loaded from {@code config.json}, storing persistent settings
+     * Das Konfigurationsobjekt, geladen aus {@code config.json}, speichert persistente Einstellungen.
      */
     @Getter
     private JsonConfig config;
 
     /**
-     * The static singleton instance of the {@code Game} class, providing global access
-     * to all managed components.
+     * Die statische Singleton-Instanz der {@code Game}-Klasse, die globalen Zugriff
+     * auf alle verwalteten Komponenten bietet.
      */
     @Getter
     private static Game instance;
 
     /**
-     * The manager responsible for handling the main window, the game loop, and screen transitions.
+     * Der Manager, der für die Verwaltung des Hauptfensters, des Spiel-Loops und der Bildschirmübergänge zuständig ist.
      */
     @Getter
     private ScreenManager screenManager;
 
     /**
-     * The currently active game level being played.
+     * Das aktuell aktive Level, das gerade gespielt wird.
      */
     @Getter @Setter
     private Level currentLevel;
 
     /**
-     * The initialized instance of the main menu screen.
+     * Die initialisierte Instanz des Hauptmenü-Bildschirms.
      */
     @Getter @Setter
     private MainMenuScreen mainMenuScreen;
 
     /**
-     * The initialized instance of the settings configuration screen.
+     * Die initialisierte Instanz des Einstellungs-Konfigurationsbildschirms.
      */
     @Getter @Setter
     private SettingsScreen settingsScreen;
 
     /**
-     * A temporary reference to the screen the user should return to after an action (e.g., exiting settings).
+     * Eine temporäre Referenz auf den Bildschirm, zu dem der Benutzer nach einer Aktion
+     * zurückkehren soll (z. B. nach dem Verlassen der Einstellungen).
      */
     @Getter @Setter
     private GuiScreen backScreen;
 
     /**
-     * The network client responsible for connecting to and communicating with the game server.
+     * Der Netzwerk-Client, der für die Verbindung mit und die Kommunikation mit dem Spielserver zuständig ist.
      */
     @Getter
     private Client client;
 
     /**
-     * Handler responsible for loading, storing, and retrieving game messages and translations from the configuration.
+     * Der Handler, der für das Laden, Speichern und Abrufen von Spielnachrichten und Übersetzungen aus der Konfiguration zuständig ist.
      */
     @Getter
     private MessageHandler messageHandler;
 
     /**
-     * Global constant defining the strength of gravity applied to entities (pixels per second squared).
+     * Globale Konstante, die die Stärke der auf Entitäten angewendeten Schwerkraft definiert (Pixel pro Sekunde im Quadrat).
      */
     public static double gravity = 15;
 
     /**
-     * Global constant defining the default horizontal movement speed for entities (pixels per second).
+     * Globale Konstante, die die Standard-Horizontalbewegungsgeschwindigkeit für Entitäten definiert (Pixel pro Sekunde).
      */
     public static double moveSpeed = 450;
 
     /**
-     * Global constant defining the default vertical upward velocity applied during a jump (pixels per second).
+     * Globale Konstante, die die Standard-Vertikalgeschwindigkeit definiert, die beim Sprung angewendet wird (Pixel pro Sekunde).
      */
     public static double jumpPower = 800;
 
     /**
-     * The entry point for the JavaFX application lifecycle. This method is called after {@code main()}
-     * and performs the complete initialization of the game system.
+     * Der Einstiegspunkt für den JavaFX-Anwendungslebenszyklus. Diese Methode wird nach {@code main()}
+     * aufgerufen und führt die vollständige Initialisierung des Spielsystems durch.
      * <p>
-     * Initialization steps include:
+     * Die Initialisierungsschritte umfassen:
      * <ul>
-     * <li>Setting up logging and the singleton instance.</li>
-     * <li>Initializing the network client and connecting.</li>
-     * <li>Loading {@code config.json} and applying sound settings.</li>
-     * <li>Registering all game event listeners (Packet, Key, Player, UserMessage).</li>
-     * <li>Initializing and showing the {@code LoadingScreen}.</li>
-     * <li>Setting the last known level from the config (Tutorial, Second, or Boss).</li>
-     * <li>Starting the background menu music.</li>
+     * <li>Einrichtung von Logging und der Singleton-Instanz.</li>
+     * <li>Initialisierung des Netzwerk-Clients und Verbindung.</li>
+     * <li>Laden von {@code config.json} und Anwenden der Sound-Einstellungen.</li>
+     * <li>Registrierung aller Spiel-Event-Listener (Packet, Key, Player, UserMessage).</li>
+     * <li>Initialisierung und Anzeige des {@code LoadingScreen}.</li>
+     * <li>Setzen des zuletzt bekannten Levels aus der Konfiguration (Tutorial, Second oder Boss).</li>
+     * <li>Starten der Hintergrundmenü-Musik.</li>
      * </ul>
      *
-     * @param primaryStage The primary stage provided by the JavaFX runtime.
+     * @param primaryStage Die primäre Stage, die von der JavaFX-Laufzeitumgebung bereitgestellt wird.
      */
     @Override
     public void start(Stage primaryStage) {
@@ -152,8 +155,11 @@ public class Game extends Application {
         instance = this;
         thePlayer = new EntityPlayer();
 
+        /* Mit diesem beiden Zeilen würde eine Verbindung zum Server hergestellt werden (Wenn der Server an ist, dann funktioniert diese Verbindung bereits)
+         *
         client = new Client();
         client.connectAndRun();
+         */
 
         getLogger().info("Starting Steal The Files v0.1 BETA..");
         getLogger().info("Loading configuration..");
@@ -171,6 +177,7 @@ public class Game extends Application {
         getLogger().info("SoundManger loaded successfully!");
         getLogger().info("Registering EventListener..");
 
+        // Registrierung der zentralen Event-Listener
         EventManager.register(new PacketListener());
         EventManager.register(new UserMessageListener());
         EventManager.register(new KeyListener());
@@ -180,6 +187,7 @@ public class Game extends Application {
 
         getLogger().info("Loading ScreenManger..");
 
+        // Initialisiere die UI-Manager und zeige den Ladebildschirm
         screenManager = new ScreenManager(primaryStage);
         mainMenuScreen = new MainMenuScreen(screenManager);
         settingsScreen = new SettingsScreen(screenManager);
@@ -188,17 +196,20 @@ public class Game extends Application {
         getLogger().info("ScreenManager loaded & displayed MainMenu successfully!");
         getLogger().info("Client started successfully!");
 
+        // Setze das letzte gespeicherte Level basierend auf der Konfigurationsdatei
         switch (this.config.getObject().getString("currentLevel")) {
             case "Tutorial" -> this.setCurrentLevel(new TutorialLevel());
             case "Second" -> this.setCurrentLevel(new SecondLevel());
             case "Boss" -> this.setCurrentLevel(new BossLevel());
         }
 
+        // Starte die Hintergrundmusik
         SoundManager.playBackground(Music.MENU, true);
     }
 
     /**
-     * The method called by the JavaFX runtime when the application is requested to shut down.
+     * Die Methode, die von der JavaFX-Laufzeitumgebung aufgerufen wird, wenn die Anwendung beendet werden soll.
+     * Führt Aufräumarbeiten durch (z. B. Schließen der Netzwerkverbindung).
      */
     @Override
     public void stop()  {
@@ -206,8 +217,12 @@ public class Game extends Application {
         client.closeConnection();
     }
 
+    /**
+     * Die Hauptmethode der Anwendung.
+     *
+     * @param args Kommandozeilenargumente.
+     */
     public static void main(String[] args) {
         launch(args);
     }
 }
-

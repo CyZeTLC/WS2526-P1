@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@code ImageAssets} utility class is responsible for centralized management, loading,
- * and caching of all image resources used throughout the game, including UI elements and block textures.
+ * Die Utility-Klasse {@code ImageAssets} ist verantwortlich für die zentralisierte Verwaltung, das Laden
+ * und das Caching aller Bildressourcen, die im gesamten Spiel verwendet werden, einschließlich UI-Elementen und Blocktexturen.
+ *
  * <p>
- * Using a static cache prevents repeated disk access and object creation, improving performance.
+ * Die Verwendung eines statischen Caches verhindert wiederholten Festplattenzugriff und Objekt-Erstellung,
+ * was die Performance verbessert.
  *
  * @see Material
  * @author Tom Coombs
@@ -20,30 +22,33 @@ import java.util.Map;
  */
 public class ImageAssets {
     /**
-     * Cache specifically for {@code Image} objects related to game {@code Material}s, keyed by the material type.
+     * Cache speziell für {@code Image}-Objekte, die zu Spiel-{@code Material}ien gehören, geschlüsselt nach dem Materialtyp.
      */
     private static HashMap<Material, Image> cachedBlockImages = new HashMap<>();
 
     /**
-     * The general-purpose cache mapping image resource paths (Strings) to their loaded {@code Image} objects.
+     * Der allgemeine Cache, der Bildressourcenpfade (Strings) auf die geladenen {@code Image}-Objekte abbildet.
      */
     private static final Map<String, Image> cache = new HashMap<>();
 
     /**
-     * Retrieves an image resource based on its path.
+     * Ruft eine Bildressource basierend auf ihrem Pfad ab.
      * <p>
-     * If the image is already in the cache, it is returned immediately. Otherwise, the image is
-     * loaded using {@code getImageResource(String)} and added to the cache before being returned.
+     * Wenn das Bild bereits im Cache vorhanden ist, wird es sofort zurückgegeben. Andernfalls wird das Bild
+     * mit {@code getImageResource(String)} geladen und dem Cache hinzugefügt, bevor es zurückgegeben wird.
+     * Dies implementiert das "Compute-If-Absent"-Muster für effizientes Caching.
      *
-     * @param path The classpath resource path to the image (e.g., "/assets/image.png").
-     * @return The loaded {@code Image} object.
+     * @param path Der Classpath-Ressourcenpfad zum Bild (z. B. "/assets/image.png").
+     * @return Das geladene {@code Image}-Objekt.
      */
     public static Image get(String path) {
         return cache.computeIfAbsent(path, ImageAssets::getImageResource);
     }
 
     /**
-     * Pre-loads a selection of common image assets into the cache.
+     * Lädt eine Auswahl gängiger Bildressourcen vorab in den Cache (Warm-up).
+     * <p>
+     * Dies reduziert Latenzen beim ersten Zugriff auf diese Bilder während des Spiels.
      */
     public static void warm() {
         String[] paths = {
@@ -64,41 +69,43 @@ public class ImageAssets {
     }
 
     /**
-     * Explicitly adds an {@code Image} to the block image cache, associating it with a specific {@code Material}.
+     * Fügt explizit ein {@code Image} zum Block-Image-Cache hinzu und assoziiert es mit einem spezifischen {@code Material}.
      *
-     * @param material The {@code Material} key.
-     * @param image The {@code Image} object to cache.
+     * @param material Der {@code Material}-Schlüssel.
+     * @param image Das zu cachende {@code Image}-Objekt.
      */
     public static void cacheBlockImage(Material material, Image image) {
         cachedBlockImages.put(material, image);
     }
 
     /**
-     * Retrieves an {@code ImageView} for a specific {@code Material}.
+     * Ruft einen {@code ImageView} für ein spezifisches {@code Material} ab.
      * <p>
-     * If the image is not yet in the block cache, it attempts to load it using the material's
-     * texture path and caches it before creating the {@code ImageView}. Returns an empty
-     * {@code ImageView} if no image can be found.
+     * Ist das Bild noch nicht im Block-Cache, versucht die Methode, es über den Texturpfad des Materials zu laden
+     * und cached es, bevor der {@code ImageView} erstellt wird. Gibt einen leeren
+     * {@code ImageView} zurück, falls kein Bild gefunden werden kann.
      *
-     * @param material The {@code Material} whose texture is requested.
-     * @return A new {@code ImageView} containing the material's texture.
+     * @param material Das {@code Material}, dessen Textur angefordert wird.
+     * @return Ein neues {@code ImageView}, das die Textur des Materials enthält.
      */
     public static ImageView getBlockImage(Material material) {
         Image image = cachedBlockImages.get(material);
+        // Versuch, das Bild zu laden und zu cachen, wenn es fehlt und ein Pfad existiert
         if (image == null && material.texturePath != null && !material.texturePath.isEmpty()) {
             image = getImageResource(material.texturePath);
             cachedBlockImages.put(material, image);
         }
+        // Gib entweder das ImageView mit dem Bild oder ein leeres ImageView zurück
         return image == null ? new ImageView() : new ImageView(image);
     }
 
     /**
-     * Loads an image from the classpath resource path.
+     * Lädt ein Bild über den Classpath-Ressourcenpfad.
      * <p>
-     * If the specified resource is not found, it returns a dedicated "missing texture" image.
+     * Wird die angegebene Ressource nicht gefunden, gibt die Methode ein dediziertes "Missing Texture"-Bild zurück.
      *
-     * @param path The classpath resource path of the image.
-     * @return The loaded {@code Image} object, or the missing texture fallback.
+     * @param path Der Classpath-Ressourcenpfad des Bildes.
+     * @return Das geladene {@code Image}-Objekt oder das Fallback-Bild für fehlende Texturen.
      */
     public static Image getImageResource(String path) {
         String fallbackPath = "/assets/missing_texture.png";
@@ -107,11 +114,16 @@ public class ImageAssets {
         try {
             URL resource = ImageAssets.class.getResource(path);
             if (resource != null) {
+                // Lade das gefundene Bild
                 image = new Image(resource.toExternalForm());
             } else {
+                // Ressource nicht gefunden, lade Fallback
+                System.err.println("WARN: Image resource not found: " + path);
                 image = new Image(ImageAssets.class.getResource(fallbackPath).toExternalForm());
             }
         } catch (Exception e) {
+            // Fehler beim Laden (z.B. falsche URL), lade Fallback
+            System.err.println("ERROR loading image resource " + path + ": " + e.getMessage());
             image = new Image(ImageAssets.class.getResource(fallbackPath).toExternalForm());
         }
 
