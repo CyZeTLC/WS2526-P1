@@ -56,7 +56,7 @@ cd WS2526-P1
 Die wichtigste Anforderung ist, dass die config.json Datei existiert. Diese muss im Ordner der Jar oder im Baseordner des Projekts liegen. Sollte das Projekt aus der Repo geladen worden, so ist diese Datei bereits vorhanden.
 
 ### Option 1: Über die IDE (Empfohlen)
-Importiere das Projekt als **Maven-Projekt**. Erstelle eine "Run Configuration" für die Main-Klasse und füge bei Bedarf die VM-Optionen für JavaFX hinzu (im Normalfall nicht benötigt):
+Importiere das Projekt als **Maven-Projekt**. Erstelle eine "Run Configuration" für die Main-Klasse im Client-Modul und füge bei Bedarf die VM-Optionen für JavaFX hinzu (im Normalfall nicht benötigt):
 ```text
 --module-path /pfad/zu/javafx-sdk-17.0.17/lib --add-modules javafx.controls,javafx.fxml
 ```
